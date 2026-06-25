@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Math Game Ultimate</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 10px;
+            color: white;
+            transition: all 0.5s ease;
+        }
+        .container {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            padding: 15px;
+            border-radius: 25px;
+            max-width: 950px;
+            width: 100%;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        /* افکت پارتیکل پس‌زمینه */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #ffd200;
+            border-radius: 50%;
+            animation: float 8s infinite;
+            opacity: 0.3;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.2; }
+            50% { transform: translateY(-80px) rotate(180deg); opacity: 0.8; }
+        }
+
+        .header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; position: relative; z-index: 1; }
+        h1 { font-size: 1.5rem; background: linear-gradient(45deg, #f7971e, #ffd200); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .badge-group { display: flex; gap: 5px; flex-wrap: wrap; }
+        .badge { padding: 3px 10px; border-radius: 15px; font-weight: bold; font-size: 0.65rem; background: linear-gradient(45deg, #f7971e, #ffd200); color: #1a1a2e; }
+        .badge.rank { background: linear-gradient(45deg, #6c5ce7, #a29bfe); color: white; }
+        .badge.upgrade { background: linear-gradient(45deg, #00b894, #55efc4); color: #1a1a2e; }
+
+        .controls-top {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 4px;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+        .ctrl-top-btn {
+            padding: 6px 4px;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+            color: white;
+            cursor: pointer;
+            font-size: 0.6rem;
+            font-weight: bold;
+            transition: 0.3s;
+            text-align: center;
+        }
+        .ctrl-top-btn:hover { background: rgba(255,255,255,0.15); transform: scale(1.05); }
+        .ctrl-top-btn .icon { display: block; font-size: 0.9rem; }
+        .ctrl-top-btn.active { background: rgba(255,215,0,0.2); border-color: #ffd200; }
+
+        .level-selector {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 3px;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+        .level-btn {
+            padding: 4px 2px;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+            color: #a8a8b3;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+            font-size: 0.5rem;
+            text-align: center;
+        }
+        .level-btn:hover { background: rgba(255,255,255,0.1); }
+        .level-btn.active { background: linear-gradient(45deg, #f7971e, #ffd200); color: #1a1a2e; border-color: #ffd200; transform: scale(1.05); }
+        .level-btn.locked { opacity: 0.3; cursor: not-allowed; }
+        .level-btn .icon { display: block; font-size: 0.8rem; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 3px;
+            background: rgba(0,0,0,0.3);
+            padding: 6px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+        .stat-item { text-align: center; }
+        .stat-item .number { display: block; font-size: 0.9rem; font-weight: bold; color: #ffd200; }
+        .stat-item .label { color: #a8a8b3; font-size: 0.45rem; }
+
+        .level-progress {
+            width: 100%;
+            height: 5px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            margin: 4px 0;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+        .level-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00b894, #ffd200);
+            transition: width 0.5s ease;
+            border-radius: 3px;
+        }
+
+        .question-box {
+            background: rgba(0,0,0,0.4);
+            padding: 18px 10px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 6px 0;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255,215,0,0.2);
+            font-family: 'Courier New', monospace;
+            position: relative;
+            z-index: 1;
+        }
+        .question-number { position: absolute; top: 4px; left: 10px; font-size: 0.55rem; color: #a8a8b3; }
+        .question-timer { position: absolute; top: 4px; right: 10px; font-size: 0.55rem; color: #ff6b6b; }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 5px;
+            margin: 6px 0;
+            position: relative;
+            z-index: 1;
+        }
+        .option {
+            background: rgba(255,255,255,0.08);
+            border: 2px solid rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .option:hover:not(:disabled) { background: rgba(255,255,255,0.15); transform: scale(1.03); }
+        .option:disabled { opacity: 0.4; cursor: not-allowed; }
+        .option.correct { background: #00b894; border-color: #00b894; animation: pulseGreen 0.4s; }
+        .option.wrong { background: #d63031; border-color: #d63031; animation: pulseRed 0.4s; }
+        @keyframes pulseGreen { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+        @keyframes pulseRed { 0%, 100% { transform: scale(1); } 50% { transform: scale(0.94); } }
+
+        .timer-bar { width: 100%; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; margin: 4px 0; overflow: hidden; position: relative; z-index: 1; }
+        .timer-fill { height: 100%; background: linear-gradient(90deg, #00b894, #ffd200); transition: width 0.5s linear; border-radius: 2px; }
+
+        .challenge-section {
+            background: rgba(0,0,0,0.2);
+            padding: 6px;
+            border-radius: 8px;
+            margin: 5px 0;
+            position: relative;
+            z-index: 1;
+        }
+        .challenge-title { font-size: 0.7rem; color: #ffd200; margin-bottom: 3px; }
+        .challenge-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+        .challenge-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 2px 5px;
+            font-size: 0.6rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 5px;
+        }
+        .challenge-item .progress { color: #00b894; font-weight: bold; }
+        .challenge-item.complete .progress { color: #ffd200; }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 4px;
+            margin-top: 6px;
+            position: relative;
+            z-index: 1;
+        }
+        .btn {
+            padding: 8px 4px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            text-align: center;
+        }
+        .btn:hover { transform: scale(0.97); }
+        .btn-start { background: linear-gradient(45deg, #00b894, #00cec9); color: white; }
+        .btn-reset { background: linear-gradient(45deg, #d63031, #e17055); color: white; }
+        .btn-hint { background: linear-gradient(45deg, #6c5ce7, #a29bfe); color: white; }
+        .btn-skip { background: linear-gradient(45deg, #fdcb6e, #f39c12); color: #1a1a2e; }
+        .btn-power { background: linear-gradient(45deg, #00b894, #55efc4); color: #1a1a2e; }
+        .btn-upgrade { background: linear-gradient(45deg, #fd79a8, #e84393); color: white; }
+
+        .message {
+            text-align: center;
+            margin-top: 6px;
+            min-height: 22px;
+            font-size: 0.8rem;
+            color: #dfe6e9;
+            padding: 5px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ====== فوتر ====== */
+        .footer {
+            margin-top: 20px;
+            padding: 12px 15px;
+            border-top: 2px solid rgba(255, 215, 0, 0.15);
+            text-align: center;
+            font-size: 0.75rem;
+            color: #a8a8b3;
+            position: relative;
+            z-index: 1;
+            direction: rtl;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+        }
+        .footer .creator {
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+        .footer .creator strong {
+            color: #ffd200;
+            font-weight: 700;
+            background: linear-gradient(45deg, #ffd200, #f7971e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .footer .channel-btn {
+            display: inline-block;
+            color: #00d2d3;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 6px 18px;
+            border-radius: 30px;
+            background: rgba(0, 210, 211, 0.08);
+            border: 2px solid rgba(0, 210, 211, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+        .footer .channel-btn:hover {
+            background: rgba(0, 210, 211, 0.2);
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 210, 211, 0.2);
+        }
+        .footer .channel-id {
+            margin-top: 5px;
+            font-size: 0.65rem;
+            opacity: 0.6;
+            direction: ltr;
+        }
+        .footer .channel-id span { color: #ffd200; }
+
+        @media (max-width: 700px) {
+            .container { padding: 10px; }
+            .question-box { font-size: 1.3rem; padding: 12px 8px; min-height: 50px; }
+            .option { font-size: 0.9rem; padding: 7px; }
+            .stats-grid { grid-template-columns: repeat(5, 1fr); }
+            .controls { grid-template-columns: repeat(3, 1fr); }
+            .controls-top { grid-template-columns: repeat(4, 1fr); }
+            .level-selector { grid-template-columns: repeat(4, 1fr); }
+            .challenge-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="mainContainer">
+        <!-- افکت پارتیکل -->
+        <div class="particles" id="particles"></div>
+
+        <!-- هدر -->
+        <div class="header">
+            <h1>🚀 Math Game Pro</h1>
+            <div class="badge-group">
+                <span class="badge rank" id="rankBadge">🥉 مبتدی</span>
+                <span class="badge" id="levelBadge">📐 آسان</span>
+                <span class="badge" id="streakBadge">🔥 0</span>
+                <span class="badge upgrade" id="upgradeBadge">⭐ 0</span>
+            </div>
+        </div>
+
+        <!-- نوار پیشرفت -->
+        <div class="level-progress">
+            <div class="level-progress-fill" id="levelProgress" style="width: 0%"></div>
+        </div>
+
+        <!-- دکمه‌های بالایی -->
+        <div class="controls-top">
+            <button class="ctrl-top-btn" onclick="openProfile()"><span class="icon">👤</span>پروفایل</button>
+            <button class="ctrl-top-btn" onclick="openUpgrades()"><span class="icon">⭐</span>ارتقا</button>
+            <button class="ctrl-top-btn" onclick="toggleMusic()"><span class="icon">🎵</span>موسیقی</button>
+            <button class="ctrl-top-btn" onclick="openShare()"><span class="icon">📤</span>اشتراک</button>
+            <button class="ctrl-top-btn" onclick="openChallenges()"><span class="icon">🎯</span>چالش</button>
+            <button class="ctrl-top-btn" onclick="openHelp()"><span class="icon">❓</span>راهنما</button>
+            <button class="ctrl-top-btn" onclick="resetGame()"><span class="icon">🔄</span>ریست</button>
+            <button class="ctrl-top-btn" onclick="location.reload()"><span class="icon">🔁</span>بارگذاری</button>
+        </div>
+
+        <!-- سطوح -->
+        <div class="level-selector" id="levelSelector">
+            <button class="level-btn active" data-level="easy"><span class="icon">📐</span>مبتدی</button>
+            <button class="level-btn" data-level="medium"><span class="icon">🔢</span>متوسط</button>
+            <button class="level-btn" data-level="hard"><span class="icon">🧠</span>پیشرفته</button>
+            <button class="level-btn" data-level="expert"><span class="icon">👑</span>استاد</button>
+            <button class="level-btn" data-level="mixed"><span class="icon">🎯</span>ترکیبی</button>
+            <button class="level-btn" data-level="nightmare"><span class="icon">💀</span>کابوس</button>
+            <button class="level-btn" data-level="hell"><span class="icon">🔥</span>جهنم</button>
+            <button class="level-btn" data-level="god"><span class="icon">⚡</span>خدایی</button>
+        </div>
+
+        <!-- آمار -->
+        <div class="stats-grid">
+            <div class="stat-item"><span class="number" id="score">0</span><span class="label">⭐ امتیاز</span></div>
+            <div class="stat-item"><span class="number" id="correct">0</span><span class="label">✅ درست</span></div>
+            <div class="stat-item"><span class="number" id="wrong">0</span><span class="label">❌ غلط</span></div>
+            <div class="stat-item"><span class="number" id="streak">0</span><span class="label">🔥 زنجیره</span></div>
+            <div class="stat-item"><span class="number" id="accuracy">0%</span><span class="label">🎯 دقت</span></div>
+            <div class="stat-item"><span class="number" id="coins">0</span><span class="label">🪙 سکه</span></div>
+            <div class="stat-item"><span class="number" id="level">1</span><span class="label">📈 سطح</span></div>
+            <div class="stat-item"><span class="number" id="xp">0</span><span class="label">✨ تجربه</span></div>
+            <div class="stat-item"><span class="number" id="upgradePoints">0</span><span class="label">⭐ ارتقا</span></div>
+            <div class="stat-item"><span class="number" id="kills">0</span><span class="label">⚔️ کشته</span></div>
+        </div>
+
+        <div class="timer-bar"><div class="timer-fill" id="timerFill" style="width: 100%"></div></div>
+
+        <!-- سوال -->
+        <div class="question-box">
+            <span class="question-number" id="questionNum">#1</span>
+            <span class="question-timer" id="questionTimer">⏱️ 8</span>
+            <span id="question">۵ + ۳ = ؟</span>
+        </div>
+
+        <!-- گزینه‌ها -->
+        <div class="options">
+            <button class="option" id="opt0">۸</button>
+            <button class="option" id="opt1">۷</button>
+            <button class="option" id="opt2">۶</button>
+            <button class="option" id="opt3">۹</button>
+        </div>
+
+        <!-- چالش‌ها -->
+        <div class="challenge-section">
+            <div class="challenge-title">🎯 چالش‌های روزانه</div>
+            <div class="challenge-grid">
+                <div class="challenge-item"><span>📝 ۲۰ سوال</span><span class="progress" id="dailyChallenge">0/20</span></div>
+                <div class="challenge-item"><span>🔥 زنجیره ۱۰</span><span class="progress" id="dailyStreak">0/10</span></div>
+                <div class="challenge-item"><span>⚡ بدون خطا</span><span class="progress" id="dailyNoError">❌</span></div>
+                <div class="challenge-item"><span>🏆 ۱۰۰ امتیاز</span><span class="progress" id="dailyScore">0/100</span></div>
+            </div>
+        </div>
+
+        <!-- دکمه‌های کنترل -->
+        <div class="controls">
+            <button class="btn btn-start" id="startBtn">▶ شروع</button>
+            <button class="btn btn-hint" id="hintBtn">💡 راهنما</button>
+            <button class="btn btn-skip" id="skipBtn">⏭ رد</button>
+            <button class="btn btn-power" id="powerBtn">⚡ قدرت</button>
+            <button class="btn btn-upgrade" id="upgradeBtn">⭐ ارتقا</button>
+            <button class="btn btn-reset" id="resetBtn">🔄 جدید</button>
+        </div>
+
+        <div class="message" id="message">برای شروع روی "شروع" کلیک کنید</div>
+
+        <!-- ====== فوتر با اسم و لینک ====== -->
+        <div class="footer">
+            <div class="creator">
+                💻 ساخته شده با ❤️ توسط 
+                <strong>محمد حسین حبیبی راد</strong>
+            </div>
+            <div>
+                <span style="color: #8395a7; margin-left: 10px; font-size: 0.75rem;">🎯 آموزش پایتون و هوش مصنوعی</span>
+                <button onclick="openChannel()" class="channel-btn">
+                    📢 کانال ایران دیجیتال
+                </button>
+            </div>
+            <div class="channel-id">
+                <span>🇮🇷</span> @irandigital_python
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ---- تابع باز کردن کانال ----
+        function openChannel() {
+            const url = 'https://eitaa.com/irandigital_python';
+            const newWindow = window.open(url, '_blank');
+            if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                window.location.href = url;
+                const msg = document.getElementById('message');
+                if (msg) {
+                    msg.textContent = '🔗 لینک کانال: ' + url;
+                    msg.style.background = 'rgba(0, 210, 211, 0.1)';
+                    msg.style.border = '1px solid rgba(0, 210, 211, 0.3)';
+                    msg.style.padding = '8px';
+                    msg.style.borderRadius = '8px';
+                }
+            }
+        }
+
+        // ---- عناصر اصلی ----
+        const questionEl = document.getElementById('question');
+        const questionNum = document.getElementById('questionNum');
+        const questionTimer = document.getElementById('questionTimer');
+        const optBtns = [
+            document.getElementById('opt0'),
+            document.getElementById('opt1'),
+            document.getElementById('opt2'),
+            document.getElementById('opt3')
+        ];
+        const scoreEl = document.getElementById('score');
+        const correctEl = document.getElementById('correct');
+        const wrongEl = document.getElementById('wrong');
+        const streakEl = document.getElementById('streak');
+        const accuracyEl = document.getElementById('accuracy');
+        const coinsEl = document.getElementById('coins');
+        const levelEl = document.getElementById('level');
+        const xpEl = document.getElementById('xp');
+        const upgradePointsEl = document.getElementById('upgradePoints');
+        const killsEl = document.getElementById('kills');
+        const levelProgress = document.getElementById('levelProgress');
+        const streakBadge = document.getElementById('streakBadge');
+        const timerFill = document.getElementById('timerFill');
+        const messageEl = document.getElementById('message');
+        const rankBadge = document.getElementById('rankBadge');
+        const levelBadge = document.getElementById('levelBadge');
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const hintBtn = document.getElementById('hintBtn');
+        const skipBtn = document.getElementById('skipBtn');
+        const powerBtn = document.getElementById('powerBtn');
+        const upgradeBtn = document.getElementById('upgradeBtn');
+        const dailyChallenge = document.getElementById('dailyChallenge');
+        const dailyStreak = document.getElementById('dailyStreak');
+        const dailyNoError = document.getElementById('dailyNoError');
+        const dailyScore = document.getElementById('dailyScore');
+        const levelBtns = document.querySelectorAll('.level-btn');
+
+        // ---- متغیرها ----
+        let currentLevel = 'easy';
+        let score = 0, correct = 0, wrong = 0, streak = 0, coins = 0, level = 1, xp = 0, upgradePoints = 0, kills = 0;
+        let gameActive = false;
+        let correctAnswer = 0;
+        let timer = 60;
+        let timerInterval = null;
+        let hintCount = 3;
+        let skipCount = 3;
+        let noError = true;
+        let maxStreak = 0;
+        let currentQuestion = 0;
+        let questionTimeLeft = 0;
+        let questionTimerInterval = null;
+        let powerActive = false;
+        let powerTimer = null;
+        let powerMultiplier = 1;
+        let musicActive = false;
+        let musicInterval = null;
+        let dailyCorrect = 0;
+        let dailyStreakCount = 0;
+        let dailyNoErrorStatus = true;
+        let dailyScoreCount = 0;
+
+        // ---- تنظیمات سطوح ----
+        function getLevelConfig(level) {
+            const configs = {
+                easy: { maxNum: 10, time: 60, label: 'آسان', operations: ['add', 'sub'], rank: '🥉', emoji: '📐', requiredLevel: 0 },
+                medium: { maxNum: 30, time: 50, label: 'متوسط', operations: ['add', 'sub', 'mul'], rank: '🥈', emoji: '🔢', requiredLevel: 2 },
+                hard: { maxNum: 80, time: 40, label: 'پیشرفته', operations: ['add', 'sub', 'mul', 'div'], rank: '🥇', emoji: '🧠', requiredLevel: 4 },
+                expert: { maxNum: 150, time: 30, label: 'استاد', operations: ['add', 'sub', 'mul', 'div', 'pow'], rank: '👑', emoji: '👑', requiredLevel: 6 },
+                mixed: { maxNum: 100, time: 35, label: 'ترکیبی', operations: ['add', 'sub', 'mul', 'div', 'pow', 'sqrt'], rank: '🎯', emoji: '🎯', requiredLevel: 8 },
+                nightmare: { maxNum: 200, time: 25, label: 'کابوس', operations: ['mul', 'div', 'pow', 'sqrt', 'log', 'fact'], rank: '💀', emoji: '💀', requiredLevel: 10 },
+                hell: { maxNum: 300, time: 15, label: 'جهنم', operations: ['pow', 'sqrt', 'log', 'fact', 'sin', 'cos'], rank: '🔥', emoji: '🔥', requiredLevel: 12 },
+                god: { maxNum: 500, time: 10, label: 'خدایی', operations: ['pow', 'sqrt', 'log', 'fact', 'sin', 'cos', 'tan', 'cot'], rank: '⚡', emoji: '⚡', requiredLevel: 15 }
+            };
+            return configs[level] || configs.easy;
+        }
+
+        // ---- توابع ریاضی ----
+        function factorial(n) { if (n <= 1) return 1; return n * factorial(n-1); }
+        function sinDeg(deg) { return Math.round(Math.sin(deg * Math.PI / 180) * 100) / 100; }
+        function cosDeg(deg) { return Math.round(Math.cos(deg * Math.PI / 180) * 100) / 100; }
+        function tanDeg(deg) { return Math.round(Math.tan(deg * Math.PI / 180) * 100) / 100; }
+        function cotDeg(deg) { return Math.round(1 / Math.tan(deg * Math.PI / 180) * 100) / 100; }
+
+        // ---- تولید سوال ----
+        function generateQuestion() {
+            const config = getLevelConfig(currentLevel);
+            const maxNum = config.maxNum;
+            const ops = config.operations;
+            
+            const opType = ops[Math.floor(Math.random() * ops.length)];
+            let a, b, answer, symbol, questionText;
+
+            switch(opType) {
+                case 'add':
+                    a = Math.floor(Math.random() * maxNum) + 1;
+                    b = Math.floor(Math.random() * maxNum) + 1;
+                    answer = a + b;
+                    symbol = '+';
+                    questionText = `${a} ${symbol} ${b} = ؟`;
+                    break;
+                case 'sub':
+                    a = Math.floor(Math.random() * maxNum) + 1;
+                    b = Math.floor(Math.random() * maxNum) + 1;
+                    if (a < b) [a, b] = [b, a];
+                    answer = a - b;
+                    symbol = '−';
+                    questionText = `${a} ${symbol} ${b} = ؟`;
+                    break;
+                case 'mul':
+                    const mulLimit = currentLevel === 'easy' ? 5 : currentLevel === 'medium' ? 8 : 12;
+                    a = Math.floor(Math.random() * mulLimit) + 1;
+                    b = Math.floor(Math.random() * mulLimit) + 1;
+                    answer = a * b;
+                    symbol = '×';
+                    questionText = `${a} ${symbol} ${b} = ؟`;
+                    break;
+                case 'div':
+                    const divLimit = currentLevel === 'hard' ? 10 : 5;
+                    b = Math.floor(Math.random() * divLimit) + 1;
+                    let quotient = Math.floor(Math.random() * divLimit) + 1;
+                    a = b * quotient;
+                    answer = quotient;
+                    symbol = '÷';
+                    questionText = `${a} ${symbol} ${b} = ؟`;
+                    break;
+                case 'pow':
+                    a = Math.floor(Math.random() * 4) + 2;
+                    b = Math.floor(Math.random() * 3) + 2;
+                    answer = Math.pow(a, b);
+                    if (answer > 500) { a = 3; b = 3; answer = 27; }
+                    symbol = '^';
+                    questionText = `${a} ${symbol} ${b} = ؟`;
+                    break;
+                case 'sqrt':
+                    let root = Math.floor(Math.random() * 10) + 2;
+                    a = root * root;
+                    answer = root;
+                    symbol = '√';
+                    questionText = `√${a} = ؟`;
+                    break;
+                case 'log':
+                    let base = Math.floor(Math.random() * 4) + 2;
+                    let power = Math.floor(Math.random() * 4) + 1;
+                    a = Math.pow(base, power);
+                    answer = power;
+                    symbol = 'log';
+                    questionText = `log${base}(${a}) = ؟`;
+                    break;
+                case 'fact':
+                    a = Math.floor(Math.random() * 5) + 1;
+                    answer = factorial(a);
+                    symbol = '!';
+                    questionText = `${a}${symbol} = ؟`;
+                    break;
+                case 'sin':
+                    a = [0, 30, 45, 60, 90][Math.floor(Math.random() * 5)];
+                    answer = sinDeg(a);
+                    symbol = 'sin';
+                    questionText = `${symbol}(${a}°) = ؟`;
+                    break;
+                case 'cos':
+                    a = [0, 30, 45, 60, 90][Math.floor(Math.random() * 5)];
+                    answer = cosDeg(a);
+                    symbol = 'cos';
+                    questionText = `${symbol}(${a}°) = ؟`;
+                    break;
+                case 'tan':
+                    a = [0, 30, 45, 60][Math.floor(Math.random() * 4)];
+                    answer = tanDeg(a);
+                    symbol = 'tan';
+                    questionText = `${symbol}(${a}°) = ؟`;
+                    break;
+                case 'cot':
+                    a = [30, 45, 60][Math.floor(Math.random() * 3)];
+                    answer = cotDeg(a);
+                    symbol = 'cot';
+                    questionText = `${symbol}(${a}°) = ؟`;
+                    break;
+                default:
+                    a = Math.floor(Math.random() * maxNum) + 1;
+                    b = Math.floor(Math.random() * maxNum) + 1;
+                    answer = a + b;
+                    symbol = '+';
+                    questionText = `${a} ${symbol} ${b} = ؟`;
+            }
+
+            questionEl.textContent = questionText;
+            correctAnswer = answer;
+            currentQuestion++;
+            questionNum.textContent = `#${currentQuestion}`;
+
+            // تولید گزینه‌ها
+            let options = new Set();
+            options.add(answer);
+
+            let attempts = 0;
+            const offsetRange = Math.max(3, Math.floor(Math.abs(answer) * 0.3) + 1);
+            while (options.size < 4 && attempts < 100) {
+                let offset = Math.floor(Math.random() * offsetRange) + 1;
+                let candidate = Math.random() < 0.5 ? answer + offset : answer - offset;
+                if (candidate !== answer && Number.isFinite(candidate)) {
+                    if (Number.isInteger(candidate)) {
+                        options.add(candidate);
+                    } else {
+                        options.add(Number(candidate.toFixed(2)));
+                    }
+                }
+                attempts++;
+            }
+
+            let optArray = Array.from(options);
+            let fallbacks = [answer+1, answer-1, answer+2, answer-2];
+            for (let val of fallbacks) {
+                if (optArray.length >= 4) break;
+                if (!optArray.includes(val) && val !== answer && Number.isFinite(val)) {
+                    optArray.push(Number(val.toFixed(2)));
+                }
+            }
+
+            for (let i = optArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [optArray[i], optArray[j]] = [optArray[j], optArray[i]];
+            }
+
+            optBtns.forEach((btn, index) => {
+                const val = optArray[index] || '?';
+                btn.textContent = typeof val === 'number' ? val.toString() : val;
+                btn.className = 'option';
+                btn.disabled = false;
+            });
+
+            startQuestionTimer();
+        }
+
+        // ---- تایمر سوال ----
+        function startQuestionTimer() {
+            questionTimeLeft = currentLevel === 'god' ? 5 : 8;
+            questionTimer.textContent = `⏱️ ${questionTimeLeft}`;
+            if (questionTimerInterval) clearInterval(questionTimerInterval);
+            questionTimerInterval = setInterval(() => {
+                questionTimeLeft--;
+                questionTimer.textContent = `⏱️ ${questionTimeLeft}`;
+                if (questionTimeLeft <= 3) questionTimer.style.color = '#ff6b6b';
+                if (questionTimeLeft <= 0) {
+                    clearInterval(questionTimerInterval);
+                    questionTimerInterval = null;
+                    wrong++;
+                    streak = 0;
+                    noError = false;
+                    dailyNoErrorStatus = false;
+                    kills++;
+                    messageEl.textContent = `⏱️ زمان تمام شد! پاسخ: ${correctAnswer}`;
+                    optBtns.forEach(b => {
+                        b.disabled = true;
+                        if (parseFloat(b.textContent) === correctAnswer) b.classList.add('correct');
+                    });
+                    updateStats();
+                    updateChallenges();
+                    setTimeout(() => {
+                        if (gameActive) generateQuestion();
+                    }, 600);
+                }
+            }, 1000);
+        }
+
+        // ---- بررسی پاسخ ----
+        function checkAnswer(btn) {
+            if (!gameActive || btn.disabled) return;
+
+            if (questionTimerInterval) {
+                clearInterval(questionTimerInterval);
+                questionTimerInterval = null;
+            }
+
+            const selected = parseFloat(btn.textContent);
+            const isCorrect = Math.abs(selected - correctAnswer) < 0.01;
+
+            optBtns.forEach(b => b.disabled = true);
+
+            if (isCorrect) {
+                const bonus = Math.floor(streak / 3) + 1;
+                const points = (10 + bonus * 2) * powerMultiplier;
+                const coinBonus = Math.floor(streak / 5) + 1;
+                
+                score += points;
+                coins += coinBonus;
+                xp += Math.floor(points / 5) + 1;
+                correct++;
+                streak++;
+                if (streak > maxStreak) maxStreak = streak;
+                dailyCorrect++;
+                dailyScoreCount += points;
+                if (streak > dailyStreakCount) dailyStreakCount = streak;
+                
+                messageEl.textContent = `✅ درست! +${points} امتیاز | 🪙+${coinBonus} | ✨+${Math.floor(points/5)+1} (🔥 ${streak})`;
+                btn.classList.add('correct');
+                
+                // ایجاد افکت پارتیکل
+                createParticles(btn);
+            } else {
+                wrong++;
+                streak = 0;
+                noError = false;
+                dailyNoErrorStatus = false;
+                messageEl.textContent = `❌ غلط! پاسخ: ${correctAnswer}`;
+                btn.classList.add('wrong');
+                optBtns.forEach(b => {
+                    if (Math.abs(parseFloat(b.textContent) - correctAnswer) < 0.01) {
+                        b.classList.add('correct');
+                    }
+                });
+            }
+
+            updateStats();
+            updateChallenges();
+            checkLevelUp();
+
+            setTimeout(() => {
+                if (gameActive) generateQuestion();
+            }, 600);
+        }
+
+        // ---- افکت پارتیکل ----
+        function createParticles(btn) {
+            const rect = btn.getBoundingClientRect();
+            const containerRect = document.getElementById('mainContainer').getBoundingClientRect();
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = (rect.left - containerRect.left + Math.random() * rect.width) + 'px';
+                particle.style.top = (rect.top - containerRect.top + Math.random() * rect.height) + 'px';
+                particle.style.width = (Math.random() * 6 + 2) + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.background = ['#ffd200', '#00b894', '#ff6b6b', '#6c5ce7', '#fd79a8'][Math.floor(Math.random() * 5)];
+                particle.style.animationDuration = (Math.random() * 2 + 1) + 's';
+                document.getElementById('mainContainer').appendChild(particle);
+                setTimeout(() => particle.remove(), 3000);
+            }
+        }
+
+        // ---- ایجاد پارتیکل‌های پس‌زمینه ----
+        function createBackgroundParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.width = (Math.random() * 3 + 1) + 'px';
+                particle.style.height = particle.style.width;
+                container.appendChild(particle);
+            }
+        }
+        createBackgroundParticles();
+
+        // ---- آمار ----
+        function updateStats() {
+            scoreEl.textContent = score;
+            correctEl.textContent = correct;
+            wrongEl.textContent = wrong;
+            streakEl.textContent = streak;
+            coinsEl.textContent = coins;
+            xpEl.textContent = xp;
+            upgradePointsEl.textContent = upgradePoints;
+            killsEl.textContent = kills;
+            streakBadge.textContent = `🔥 ${streak}`;
+            const total = correct + wrong;
+            const acc = total > 0 ? Math.round((correct / total) * 100) : 0;
+            accuracyEl.textContent = acc + '%';
+            updateRank();
+            updateLevelProgress();
+        }
+
+        // ---- نوار پیشرفت سطح ----
+        function updateLevelProgress() {
+            const xpNeeded = level * 20;
+            const progress = Math.min(100, (xp / xpNeeded) * 100);
+            levelProgress.style.width = progress + '%';
+        }
+
+        // ---- سطح ----
+        function checkLevelUp() {
+            const xpNeeded = level * 20;
+            if (xp >= xpNeeded) {
+                level++;
+                xp = 0;
+                levelEl.textContent = level;
+                const bonusUpgrade = Math.floor(level / 2) + 1;
+                upgradePoints += bonusUpgrade;
+                messageEl.textContent = `🎉 سطح ${level}! ⭐+${bonusUpgrade} نقطه ارتقا!`;
+                updateStats();
+                updateLevelProgress();
+                unlockLevels();
+            }
+        }
+
+        // ---- قفل‌گذاری سطوح ----
+        function unlockLevels() {
+            levelBtns.forEach(btn => {
+                const levelKey = btn.dataset.level;
+                const config = getLevelConfig(levelKey);
+                if (config.requiredLevel <= level) {
+                    btn.classList.remove('locked');
+                } else {
+                    btn.classList.add('locked');
+                }
+            });
+        }
+
+        // ---- رتبه ----
+        function updateRank() {
+            const total = correct + wrong;
+            if (total === 0) return;
+            const acc = (correct / total) * 100;
+            let rank = '🥉 مبتدی';
+            if (score > 500 && acc > 85) rank = '👑 استاد';
+            else if (score > 300 && acc > 75) rank = '🥇 پیشرفته';
+            else if (score > 150 && acc > 65) rank = '🥈 متوسط';
+            rankBadge.textContent = rank;
+        }
+
+        // ---- چالش‌ها ----
+        function updateChallenges() {
+            dailyChallenge.textContent = `${dailyCorrect}/20`;
+            dailyStreak.textContent = `${dailyStreakCount}/10`;
+            dailyNoError.textContent = dailyNoErrorStatus ? '✅ بدون خطا' : '❌';
+            dailyScore.textContent = `${dailyScoreCount}/100`;
+        }
+
+        // ---- تایمر اصلی ----
+        function startTimer() {
+            let timeLeft = timer;
+            timerFill.style.width = '100%';
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const percent = (timeLeft / timer) * 100;
+                timerFill.style.width = percent + '%';
+                if (percent < 30) {
+                    timerFill.style.background = 'linear-gradient(90deg, #d63031, #ff6b6b)';
+                }
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    endGame('⏰ زمان تمام شد!');
+                }
+            }, 1000);
+        }
+
+        function endGame(message) {
+            gameActive = false;
+            optBtns.forEach(b => b.disabled = true);
+            startBtn.textContent = '▶ شروع';
+            startBtn.style.opacity = '1';
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            if (questionTimerInterval) {
+                clearInterval(questionTimerInterval);
+                questionTimerInterval = null;
+            }
+            if (powerTimer) {
+                clearInterval(powerTimer);
+                powerTimer = null;
+                powerActive = false;
+                powerMultiplier = 1;
+                powerBtn.textContent = '⚡ قدرت';
+                powerBtn.style.background = 'linear-gradient(45deg, #00b894, #55efc4)';
+            }
+            const total = correct + wrong;
+            const acc = total > 0 ? Math.round((correct / total) * 100) : 0;
+            const bonusCoins = Math.floor(score / 10);
+            coins += bonusCoins;
+            const bonusUpgrade = Math.floor(score / 50);
+            upgradePoints += bonusUpgrade;
+            messageEl.textContent = `${message} | امتیاز: ${score} | ✅ ${correct} | ❌ ${wrong} | 🎯 ${acc}% | 🪙+${bonusCoins} | ⭐+${bonusUpgrade}`;
+            updateStats();
+            updateChallenges();
+        }
+
+        // ---- شروع بازی ----
+        function startGame() {
+            if (gameActive) return;
+            
+            const config = getLevelConfig(currentLevel);
+            timer = config.time;
+            timerFill.style.width = '100%';
+            timerFill.style.background = 'linear-gradient(90deg, #00b894, #ffd200)';
+            
+            gameActive = true;
+            startBtn.textContent = '⏳ در حال بازی...';
+            startBtn.style.opacity = '0.7';
+            messageEl.textContent = '🎯 شروع شد!';
+            
+            if (!powerActive) {
+                score = 0; correct = 0; wrong = 0; streak = 0; maxStreak = 0; noError = true; kills = 0;
+                currentQuestion = 0;
+                hintCount = 3; skipCount = 3;
+                dailyCorrect = 0; dailyStreakCount = 0; dailyNoErrorStatus = true; dailyScoreCount = 0;
+            }
+            
+            updateStats();
+            levelBadge.textContent = config.emoji + ' ' + config.label;
+            rankBadge.textContent = config.rank + ' ' + config.label;
+            
+            generateQuestion();
+            startTimer();
+        }
+
+        // ---- ریست ----
+        function resetGame() {
+            if (timerInterval) clearInterval(timerInterval);
+            if (questionTimerInterval) clearInterval(questionTimerInterval);
+            if (powerTimer) { clearInterval(powerTimer); powerActive = false; powerMultiplier = 1; powerBtn.textContent = '⚡ قدرت'; powerBtn.style.background = 'linear-gradient(45deg, #00b894, #55efc4)'; }
+            
+            gameActive = false;
+            startBtn.textContent = '▶ شروع';
+            startBtn.style.opacity = '1';
+            
+            score = 0; correct = 0; wrong = 0; streak = 0; maxStreak = 0; noError = true; kills = 0;
+            currentQuestion = 0;
+            dailyCorrect = 0; dailyStreakCount = 0; dailyNoErrorStatus = true; dailyScoreCount = 0;
+            
+            updateStats();
+            timerFill.style.width = '100%';
+            timerFill.style.background = 'linear-gradient(90deg, #00b894, #ffd200)';
+            
+            questionEl.textContent = '۵ + ۳ = ؟';
+            correctAnswer = 8;
+            questionNum.textContent = '#0';
+            questionTimer.textContent = '⏱️ 0';
+            questionTimer.style.color = 'white';
+            
+            optBtns.forEach((btn, i) => {
+                btn.className = 'option';
+                btn.disabled = true;
+                const defaults = [8, 7, 6, 9];
+                btn.textContent = defaults[i];
+            });
+            
+            updateChallenges();
+            const config = getLevelConfig(currentLevel);
+            levelBadge.textContent = config.emoji + ' ' + config.label;
+            rankBadge.textContent = config.rank + ' ' + config.label;
+            messageEl.textContent = '🔄 ریست شد. برای شروع کلیک کنید';
+        }
+
+        // ---- راهنما ----
+        function showHint() {
+            if (!gameActive) { messageEl.textContent = '⚠️ ابتدا شروع کنید!'; return; }
+            if (hintCount <= 0) { messageEl.textContent = '💡 راهنمایی تمام شد!'; return; }
+            hintCount--;
+            const range = Math.max(3, Math.floor(Math.abs(correctAnswer) * 0.3));
+            messageEl.textContent = `💡 بین ${Math.max(0, correctAnswer - range)} تا ${correctAnswer + range} (${hintCount} باقی)`;
+        }
+
+        // ---- رد کردن ----
+        function skipQuestion() {
+            if (!gameActive) { messageEl.textContent = '⚠️ ابتدا شروع کنید!'; return; }
+            if (skipCount <= 0) { messageEl.textContent = '⏭ تعداد رد کردن تمام شد!'; return; }
+            skipCount--;
+            messageEl.textContent = `⏭ رد شد! (${skipCount} بار باقی)`;
+            if (questionTimerInterval) {
+                clearInterval(questionTimerInterval);
+                questionTimerInterval = null;
+            }
+            generateQuestion();
+        }
+
+        // ---- قدرت ----
+        function togglePower() {
+            if (powerActive) {
+                powerActive = false;
+                powerMultiplier = 1;
+                if (powerTimer) { clearInterval(powerTimer); powerTimer = null; }
+                powerBtn.textContent = '⚡ قدرت';
+                powerBtn.style.background = 'linear-gradient(45deg, #00b894, #55efc4)';
+                messageEl.textContent = '⚡ قدرت غیرفعال شد';
+                return;
+            }
+            
+            const powerCost = 25;
+            if (coins < powerCost) {
+                messageEl.textContent = `⚠️ به ${powerCost} سکه نیاز دارید!`;
+                return;
+            }
+            
+            coins -= powerCost;
+            coinsEl.textContent = coins;
+            powerActive = true;
+            powerMultiplier = 2;
+            powerBtn.textContent = '⚡ 2x';
+            powerBtn.style.background = 'linear-gradient(45deg, #d63031, #ff6b6b)';
+            messageEl.textContent = '⚡ قدرت 2x فعال! (۲۰ ثانیه)';
+            
+            if (powerTimer) clearInterval(powerTimer);
+            powerTimer = setTimeout(() => {
+                powerActive = false;
+                powerMultiplier = 1;
+                powerBtn.textContent = '⚡ قدرت';
+                powerBtn.style.background = 'linear-gradient(45deg, #00b894, #55efc4)';
+                messageEl.textContent = '⚡ قدرت به پایان رسید';
+            }, 20000);
+        }
+
+        // ---- موسیقی ----
+        function toggleMusic() {
+            musicActive = !musicActive;
+            if (musicActive) {
+                if (musicInterval) return;
+                const notes = [523, 587, 659, 784, 880, 784, 659, 587];
+                let i = 0;
+                musicInterval = setInterval(() => {
+                    if (!musicActive) return;
+                    try {
+                        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.frequency.value = notes[i % notes.length];
+                        gain.gain.value = 0.08;
+                        osc.start();
+                        osc.stop(ctx.currentTime + 0.15);
+                        i++;
+                    } catch(e) { /* ignore */ }
+                }, 200);
+                messageEl.textContent = '🎵 موسیقی فعال شد!';
+            } else {
+                if (musicInterval) {
+                    clearInterval(musicInterval);
+                    musicInterval = null;
+                }
+                messageEl.textContent = '🔇 موسیقی غیرفعال شد';
+            }
+        }
+
+        // ---- مدال‌ها ----
+        function openProfile() {
+            alert(`👤 پروفایل کاربر\n\n⭐ امتیاز: ${score}\n✅ درست: ${correct}\n❌ غلط: ${wrong}\n🔥 زنجیره: ${streak}\n🪙 سکه: ${coins}\n📈 سطح: ${level}\n✨ تجربه: ${xp}\n⭐ ارتقا: ${upgradePoints}\n🎯 دقت: ${accuracyEl.textContent}`);
+        }
+
+        function openUpgrades() {
+            alert(`⭐ سیستم ارتقا\n\nنقاط ارتقا: ${upgradePoints}\n\n⏱️ زمان بیشتر: سطح 0/5 (هزینه: 5⭐)\n🪙 سکه بیشتر: سطح 0/5 (هزینه: 10⭐)\n⚡ قدرت قوی‌تر: سطح 0/5 (هزینه: 15⭐)\n🎯 دقت بیشتر: سطح 0/5 (هزینه: 20⭐)`);
+        }
+
+        function openShare() {
+            const text = `🎮 من در Math Game Pro امتیاز ${score} و سطح ${level} دارم!`;
+            if (navigator.share) {
+                navigator.share({ title: 'Math Game Pro', text: text, url: window.location.href });
+            } else {
+                navigator.clipboard.writeText(text + ' ' + window.location.href).then(() => {
+                    messageEl.textContent = '✅ لینک کپی شد!';
+                });
+            }
+        }
+
+        function openChallenges() {
+            alert(`🎯 چالش‌های روزانه\n\n📝 ۲۰ سوال: ${dailyCorrect}/20\n🔥 زنجیره ۱۰: ${dailyStreakCount}/10\n⚡ بدون خطا: ${dailyNoErrorStatus ? '✅' : '❌'}\n🏆 ۱۰۰ امتیاز: ${dailyScoreCount}/100`);
+        }
+
+        function openHelp() {
+            alert(`❓ راهنمای بازی\n\n🎯 به سوالات پاسخ دهید و امتیاز بگیرید\n⭐ با هر سطح، نقاط ارتقا دریافت کنید\n🔥 پاسخ‌های پشت سر هم زنجیره می‌سازند\n🪙 با پاسخ‌های درست سکه بگیرید\n⚡ قدرت امتیاز را ۲ برابر می‌کند\n🎯 چالش‌های روزانه را کامل کنید`);
+        }
+
+        // ---- تغییر سطح ----
+        function changeLevel(level) {
+            const config = getLevelConfig(level);
+            if (config.requiredLevel > level) {
+                messageEl.textContent = `⚠️ نیاز به سطح ${config.requiredLevel} دارید!`;
+                return;
+            }
+            if (gameActive) {
+                if (!confirm('با تغییر سطح، بازی متوقف می‌شود. ادامه؟')) return;
+            }
+            currentLevel = level;
+            levelBtns.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.level === level);
+            });
+            resetGame();
+            levelBadge.textContent = config.emoji + ' ' + config.label;
+            rankBadge.textContent = config.rank + ' ' + config.label;
+            messageEl.textContent = `🎯 سطح ${config.label} انتخاب شد`;
+        }
+
+        // ---- رویدادها ----
+        optBtns.forEach((btn) => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                checkAnswer(this);
+            });
+        });
+
+        startBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            startGame();
+        });
+
+        resetBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            resetGame();
+        });
+
+        hintBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            showHint();
+        });
+
+        skipBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            skipQuestion();
+        });
+
+        powerBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            togglePower();
+        });
+
+        upgradeBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            openUpgrades();
+        });
+
+        levelBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                changeLevel(this.dataset.level);
+            });
+        });
+
+        // ---- مقداردهی اولیه ----
+        unlockLevels();
+        resetGame();
+        console.log('🚀 Math Game Pro - نسخه کامل با فوتر و لینک فعال!');
+        console.log('📢 کانال: https://eitaa.com/irandigital_python');
+    </script>
+</body>
+</html>
