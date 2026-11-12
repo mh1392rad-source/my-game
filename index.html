@@ -64,15 +64,15 @@ h1{font-size:1.25rem;background:linear-gradient(45deg,#f7971e,#ffd200);-webkit-b
  <div class="row hd"><h1>🚀 Math Game Ultimate</h1><div class="row" style="flex-wrap:wrap"><span class="bdg v" id="rk"></span><span class="bdg" id="lb"></span><span class="bdg" id="sb">🔥 ۰</span><span class="bdg" id="cn"></span></div></div>
  <div class="bar" title="تجربه"><i id="xb"></i></div>
  <div class="nav">
-  <button data-m="p"><b>👤</b>پروفایل</button><button data-m="s"><b>🛒</b>فروشگاه</button><button data-m="d"><b>🎯</b>مأموریت</button><button id="sn"><b>🔊</b>صدا</button><button id="mu"><b>🎵</b>موسیقی</button><button id="shr"><b>📤</b>اشتراک</button><button id="th"><b>🌓</b>تم</button><button id="rsb"><b>🔄</b>ریست</button><button id="rl"><b>🔁</b>بارگذاری</button><button data-m="h"><b>❓</b>راهنما</button>
+  <button data-m="p"><b>👤</b>پروفایل</button><button data-m="s"><b>🛒</b>فروشگاه</button><button data-m="d"><b>🎯</b>مأموریت</button><button id="sn"><b>🔊</b>صدا</button><button id="mu"><b>🎵</b>موسیقی</button><button id="shr"><b>📤</b>اشتراک</button><button id="th"><b>🌓</b>تم</button><button id="rsb"><b>🔄</b>ریست</button><button data-m="f"><b>❤️</b>علاقه‌مندی</button><button id="lg"></button><button id="rl"><b>🔁</b>بارگذاری</button><button data-m="h"><b>❓</b>راهنما</button>
  </div>
  <div class="lv" id="lv"></div>
  <div class="hud"><div><b id="sc">۰</b><span>امتیاز</span></div><div><b id="li">❤️</b><span>جان</span></div><div><b id="st">۰</b><span>🔥 زنجیره</span></div><div><b id="tm">۰</b><span>⏱ زمان</span></div></div>
  <div class="stg" id="stg"></div><div class="bar"><i id="tb" style="width:100%"></i></div>
- <div class="q"><small><span id="qn">#۰</span><span id="pw"></span><span id="qs">⏱ ۰</span></small><span id="qt">آماده‌ای؟</span><div class="bar"><i id="qb" style="width:100%"></i></div></div>
+ <div class="q"><small><span id="qn">#۰</span><span id="pw"></span><span id="qs">⏱ ۰</span></small><button id="fv" aria-label="علاقه‌مندی" style="position:absolute;top:22px;inset-inline-end:8px;background:none;border:0;font-size:1.5rem;cursor:pointer;color:var(--gold)">☆</button><span id="qt">آماده‌ای؟</span><div class="bar"><i id="qb" style="width:100%"></i></div></div>
  <div class="op" id="op"></div>
  <div class="tl"><button class="btn t1" id="b5">✂️ ۵۰/۵۰ (۲)</button><button class="btn t2" id="bk">⏭ رد (۲)</button><button class="btn" id="bh" style="background:linear-gradient(45deg,#0984e3,#74b9ff)">💡 راهنما (۳)</button><button class="btn t3" id="bp">⚡ ×۲ (۲۵🪙)</button></div>
- <div class="ch" id="ch"></div><button class="btn go" id="go">▶ شروع بازی</button>
+ <div class="ch" id="ch"></div><div class="row"><button class="btn go" id="go">▶ شروع بازی</button><button class="btn t3" id="en" aria-label="پایان بازی" style="flex:0 0 auto;padding:13px 16px;font-size:1rem">⏹</button></div>
  <div class="msg" id="ms" aria-live="polite">سطح را انتخاب کن و شروع کن. کلیدهای ۱ تا ۴ هم کار می‌کنند.</div>
  <div class="ft"><div>💻 ساخته‌شده با ❤️ توسط <strong>محمد حسین حبیبی راد</strong></div><div style="margin:3px 0">🎯 آموزش پایتون و هوش مصنوعی</div><a href="https://eitaa.com/irandigital_python" target="_blank" rel="noopener">📢 کانال ایران دیجیتال</a><div dir="ltr" style="opacity:.6;margin-top:4px">🇮🇷 @irandigital_python</div></div>
 </div>
@@ -86,7 +86,7 @@ const pick=a=>a[rnd(0,a.length-1)];
 const today=()=>new Date().toDateString();
 let S;
 try{S=JSON.parse(localStorage.getItem('mgu')||'{}')}catch(e){S={}}
-S=Object.assign({coins:0,xp:0,lvl:1,up:{t:0,l:0,c:0,s:0},best:{},ach:{},tot:0,games:0,snd:1,pts:0,kills:0,dn:0,boss:0,hist:[],theme:'',day:'',dq:0,ds:0,dp:0,dc:0},S);
+S=Object.assign({coins:0,xp:0,lvl:1,up:{t:0,l:0,c:0,s:0},best:{},ach:{},tot:0,games:0,snd:1,pts:0,kills:0,dn:0,boss:0,hist:[],theme:'',fav:[],lang:'fa',day:'',dq:0,ds:0,dp:0,dc:0},S);
 S.up=Object.assign({t:0,l:0,c:0,s:0},S.up);
 if(S.day!==today()){S.day=today();S.dq=S.ds=S.dp=S.dc=S.dn=0}
 if(S.theme)document.documentElement.dataset.theme=S.theme;
@@ -115,7 +115,7 @@ function ui(){
  $('#rk').textContent=rankOf()+' • سطح '+fa(S.lvl);$('#cn').textContent='🪙 '+fa(S.coins);ui2();
  $('#xb').style.width=Math.min(100,S.xp/(S.lvl*40)*100)+'%';
  $('#sn').innerHTML='<b>'+(S.snd?'🔊':'🔇')+'</b>صدا';
- $('#lv').innerHTML=LV.map((l,i)=>`<button class="${i===cur?'on':''} ${l.r>S.lvl?'lk':''}" data-i="${i}">${l.r>S.lvl?'🔒':l.i} ${l.n}${l.r>S.lvl?'<br>سطح '+fa(l.r):S.best[l.k]?'<br>🏆'+fa(S.best[l.k]):''}</button>`).join('');
+ $('#lv').innerHTML=LV.map((l,i)=>`<button class="${i===cur?'on':''} ${l.r>S.lvl?'lk':''}" data-i="${i}">${l.r>S.lvl?'🔒':l.i} ${l.n}${l.r>S.lvl?'<br>سطح '+fa(l.r):S.best[l.k]?'<br>'+(S.best[l.k]>=400?'🥇':S.best[l.k]>=200?'🥈':'🥉')+fa(S.best[l.k]):''}</button>`).join('');
  if(G.on){$('#sc').textContent=fa(G.score);$('#st').textContent=fa(G.streak);$('#li').textContent='❤️'.repeat(Math.max(0,G.lives))||'💔';
   $('#pw').textContent=G.pow>0?'⚡ ×۲ '+fa(Math.ceil(G.pow)):'';
   $('#b5').textContent='✂️ ۵۰/۵۰ ('+fa(G.f5)+')';$('#bk').textContent='⏭ رد ('+fa(G.sk)+')';$('#bh').textContent='💡 راهنما ('+fa(G.h)+')'}
@@ -138,20 +138,21 @@ function gen(L){
  else if(o==='log'){b=rnd(2,5);r=rnd(1,4);a=b**r;t=`log<sub>${b}</sub>(${a})`}
  else if(o==='!'){a=rnd(2,L.m>250?7:5);r=1;for(let i=2;i<=a;i++)r*=i;t=`${a}!`}
  else{a=pick(Object.keys(TR[o]).map(Number));r=TR[o][a];t=`${o}(${a}°)`}
+ if('+-*'.includes(o)&&Math.random()<.3){return{t:(a+(o==='*'?' × ':o==='+'?' + ':' − ')+'؟').replace(/\d+/g,m=>fa(m)),r:b,e:' = '+fa(r)}}
  return{t:t.replace(/\d+/g,m=>fa(m)).replace(/log|sin|cos|tan|cot/g,m=>m),r}}
 function next(){
- const L=LV[cur];const q=gen(L);G.ans=q.r;G.n++;G.boss=G.n%10===0;G.ql=G.qm=L.q;lock=0;
- $('#qt').innerHTML=q.t+' = ؟';$('#qn').textContent='#'+fa(G.n)+(G.boss?' 👹 غول ×۳':'');
+ const L=LV[cur];const q=(G.fm&&S.fav.length)?pick(S.fav):gen(L);G.cq=q;G.ans=q.r;G.n++;G.boss=G.n%10===0;G.gold=!G.boss&&Math.random()<.12;G.ql=G.qm=L.q;lock=0;
+ $('#qt').innerHTML=q.t+(q.e||' = ؟');G.qh=$('#qt').innerHTML;starUp();$('#qn').textContent=(G.gold?'🌟 طلایی ×۳ سکه ':'')+'#'+fa(G.n)+(G.boss?' 👹 غول ×۳':'');
  const ops=distract(q.r,4).sort(()=>Math.random()-.5);
  $('#op').innerHTML=ops.map((v,i)=>`<button data-v="${v}" aria-label="گزینه ${i+1}">${fa(v)}</button>`).join('');
  [...$('#op').children].forEach(b=>b.disabled=false)}
 function start(){
  if(G.on)return;const L=LV[cur];if(L.r>S.lvl){toast('🔒 این سطح هنوز قفل است');return}
  const tot=L.t+S.up.t*3;
- G={on:1,score:0,ok:0,bad:0,streak:0,best:0,lives:3+S.up.l,time:tot,tot,n:0,f5:2,sk:2,h:3,pow:0,ql:0,qm:1,coins:0};
+ G={on:1,score:0,ok:0,bad:0,streak:0,best:0,lives:3+S.up.l,time:tot,tot,n:0,f5:2,sk:2,h:3,fm:favMode,pow:0,ql:0,qm:1,coins:0};
  $('#go').textContent='⏳ در حال بازی… (توقف)';
  ['#b5','#bk','#bp','#bh'].forEach(s=>$(s).disabled=false);
- msg('🎯 شروع شد! موفق باشی');next();ui();
+ msg('🎯 شروع شد! موفق باشی');favMode=0;next();ui();
  clearInterval(tick);tick=setInterval(loop,100)}
 function loop(){
  G.time-=.1;if(G.pow>0)G.pow-=.1;if(!lock)G.ql-=.1;
@@ -168,20 +169,20 @@ function answer(btn){
  if(ok){
   G.streak++;G.ok++;S.tot++;S.kills++;if(G.boss)S.boss=(S.boss||0)+1;G.best=Math.max(G.best,G.streak);
   const pts=Math.round((10+Math.min(G.streak,15)*2)*(G.pow>0?2:1)*(G.boss?3:1)*(1+S.up.s*.1));
-  const cn=Math.round((1+Math.floor(G.streak/5))*(1+S.up.c*.25));
+  const cn=Math.round((1+Math.floor(G.streak/5))*(1+S.up.c*.25)*(G.gold?3:1));
   G.score+=pts;S.coins+=cn;G.coins+=cn;S.xp+=4+Math.floor(pts/6);G.time=Math.min(G.tot,G.time+1);
-  S.dq++;S.ds=Math.max(S.ds,G.streak);S.dp+=pts;
+  S.dq++;S.ds=Math.max(S.ds,G.streak);S.dp+=pts;if(G.streak%5===0){G.time=Math.min(G.tot,G.time+3);toast(G.streak%10===0&&G.lives<6?(G.lives++,'❤️ جان جایزه + ⏱ +۳ ثانیه'):'🔥 زنجیره '+fa(G.streak)+'! ⏱ +۳ ثانیه')}
   btn.classList.add('c');beep(660+Math.min(G.streak,12)*30,.1);
   msg(`✅ درست! +${fa(pts)} امتیاز • 🪙+${fa(cn)} • ⏱ +۱ ثانیه`);
   fly(btn,'+'+fa(pts));burst(btn);lvUp();
  }else{
-  G.streak=0;G.bad++;G.lives--;beep(160,.25,'sawtooth');
+  G.streak=0;G.bad++;G.lives--;beep(160,.25,'sawtooth');(G.mis=G.mis||[]).push(G.qh+' → '+fa(G.ans));if(navigator.vibrate)navigator.vibrate(120);
   if(btn)btn.classList.add('w');
   bs.forEach(b=>{if(Math.abs(parseFloat(b.dataset.v)-G.ans)<.001)b.classList.add('c')});
   msg((btn?'❌ غلط!':'⏱ وقت سوال تمام شد!')+' پاسخ: '+fa(G.ans));}
  S.xp>=0&&save();checkAch();ui();
  if(G.lives<=0){setTimeout(()=>end('💔 جان‌هایت تمام شد!'),700);return}
- setTimeout(()=>{if(G.on)next()},ok?450:900)}
+ setTimeout(function nx(){if(!G.on)return;if(G.paused){setTimeout(nx,300);return}next()},ok?450:900)}
 function lvUp(){
  const need=S.lvl*40;
  if(S.xp>=need){S.xp-=need;S.lvl++;S.coins+=20;S.pts+=Math.floor(S.lvl/2)+1;toast('🎉 سطح '+fa(S.lvl)+' • 🪙+۲۰');beep(880,.3);
@@ -200,7 +201,7 @@ function end(why){
  <div class="it"><span>⭐ امتیاز</span><b>${fa(G.score)}</b></div><div class="it"><span>✅ درست / ❌ غلط</span><b>${fa(G.ok)} / ${fa(G.bad)}</b></div>
  <div class="it"><span>🎯 دقت</span><b>${fa(acc)}٪</b></div><div class="it"><span>🔥 بهترین زنجیره</span><b>${fa(G.best)}</b></div>
  <div class="it"><span>🪙 پاداش پایان بازی</span><b>+${fa(bonus)} 🪙 • +${fa(Math.floor(G.score/50))} 🌟</b></div>
- <button class="btn go" id="sh" style="margin-top:6px">📤 اشتراک نتیجه</button>`);
+ ${G.mis&&G.mis.length?'<h2 style="margin-top:8px">📚 مرور اشتباهات</h2>'+G.mis.slice(0,6).map(x=>'<div class="it" style="direction:ltr;justify-content:center">'+x+'</div>').join(''):''}<button class="btn go" id="sh" style="margin-top:6px">📤 اشتراک نتیجه</button>`);
  $('#sh').onclick=()=>share(G.score)}
 function share(sc){const t=`🎮 در Math Game Ultimate امتیاز ${fa(sc)} و سطح ${fa(S.lvl)} گرفتم! می‌تونی شکستم بدی؟`;
  if(navigator.share)navigator.share({text:t,url:location.href}).catch(()=>{});
@@ -222,17 +223,22 @@ function profile(){
  '<h2 style="margin-top:10px">🕘 ۵ بازی اخیر</h2>'+((S.hist||[]).map(h=>'<div class="it"><span>'+h.l+' • '+h.d+'</span><b>'+fa(h.s)+' ('+fa(h.a)+'٪)</b></div>').join('')||'<div class="it">هنوز بازی‌ای ثبت نشده</div>')+'<button class="btn t3" id="rs" style="width:100%;margin-top:8px">🗑 پاک‌کردن همه‌ی پیشرفت</button>')}
 function help(){modal(`<h2>❓ راهنما</h2><div class="it">✅ جواب درست: امتیاز، سکه، تجربه و ۱ ثانیه‌ی اضافه</div><div class="it">❌ جواب غلط یا اتمام وقت سوال: یک جان کم می‌شود</div>
 <div class="it">🔥 زنجیره‌ی بیشتر = امتیاز بیشتر</div><div class="it">✂️ ۵۰/۵۰ دو گزینه‌ی غلط را حذف می‌کند • ⏭ رد سوال بدون جریمه</div><div class="it">⚡ ×۲ به مدت ۱۵ ثانیه امتیاز را دو برابر می‌کند</div>
-<div class="it">⌨️ کلیدهای ۱ تا ۴ برای انتخاب گزینه • Enter برای شروع</div><div class="it">👹 هر سوال دهم «غول» است: امتیاز ×۳</div><div class="it">💡 راهنما بازه‌ی جواب را نشان می‌دهد • 🌟 نقطه‌ی ارتقا با رفتن به سطح بعد و پایان بازی به دست می‌آید • 🎵 موسیقی و 🌓 تم</div><div class="it">💾 پیشرفت شما در همین مرورگر ذخیره می‌شود</div>`)}
+<div class="it">⌨️ کلیدهای ۱ تا ۴ برای انتخاب گزینه • Enter برای شروع</div><div class="it">👹 هر سوال دهم «غول» است: امتیاز ×۳</div><div class="it">💡 راهنما بازه‌ی جواب را نشان می‌دهد • 🌟 نقطه‌ی ارتقا با رفتن به سطح بعد و پایان بازی به دست می‌آید • 🎵 موسیقی و 🌓 تم</div><div class="it">⏸ توقف بازی: دکمه‌ی بازی یا کلید P (صفحه تار می‌شود) • ⏹ پایان بازی</div><div class="it">🔥 هر ۵ زنجیره: +۳ ثانیه • هر ۱۰ زنجیره: یک جان جایزه</div><div class="it">🌟 سوال طلایی: سکه ×۳ • ✏️ گاهی باید عدد گمشده را پیدا کنی</div><div class="it">📚 در پایان بازی اشتباهاتت مرور می‌شود • 🥉🥈🥇 مدال هر سطح • 📅 پاداش ورود روزانه</div><div class="it">💾 پیشرفت شما در همین مرورگر ذخیره می‌شود</div>`)}
 document.addEventListener('click',e=>{
  const t=e.target.closest('button');if(!t)return;
- if(t.dataset.m)({p:profile,s:shop,d:daily,h:help})[t.dataset.m]();
+ if(t.dataset.m)({p:profile,s:shop,d:daily,h:help,f:favs})[t.dataset.m]();
  else if(t.dataset.i!==undefined){if(G.on){toast('ابتدا بازی را متوقف کن');return}const i=+t.dataset.i;if(LV[i].r>S.lvl){toast('🔒 نیاز به سطح '+fa(LV[i].r));return}cur=i;ui();msg('🎯 سطح '+LV[i].n+' انتخاب شد')}
  else if(t.dataset.u){const u=UP.find(x=>x[0]===t.dataset.u),lv=S.up[u[0]],c=40*(lv+1)*(lv+1);if(S.coins>=c&&lv<u[3]){S.coins-=c;S.up[u[0]]++;save();beep(740,.2);ui();shop()}}
  else if(t.id==='cl'){S.dc=1;S.coins+=60;save();ui();daily();toast('🎁 ۶۰ سکه گرفتی!')}
  else if(t.id==='rs'){if(confirm('همه‌ی پیشرفت پاک شود؟')){try{localStorage.removeItem('mgu')}catch(x){}location.reload()}}
  else if(t.id==='sn'){S.snd=S.snd?0:1;save();ui()}
  else if(t.id==='mc')$('#md').classList.remove('on');
- else if(t.id==='go'){G.on?end('⏹ بازی متوقف شد'):start()}
+ else if(t.id==='lg'){if(G.on){toast('ابتدا بازی را متوقف کن');return}S.lang=NX[LG];save();location.reload()}
+ else if(t.id==='fv'){if(!G.cq)return;const k=G.cq.t+(G.cq.e||''),i=S.fav.findIndex(f=>f.t+(f.e||'')===k);if(i>=0)S.fav.splice(i,1);else if(S.fav.length<50)S.fav.push({t:G.cq.t,e:G.cq.e||'',r:G.cq.r});else{toast('حداکثر ۵۰ سوال');return}save();starUp();toast(i>=0?'💔 از علاقه‌مندی‌ها حذف شد':'❤️ به علاقه‌مندی‌ها اضافه شد')}
+ else if(t.dataset.fd){S.fav.splice(+t.dataset.fd,1);save();favs()}
+ else if(t.id==='fp'){if(G.on){toast('ابتدا بازی را متوقف کن');return}if(!S.fav.length)return;$('#md').classList.remove('on');favMode=1;start()}
+ else if(t.id==='en'){if(G.on){if(G.paused)pause();end('⏹ بازی پایان یافت')}}
+ else if(t.id==='go'){G.on?pause('⏹ بازی متوقف شد'):start()}
  else if(t.id==='b5'&&G.on&&!lock&&G.f5>0){G.f5--;const w=[...$('#op').children].filter(b=>Math.abs(parseFloat(b.dataset.v)-G.ans)>=.001).sort(()=>Math.random()-.5).slice(0,2);w.forEach(b=>{b.disabled=true;b.classList.add('h')});ui()}
  else if(t.id==='bk'&&G.on&&!lock&&G.sk>0){G.sk--;G.n--;next();ui()}
  else if(t.id==='bp'&&G.on){if(G.pow>0)return;if(S.coins<25){toast('🪙 ۲۵ سکه لازم است');return}S.coins-=25;G.pow=15;save();beep(990,.2);ui()}
@@ -249,14 +255,156 @@ document.addEventListener('keydown',e=>{
  if(e.key==='Escape')$('#md').classList.remove('on');
  if($('#md').classList.contains('on'))return;
  if(e.key==='Enter'&&!G.on&&document.activeElement.tagName!=='BUTTON')start();
+ if((e.key==='p'||e.key==='P')&&G.on)pause();
  const n=+e.key;if(G.on&&n>=1&&n<=4){const b=$('#op').children[n-1];if(b&&!b.disabled)answer(b)}});
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&G.on)toast('⚠️ زمان همچنان در حال گذر است')});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&G.on&&!G.paused)pause();if(0)toast('⚠️ زمان همچنان در حال گذر است')});
 function ui2(){$('#lb').textContent=LV[cur].i+' '+LV[cur].n;$('#sb').textContent='🔥 '+fa(G.streak||0);const a=G.ok||0,b=G.bad||0,t=a+b,v=[['⭐','امتیاز',G.score||0],['✅','درست',a],['❌','غلط',b],['🔥','زنجیره',G.streak||0],['🎯','دقت',(t?Math.round(a/t*100):0)+'٪'],['🪙','سکه',S.coins],['📈','سطح',S.lvl],['✨','تجربه',S.xp],['🌟','ارتقا',S.pts],['⚔️','کشته',S.kills]];$('#stg').innerHTML=v.map(x=>'<div><b>'+fa(x[2])+'</b><span>'+x[0]+' '+x[1]+'</span></div>').join('');const c=[['📝 ۲۰ سوال',Math.min(S.dq,20)+'/20'],['🔥 زنجیره ۱۰',Math.min(S.ds,10)+'/10'],['⚡ بدون خطا',S.dn?'✅':'❌'],['🏆 ۱۰۰ امتیاز',Math.min(S.dp,100)+'/100']];$('#ch').innerHTML=c.map(x=>'<div><span>'+x[0]+'</span><b>'+fa(x[1])+'</b></div>').join('')}
 function burst(el){const r=el.getBoundingClientRect();for(let i=0;i<8;i++){const p=document.createElement('div');p.className='pt';p.style.left=r.left+Math.random()*r.width+'px';p.style.top=r.top+Math.random()*r.height+'px';p.style.background=pick(['#ffd200','#00b894','#ff6b6b','#6c5ce7','#fd79a8']);document.body.appendChild(p);setTimeout(()=>p.remove(),1000)}}
 let mus=0,mi=null;
 function music(){mus=!mus;if(mus){const n=[523,587,659,784,880,784,659,587];let i=0;mi=setInterval(()=>beep(n[i++%8],.15,'triangle'),260);toast('🎵 موسیقی فعال شد')}else{clearInterval(mi);toast('🔇 موسیقی خاموش شد')}}
-function resetGame(){clearInterval(tick);G={on:0};lock=1;$('#go').textContent='▶ شروع بازی';['#b5','#bk','#bp','#bh'].forEach(s=>$(s).disabled=true);$('#qt').textContent='آماده‌ای؟';$('#op').innerHTML='';$('#tb').style.width='100%';$('#qb').style.width='100%';$('#qn').textContent='#۰';$('#qs').textContent='⏱ ۰';$('#sc').textContent='۰';$('#st').textContent='۰';$('#tm').textContent='۰';$('#li').textContent='❤️';msg('🔄 ریست شد. برای شروع کلیک کنید');ui()}
+function resetGame(){clearInterval(tick);blurq(0);G={on:0};lock=1;$('#go').textContent='▶ شروع بازی';['#b5','#bk','#bp','#bh'].forEach(s=>$(s).disabled=true);$('#qt').textContent='آماده‌ای؟';$('#op').innerHTML='';$('#tb').style.width='100%';$('#qb').style.width='100%';$('#qn').textContent='#۰';$('#qs').textContent='⏱ ۰';$('#sc').textContent='۰';$('#st').textContent='۰';$('#tm').textContent='۰';$('#li').textContent='❤️';msg('🔄 ریست شد. برای شروع کلیک کنید');ui()}
 for(let i=0;i<15;i++){const p=document.createElement('i');p.style.cssText='left:'+rnd(0,100)+'%;top:'+rnd(0,100)+'%;animation-delay:'+rnd(0,8)+'s';$('#bg').appendChild(p)}
+let favMode=0;
+function starUp(){const k=G.cq?G.cq.t+(G.cq.e||''):'';$('#fv').textContent=S.fav.some(f=>f.t+(f.e||'')===k)?'★':'☆'}
+function favs(){modal('<h2>❤️ علاقه‌مندی‌ها ('+fa(S.fav.length)+')</h2>'+(S.fav.map((f,i)=>'<div class="it"><span dir="ltr">'+f.t+(f.e||' = ؟')+' → <b>'+fa(f.r)+'</b></span><button class="btn t3" data-fd="'+i+'">🗑</button></div>').join('')||'<div class="it">هنوز سوالی ذخیره نشده؛ در بازی روی ☆ بزن</div>')+(S.fav.length?'<button class="btn go" id="fp" style="margin-top:6px">🎯 تمرین علاقه‌مندی‌ها</button>':''))}
+const H={fa:['✅ جواب درست: امتیاز، سکه، تجربه و ۱ ثانیه اضافه','❌ جواب غلط یا اتمام وقت: یک جان کم می‌شود','🔥 هر ۵ زنجیره ۳ ثانیه، هر ۱۰ زنجیره یک جان جایزه','✂️ ۵۰/۵۰ • ⏭ رد • 💡 بازه‌ی جواب • ⚡ امتیاز ×۲','👹 سوال دهم غول (×۳) • 🌟 سوال طلایی (سکه ×۳)','☆ ذخیره‌ی سوال در علاقه‌مندی‌ها و تمرین آن‌ها','⏸ توقف با P • ⌨️ کلیدهای ۱ تا ۴ • 💾 ذخیره‌ی خودکار'],en:['✅ Correct answer: points, coins, XP and +1 second','❌ Wrong answer or question timeout: lose a life','🔥 Every 5 streak: +3 seconds, every 10: a bonus life','✂️ 50/50 • ⏭ Skip • 💡 Hint range • ⚡ Double points','👹 Every 10th question is a boss (×3) • 🌟 Golden question (coins ×3)','☆ Save a question to Favorites, then practice them','⏸ Pause with P • ⌨️ Keys 1–4 • 💾 Auto-save'],ar:['✅ إجابة صحيحة: نقاط وعملات وخبرة و+١ ثانية','❌ إجابة خاطئة أو انتهاء الوقت: تخسر روحاً','🔥 كل ٥ سلاسل: +٣ ثوانٍ، وكل ١٠: روح إضافية','✂️ ٥٠/٥٠ • ⏭ تخطٍّ • 💡 نطاق الإجابة • ⚡ نقاط مضاعفة','👹 كل سؤال عاشر زعيم (×٣) • 🌟 سؤال ذهبي (عملات ×٣)','☆ احفظ السؤال في المفضلة ثم تدرّب عليه','⏸ إيقاف مؤقت بمفتاح P • ⌨️ المفاتيح ١–٤ • 💾 حفظ تلقائي']};
+function help(){modal('<h2>❓ '+{fa:'راهنمای بازی',en:'How to play',ar:'طريقة اللعب'}[LG]+'</h2>'+H[LG].map(x=>'<div class="it">'+x+'</div>').join(''))}
+const LG=['fa','en','ar'].includes(S.lang)?S.lang:'fa',NX={fa:'en',en:'ar',ar:'fa'},DGS={fa:'۰۱۲۳۴۵۶۷۸۹',en:'0123456789',ar:'٠١٢٣٤٥٦٧٨٩'};
+const dg=s=>s.replace(/[۰-۹]/g,d=>DGS[LG][d.charCodeAt(0)-1776]);
+function share(sc){const t={fa:'🎮 در Math Game Ultimate امتیاز {s} و سطح {l} گرفتم! می‌تونی شکستم بدی؟',en:'🎮 I scored {s} and reached level {l} in Math Game Ultimate! Can you beat me?',ar:'🎮 حصلت على {s} نقطة وبلغت المستوى {l} في Math Game Ultimate! هل تستطيع التفوق علي؟'}[LG].replace('{s}',dg(fa(sc))).replace('{l}',dg(fa(S.lvl)));if(navigator.share)navigator.share({text:t,url:location.href}).catch(()=>{});else try{navigator.clipboard.writeText(t+' '+location.href).then(()=>toast('✅ کپی شد'))}catch(e){toast('امکان کپی نیست')}}
+const DICT=`پروفایل|Profile|ملفي
+فروشگاه ارتقا|Upgrade shop|متجر الترقيات
+فروشگاه|Shop|المتجر
+مأموریتهای امروز|Today's missions|مهام اليوم
+مأموریت|Missions|المهام
+صدا|Sound|الصوت
+موسیقی|Music|الموسيقى
+اشتراک نتیجه|Share result|شارك النتيجة
+اشتراک|Share|مشاركة
+تم|Theme|المظهر
+ریست شد|Reset|أُعيد الضبط
+ریست|Reset|إعادة
+بارگذاری|Reload|تحديث
+تمرین علاقهمندیها|Practice favorites|تدرّب على المفضلة
+از علاقهمندیها حذف شد|Removed from favorites|أُزيل من المفضلة
+به علاقهمندیها اضافه شد|Added to favorites|أُضيف إلى المفضلة
+هنوز سوالی ذخیره نشده؛ در بازی روی ☆ بزن|No saved questions yet. Tap ☆ during a game|لا أسئلة محفوظة. اضغط ☆ أثناء اللعب
+علاقهمندیها|Favorites|المفضلة
+علاقهمندی|Favorites|المفضلة
+بستن|Close|إغلاق
+آمادهای|Ready|جاهز
+سطح را انتخاب کن و شروع کن. کلیدهای ۱ تا ۴ هم کار میکنند.|Pick a level and start. Keys 1-4 pick answers too.|اختر مستوى وابدأ. المفاتيح ١-٤ تختار الإجابة.
+ساختهشده با|Made with|صُنع بـ
+توسط|by|بواسطة
+محمد حسین حبیبی راد|Mohammad Hossein Habibi Rad|محمد حسين حبيبي راد
+آموزش پایتون و هوش مصنوعی|Python & AI tutorials|دروس بايثون والذكاء الاصطناعي
+کانال ایران دیجیتال|Iran Digital channel|قناة إيران ديجيتال
+شروع بازی|Start game|ابدأ اللعبة
+پایان بازی|End game|إنهاء اللعبة
+بازی دوباره|Play again|العب مجدداً
+در حال بازی|Playing|جارٍ اللعب
+توقف|Pause|إيقاف
+ادامه پیدا کرد|Resumed|استُؤنفت
+ادامه|Resume|متابعة
+بازی پایان یافت|Game ended|انتهت اللعبة
+بازی متوقف شد|Game paused|توقفت اللعبة
+کلید|key|مفتاح
+💡 راهنما|💡 Hint|💡 تلميح
+راهنما|Help|مساعدة
+رد|Skip|تخطٍّ
+مبتدی|Beginner|مبتدئ
+متوسط|Medium|متوسط
+پیشرفته|Advanced|متقدم
+استاد|Master|أستاذ
+ترکیبی|Mixed|مختلط
+کابوس|Nightmare|كابوس
+جهنم|Hell|الجحيم
+خدایی|Godlike|خارق
+تازهکار|Rookie|مبتدئ
+کوشا|Keen|مجتهد
+حرفهای|Pro|محترف
+افسانه|Legend|أسطورة
+امتیاز بیشتر|More score|نقاط أكثر
+ امتیاز •| pts •| نقطة •
+امتیاز|Score|النقاط
+پاسخ درست|correct answers|إجابات صحيحة
+درست|Correct|صحيح
+غلط|Wrong|خطأ
+بهترین زنجیره|Best streak|أفضل سلسلة
+زنجیره|Streak|السلسلة
+دقت|Accuracy|الدقة
+سکه بیشتر|More coins|عملات أكثر
+سکه|Coins|عملات
+نیاز به سطح|Requires level|يتطلب المستوى
+رکورد جدید در سطح|New record on level|رقم جديد في المستوى
+رسیدن به سطح|Reach level|بلوغ المستوى
+سطح|Level|المستوى
+تجربه|XP|الخبرة
+ارتقا|Upgrades|الترقية
+کشته|Defeated|المهزومة
+زمان بیشتر|More time|وقت أكثر
+زمان تمام شد|Time is up|انتهى الوقت
+زمان|Time|الوقت
+ثانیه|sec|ث
+جانهایت تمام شد|You are out of lives|انتهت أرواحك
++۱ جان|+1 life|+١ روح
+جان جایزه|Bonus life|روح إضافية
+جان اضافه|Extra life|روح إضافية
+جان|Lives|الأرواح
+در هر بازی|per game|لكل لعبة
+حداکثر ۵۰ سوال|Max 50 questions|الحد الأقصى ٥٠ سؤالاً
+حداکثر|Max|الأقصى
+وقت سوال تمام شد|Question time is up|انتهى وقت السؤال
+سوال|Questions|أسئلة
+پاسخ|Answer|الإجابة
+بدون خطا|No mistakes|بلا أخطاء
+دور بدون خطا|Flawless run|جولة بلا أخطاء
+شروع شد|Started|بدأت
+موفق باشی|Good luck|بالتوفيق
+برای شروع کلیک کنید|Click to start|انقر للبدء
+این سطح هنوز قفل است|This level is locked|هذا المستوى مقفل
+انتخاب شد|selected|تم اختياره
+باز شد|unlocked|فُتح
+ابتدا بازی را متوقف کن|Stop the game first|أوقف اللعبة أولاً
+لازم است|needed|مطلوبة
+گرفتی|received|تم الاستلام
+کپی شد|Copied|تم النسخ
+امکان کپی نیست|Cannot copy|لا يمكن النسخ
+فعال شد|on|مفعّلة
+خاموش شد|off|متوقفة
+روز|Day|اليوم
+پشتسرهم|in a row|على التوالي
+بین|Between|بين
+ تا | to | إلى 
+باقی|left|متبقٍ
+دریافت جایزه|Claim reward|استلام الجائزة
+دریافت شد|Claimed|تم الاستلام
+دستاوردها|Achievements|الإنجازات
+اولین پاسخ درست|First correct answer|أول إجابة صحيحة
+شکست غول|Beat the boss|هزيمة الزعيم
+طلایی|Golden|ذهبي
+غول|Boss|زعيم
+مرور اشتباهات|Review mistakes|مراجعة الأخطاء
+پاداش پایان بازی|End-of-game bonus|مكافأة نهاية اللعبة
+کل پاسخ درست|Total correct answers|إجمالي الإجابات الصحيحة
+رکوردها|Records|الأرقام القياسية
+بازی اخیر|Recent games|آخر الألعاب
+بازیها|Games|الألعاب
+هنوز بازیای ثبت نشده|No games recorded yet|لا توجد ألعاب بعد
+پاککردن همهی پیشرفت|Erase all progress|مسح كل التقدم
+همهی پیشرفت پاک شود|Erase all progress|هل تريد مسح كل التقدم`;
+const MAP={};DICT.split('\n').forEach(l=>{const r=l.split('|');if(r.length>2)MAP[r[0]]=r[LG==='en'?1:2]});
+const PL=String.raw`[\u0621-\u065F\u0670-\u06D3]`;
+const RE=new RegExp('(?<!'+PL+')('+Object.keys(MAP).sort((a,b)=>b.length-a.length).map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')(?!'+PL+')','g');
+function tr(s){if(LG==='fa')return s;s=s.replace(/\u200c/g,'').replace(RE,m=>MAP[m]);if(LG==='en')s=s.replace(/؟/g,'?').replace(/٪/g,'%').replace(/٫/g,'.').replace(/،/g,',');return dg(s)}
+const _cf=window.confirm.bind(window);window.confirm=s=>_cf(tr(s));
+const HAS=/[\u0621-\u06D3\u06F0-\u06F9]/;
+function fx(n){if(n.nodeType===3){const v=n.nodeValue;if(HAS.test(v)){const t=tr(v);if(t!==v)n.nodeValue=t}}else if(n.nodeType===1){if(n.tagName==='SCRIPT'||n.tagName==='STYLE')return;if(n.hasAttribute('aria-label')){const v=n.getAttribute('aria-label'),t=tr(v);if(t!==v)n.setAttribute('aria-label',t)}n.childNodes.forEach(c=>fx(c))}}
+$('#lg').innerHTML='<b>🌐</b>'+{fa:'فارسی',en:'English',ar:'العربية'}[LG];
+if(LG!=='fa'){document.documentElement.lang=LG;document.documentElement.dir=LG==='en'?'ltr':'rtl';fx(document.body);new MutationObserver(ms=>ms.forEach(m=>{if(m.type==='characterData')fx(m.target);else m.addedNodes.forEach(n=>fx(n))})).observe(document.body,{childList:true,subtree:true,characterData:true})}
+function blurq(v){['.q','#op'].forEach(s=>$(s).style.filter=v?'blur(9px)':'')}
+function pause(){if(!G.on)return;if(G.paused){G.paused=0;lock=G.pl;tick=setInterval(loop,100);$('#go').textContent='⏳ در حال بازی… (توقف)';blurq(0);msg('▶ ادامه پیدا کرد')}else{G.paused=1;G.pl=lock;lock=1;clearInterval(tick);$('#go').textContent='▶ ادامه';blurq(1);msg('⏸ بازی متوقف شد (کلید P)')}}
+if(S.ld!==today()){S.ls=(S.ld===new Date(Date.now()-864e5).toDateString())?(S.ls||0)+1:1;S.ld=today();const lb=10*Math.min(S.ls,7);S.coins+=lb;save();setTimeout(()=>toast('📅 روز '+fa(S.ls)+' پشت‌سرهم! 🪙+'+fa(lb)),600)}
 $('#b5').disabled=$('#bk').disabled=$('#bp').disabled=$('#bh').disabled=true;
 ui();
 </script>
