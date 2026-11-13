@@ -936,5 +936,134 @@ ui();
 if(srDue().length&&S.srn!==today()){S.srn=today();save();setTimeout(()=>toast('🔁 '+T(nn(srDue().length)+' سوال برای مرور داری','You have '+nn(srDue().length)+' questions to review','لديك '+nn(srDue().length)+' أسئلة للمراجعة')),3200)}
 })();
 </script>
+<script>
+/* ===== Add-ons v2: solutions after mistakes, topics, conceptual/applied questions, report card.
+   Only wraps existing functions; nothing above is edited. ===== */
+(function(){'use strict';
+const nA=s=>String(s).replace(/[۰-۹]/g,d=>d.charCodeAt(0)-1776),f=fa;
+const gcd=(a,b)=>b?gcd(b,a%b):a,isP=n=>{if(n<2)return false;for(let i=2;i*i<=n;i++)if(n%i===0)return false;return true};
+const stopT=()=>toast('ابتدا بازی را متوقف کن');
+document.head.insertAdjacentHTML('beforeend','<style>.xs{margin-top:8px;padding:10px;border-radius:12px;background:var(--shade);border:1px solid var(--bd);font-size:.8rem;line-height:1.9;text-align:right}.xsm{text-align:center;font:700 .9rem "Courier New",monospace;color:var(--gold);margin:2px 0}</style>');
+S.rc=S.rc||{};
+const st2=(k,ok)=>{const h=S.rc[k]||(S.rc[k]={n:0,b:0});h.n++;if(!ok)h.b++};
+
+/* ---------- 1) step-by-step solutions ---------- */
+function sol(q){
+ if(q.x)return q.x;const r=q.r;
+ const s=nA(String(q.t+(q.e||'')).replace(/<sup>(.*?)<\/sup>/g,'^$1').replace(/<sub>(.*?)<\/sub>/g,'_$1').replace(/<[^>]*>/g,'')).replace(/٫/g,'.').replace(/−/g,'-').replace(/\s+/g,' ').trim();
+ let m;
+ if(m=/^(\d+) ([+\-×÷]) (\d+)\b/.exec(s)){const a=+m[1],b=+m[3],o=m[2],O=o==='-'?'−':o,L=[];
+  if(o==='×'&&a>=10&&a%10&&b>=2){const t=a-a%10,u=a%10;L.push('عدد '+f(a)+' را به دهگان و یکان بشکنید:','#'+f(a)+' × '+f(b)+' = ('+f(t)+' × '+f(b)+') + ('+f(u)+' × '+f(b)+')','#= '+f(t*b)+' + '+f(u*b)+' = '+f(r))}
+  else if(o==='÷')L.push('چون '+f(b)+' × '+f(r)+' = '+f(a)+' است، خارج‌قسمت '+f(r)+' می‌شود:','#'+f(a)+' ÷ '+f(b)+' = '+f(r));
+  else if(o==='-')L.push('#'+f(a)+' − '+f(b)+' = '+f(r),'برای بررسی: '+f(r)+' + '+f(b)+' = '+f(a));
+  else L.push('#'+f(a)+' '+O+' '+f(b)+' = '+f(r));
+  return L}
+ if(m=/^(\d+) ([+\-×]) \? = (\d+)/.exec(s)){const a=+m[1],c=+m[3];
+  return m[2]==='+'?['مجهول = مجموع − عدد معلوم','#'+f(c)+' − '+f(a)+' = '+f(r)]:m[2]==='-'?['مجهول = عدد اول − حاصل','#'+f(a)+' − '+f(c)+' = '+f(r)]:['مجهول = حاصل ÷ عدد معلوم','#'+f(c)+' ÷ '+f(a)+' = '+f(r)]}
+ if(m=/^(\d+)\^(\d+)/.exec(s)){const a=+m[1],b=+m[2];return[f(a)+' را '+f(b)+' بار در خودش ضرب کنید:','#'+Array(b).fill(f(a)).join(' × ')+' = '+f(r)]}
+ if(m=/^√(\d+)/.exec(s))return['دنبال عددی بگردید که مربعش '+f(m[1])+' شود:','#'+f(r)+' × '+f(r)+' = '+f(m[1]),'#√'+f(m[1])+' = '+f(r)];
+ if(m=/^log_(\d+)\((\d+)\)/.exec(s))return['لگاریتم یعنی '+f(m[1])+' را به چه توانی برسانیم تا '+f(m[2])+' شود؟','#'+f(m[1])+'^'+f(r)+' = '+f(m[2]),'#log'+f(m[1])+'('+f(m[2])+') = '+f(r)];
+ if(m=/^(\d+)!/.exec(s)){const n=+m[1],a=[];for(let i=n;i>=1;i--)a.push(f(i));return['فاکتوریل یعنی ضرب همه‌ی عددهای از ۱ تا '+f(n)+':','#'+f(n)+'! = '+a.join(' × ')+' = '+f(r)]}
+ if(m=/^(sin|cos|tan|cot)\((\d+)°\)/.exec(s)){const FR={0:'0',.5:'1/2',.71:'√2/2',.87:'√3/2',1:'1',.58:'√3/3',1.73:'√3'};
+  const L=['از جدول زاویه‌های مهم (۳۰، ۴۵، ۶۰):','#'+m[1]+'('+f(m[2])+'°) = '+(FR[r]||f(r))+' ≈ '+f(r)];if(m[1]==='tan'||m[1]==='cot')L.push('tan = sin ÷ cos  و  cot = cos ÷ sin');return L}
+ return['پاسخ درست: '+f(r)]}
+const rend=L=>(Array.isArray(L)?L:[L]).map(x=>x[0]==='#'?'<div dir="ltr" class="xsm">'+x.slice(1).replace(/</g,'&lt;')+'</div>':'<div>'+x+'</div>').join('');
+const solH=q=>'<b>📖 راه‌حل</b>'+rend(sol(q));
+const qTxt=q=>q.t+(q.e||' = ?');
+function showSol(q){const o=$('#xsol');if(o)o.remove();$('#ms').insertAdjacentHTML('afterend','<div class="xs" id="xsol" data-nt>'+solH(q)+'</div>')}
+function xpSol(){const m=$('#xqm'),w=$('#xop .w'),c=$('#xop .c');if(!m||!w||!c||m.querySelector('.xs'))return;
+ m.insertAdjacentHTML('beforeend','<div class="xs" data-nt>'+solH({t:$('#xqt').innerHTML,e:' ',r:parseFloat(c.dataset.v)})+'</div>')}
+
+/* ---------- 2+3) topics, conceptual & applied questions ---------- */
+const CON=[
+ z=>{const a=Array.from({length:4},()=>rnd(1,[20,60,99][z])),ev=a.filter(x=>x%2===0);return{t:'از بین اعداد '+a.map(f).join('، ')+' چند عدد زوج است؟',r:ev.length,x:['عدد زوج بر ۲ بخش‌پذیر است (رقم یکانش ۰، ۲، ۴، ۶ یا ۸).',ev.length?'عددهای زوج: '+ev.map(f).join('، '):'هیچ‌کدام زوج نیستند.','#تعداد = '+f(ev.length)]}},
+ z=>{const n=rnd(8,[30,80,150][z]);let p=n+1;while(!isP(p))p++;return{t:'کوچک‌ترین عدد اول بزرگ‌تر از '+f(n)+' چند است؟',r:p,x:['عدد اول فقط بر ۱ و خودش بخش‌پذیر است.','از '+f(n+1)+' شروع کنید و بالا بروید؛ عددهای قبل از '+f(p)+' همگی مرکب‌اند.','#'+f(p)+' اول است']}},
+ z=>{const M=[6,9,12][z],g=rnd(2,M),a=g*rnd(2,M),b=g*rnd(2,M);if(a===b)return CON[2](z);const d=gcd(a,b);return{t:'بزرگ‌ترین مقسوم‌علیه مشترک (ب.م.م) دو عدد '+f(a)+' و '+f(b)+' چند است؟',r:d,x:['بزرگ‌ترین عددی را بیابید که هر دو عدد را بشمارد:','#'+f(a)+' = '+f(d)+' × '+f(a/d),'#'+f(b)+' = '+f(d)+' × '+f(b/d),'ضریب‌های '+f(a/d)+' و '+f(b/d)+' عامل مشترک ندارند، پس ب.م.م برابر '+f(d)+' است.']}},
+ z=>{const M=[8,12,15][z],a=rnd(2,M);let b=rnd(2,M);if(a===b)b=a+1;const d=gcd(a,b),l=a/d*b;return{t:'کوچک‌ترین مضرب مشترک (ک.م.م) دو عدد '+f(a)+' و '+f(b)+' چند است؟',r:l,x:['ک.م.م = (حاصل‌ضرب دو عدد) ÷ (ب.م.م)','#'+f(a)+' × '+f(b)+' ÷ '+f(d)+' = '+f(l)]}},
+ z=>{const n=rnd(3,[7,10,12][z]);return{t:'مجموع زاویه‌های داخلی یک '+f(n)+'‌ضلعی محدب چند درجه است؟',r:(n-2)*180,x:['هر n‌ضلعی را می‌شود از یک رأس به (n − ۲) مثلث تقسیم کرد و مجموع زاویه‌های هر مثلث ۱۸۰ درجه است.','#('+f(n)+' − ۲) × ۱۸۰ = '+f((n-2)*180)]}},
+ z=>{const m=[10,40,90][z],a=[rnd(1,m),rnd(1,m),rnd(1,m)],s=a[0]+a[1]+a[2];let x=rnd(1,m);while((s+x)%4)x++;const all=[...a,x];return{t:'میانگین اعداد '+all.map(f).join('، ')+' چند است؟',r:(s+x)/4,x:['میانگین = مجموع اعداد ÷ تعداد اعداد','#('+all.map(f).join(' + ')+') ÷ ۴ = '+f(s+x)+' ÷ ۴ = '+f((s+x)/4)]}},
+ z=>{const n=pick([[6,8,10,12,14,15],[16,18,20,24,28,30],[36,40,42,48,60,72]][z]),ds=[];for(let i=1;i<=n;i++)if(n%i===0)ds.push(i);return{t:'عدد '+f(n)+' چند مقسوم‌علیه (شمارنده) دارد؟',r:ds.length,x:['همه‌ی عددهایی را که '+f(n)+' بر آن‌ها بخش‌پذیر است بنویسید:','#'+ds.map(f).join('، '),'تعداد = '+f(ds.length)]}},
+ z=>{const k=rnd(2,[6,9,12][z]),n=rnd(20,[60,120,300][z]),c=Math.floor(n/k);return{t:'چند عدد از ۱ تا '+f(n)+' بر '+f(k)+' بخش‌پذیر است؟',r:c,x:['مضرب‌های '+f(k)+' عبارت‌اند از '+f(k)+'، '+f(2*k)+'، '+f(3*k)+' و ...','تعداد مضرب‌ها = قسمت صحیح (‏'+f(n)+' ÷ '+f(k)+'‏) = '+f(c)]}}];
+const APP=[
+ z=>{const n=rnd(2,[6,9,12][z]),p=rnd(2,[10,20,40][z])*5;return{t:'علی '+f(n)+' دفتر خرید. قیمت هر دفتر '+f(p)+' هزار تومان است. روی هم چند هزار تومان پرداخت کرد؟',r:n*p,x:['قیمت کل = تعداد × قیمت هر دفتر','#'+f(n)+' × '+f(p)+' = '+f(n*p)]}},
+ z=>{const v=rnd(4,[10,14,18][z])*10,t=rnd(2,[4,6,8][z]);return{t:'اتومبیلی با سرعت ثابت '+f(v)+' کیلومتر بر ساعت، '+f(t)+' ساعت حرکت می‌کند. چند کیلومتر راه می‌رود؟',r:v*t,x:['مسافت = سرعت × زمان','#'+f(v)+' × '+f(t)+' = '+f(v*t)]}},
+ z=>{const p=rnd(5,[20,40,60][z])*20,d=pick([10,20,25,50]),c=p*d/100;return{t:'قیمت یک کفش '+f(p)+' هزار تومان است. اگر '+f(d)+' درصد تخفیف بگیرد، چند هزار تومان باید بپردازد؟',r:p-c,x:['مقدار تخفیف = قیمت × درصد ÷ ۱۰۰','#'+f(p)+' × '+f(d)+' ÷ ۱۰۰ = '+f(c),'مبلغ پرداختی = قیمت − تخفیف','#'+f(p)+' − '+f(c)+' = '+f(p-c)]}},
+ z=>{const a=rnd(3,[12,25,40][z]),b=rnd(2,[10,20,30][z]);if(Math.random()<.5)return{t:'طول و عرض یک زمین مستطیلی '+f(a)+' و '+f(b)+' متر است. محیط زمین چند متر است؟',r:2*(a+b),x:['محیط مستطیل = ۲ × (طول + عرض)','#۲ × ('+f(a)+' + '+f(b)+') = '+f(2*(a+b))]};return{t:'طول و عرض یک زمین مستطیلی '+f(a)+' و '+f(b)+' متر است. مساحت زمین چند متر مربع است؟',r:a*b,x:['مساحت مستطیل = طول × عرض','#'+f(a)+' × '+f(b)+' = '+f(a*b)]}},
+ z=>{const k=rnd(3,[6,9,12][z]),q=rnd(3,[8,12,20][z]);return{t:'تعداد '+f(k*q)+' شکلات را بین '+f(k)+' کودک مساوی تقسیم می‌کنیم. به هر کودک چند شکلات می‌رسد؟',r:q,x:['سهم هر نفر = کل ÷ تعداد نفرات','#'+f(k*q)+' ÷ '+f(k)+' = '+f(q)]}},
+ z=>{const a=rnd(10,[20,20,20][z]),b=rnd(10,20);let c=rnd(10,20);while((a+b+c)%3)c=c<20?c+1:10;return{t:'نمره‌های سارا در سه آزمون '+f(a)+'، '+f(b)+' و '+f(c)+' بود. میانگین نمره‌هایش چند است؟',r:(a+b+c)/3,x:['میانگین = مجموع نمره‌ها ÷ تعداد آزمون‌ها','#('+f(a)+' + '+f(b)+' + '+f(c)+') ÷ ۳ = '+f(a+b+c)+' ÷ ۳ = '+f((a+b+c)/3)]}}];
+const TPO={'+':['+'],'-':['-'],'*':['*'],'/':['/'],'^':['^'],'√':['√'],'log':['log'],'!':['!'],'trig':['sin','cos','tan','cot']};
+const CATS=[['+','➕','جمع'],['-','➖','تفریق'],['*','✖️','ضرب'],['/','➗','تقسیم'],['^','⬆️','توان'],['√','√','ریشه'],['log','🧮','لگاریتم'],['!','❗','فاکتوریل'],['trig','📐','مثلثات'],['con','💡','مفهومی'],['app','🛒','کاربردی']];
+const TPN={mix:'🎲 ترکیبی'};CATS.forEach(c=>TPN[c[0]]=c[1]+' '+c[2]);
+let tpNow=null,yTp=null;
+const mk=(a,cat,z)=>{const q=pick(a)(z);q.cat=cat;q.e=' ';return q};
+const _gn=gen;
+gen=function(L){
+ if(G&&G.on&&tpNow&&!G.pv&&!G.d){const z=L.m<=12?0:L.m<=60?1:2;
+  if(tpNow==='con')return mk(CON,'con',z);if(tpNow==='app')return mk(APP,'app',z);
+  if(tpNow==='mix'){const r=Math.random();if(r<.2)return mk(CON,'con',z);if(r<.4)return mk(APP,'app',z)}
+  else if(TPO[tpNow])return _gn(Object.assign({},L,{o:TPO[tpNow]}))}
+ return _gn(L)};
+const sty=on=>{const s=$('#qt').style;[['display','block'],['font-size','1.05rem'],['line-height','1.9'],['direction','rtl'],['font-family','inherit'],['white-space','normal']].forEach(p=>on?s.setProperty(p[0],p[1]):s.removeProperty(p[0]))};
+const _next=next;
+next=function(){_next.apply(this,arguments);try{const q=G.cq,tx=!!q&&/[\u0621-\u06D3]/.test(String(q.t).replace(/<[^>]*>/g,''));sty(tx);if(tx)G.ql=G.qm=Math.max(G.qm,q.cat==='app'?25:18)}catch(e){}};
+const _st=start;
+start=function(){const t=yTp;yTp=null;if(G.on)return _st.apply(this,arguments);
+ tpNow=t;_st.apply(this,arguments);
+ const o=$('#xsol');if(o)o.remove();
+ if(!G.on){tpNow=null;return}
+ G.tp=tpNow;if(['con','app','mix'].includes(t)){G.time=G.tot=Math.round(G.tot*1.6)}
+ if(t)msg('📚 مبحث: '+TPN[t]);ui()};
+const _ui=ui;
+ui=function(){_ui();try{const b=$('#xtp');if(b){const on=G.on&&G.tp;b.style.display=on?'':'none';if(on)b.textContent=TPN[G.tp]}}catch(e){}};
+$('#rk').parentNode.insertAdjacentHTML('beforeend','<span class="bdg v" id="xtp" style="display:none"></span>');
+
+/* ---------- answer / end hooks (solutions + stats) ---------- */
+const _answer=answer;
+answer=function(btn){
+ const q=G.cq,live=!!(G.on&&!G.pv&&!lock&&q),b0=G.bad;
+ if(live){const o=$('#xsol');if(o)o.remove()}
+ _answer.apply(this,arguments);
+ if(!live)return;
+ try{const bad=G.bad>b0;if(q.cat){st2(q.cat,!bad);save()}
+  if(bad){(G.xmis=G.xmis||[]).push(q);showSol(q)}}catch(e){console.error(e)}};
+const _end=end;
+end=function(why){const was=G.on,mis=G.xmis;_end.apply(this,arguments);tpNow=null;
+ try{if(was&&mis&&mis.length&&$('#md').classList.contains('on'))$('#mb').insertAdjacentHTML('beforeend','<div data-nt><h2 style="margin-top:8px">📖 راه‌حل اشتباهات</h2>'+mis.slice(0,5).map(q=>'<div class="xs"><div dir="auto" style="text-align:center;font-weight:700">'+qTxt(q)+'</div>'+rend(sol(q))+'</div>').join('')+'</div>')}catch(e){}};
+document.addEventListener('keydown',()=>{try{xpSol()}catch(e){}});
+
+/* ---------- topics menu ---------- */
+function topicsM(){if(G.on)return stopT();
+ modal('<div data-nt><h2>📚 انتخاب مبحث</h2><div class="it" style="display:block">یک مبحث را انتخاب کن تا بازی فقط از همان مبحث سؤال بدهد. سختی اعداد بر اساس سطح انتخاب‌شده ('+LV[cur].n+') است. «مفهومی» و «کاربردی» زمان بیشتری برای هر سؤال دارند.</div><div class="xg">'+CATS.concat([['mix','🎲','ترکیبی']]).map(c=>'<button class="xc" data-ytp="'+c[0]+'">'+c[1]+'<small>'+c[2]+'</small></button>').join('')+'</div></div>')}
+
+/* ---------- report card ---------- */
+function rcData(){return CATS.map(c=>{const h=(c[0]==='con'||c[0]==='app')?S.rc[c[0]]:(S.ws||{})[c[0]],n=h?h.n:0;return{k:c[0],i:c[1],nm:c[2],n,acc:n?(n-h.b)/n:null}})}
+function reportM(){
+ const d=rcData(),tot=d.reduce((a,x)=>a+x.n,0);
+ if(!tot)return modal('<div data-nt><h2>📋 کارنامه</h2><div class="it" style="display:block">هنوز داده‌ای ثبت نشده. چند دور بازی کن یا از «مباحث» یک مبحث را تمرین کن تا کارنامه‌ات ساخته شود.</div></div>');
+ const sc=Math.round(d.reduce((a,x)=>a+(x.acc||0)*x.n,0)/tot*200)/10,
+ gr=sc>=18?'🏆 عالی':sc>=15?'🌟 خیلی خوب':sc>=12?'👍 خوب':sc>=10?'🙂 قابل قبول':'💪 نیازمند تمرین',
+ ok=d.filter(x=>x.n>=5),stg=ok.filter(x=>x.acc>=.8).sort((a,b)=>b.acc-a.acc).slice(0,3),wk=ok.filter(x=>x.acc<.8).sort((a,b)=>a.acc-b.acc).slice(0,3),
+ li=a=>a.map(x=>x.i+' '+x.nm+' ('+f(Math.round(x.acc*100))+'٪)').join('، '),
+ h=(S.hist||[]).slice(0,5),av=a=>a.reduce((s,x)=>s+x.a,0)/a.length;
+ let tr='';if(h.length>=3){const df=av(h.slice(0,2))-av(h.slice(2));tr=df>=5?'📈 رو به پیشرفت':df<=-5?'📉 افت اخیر':'➡️ ثابت'}
+ const rows=d.map(x=>{if(!x.n)return'<div class="it"><span>'+x.i+' '+x.nm+'</span><small>بدون داده</small></div>';const p=Math.round(x.acc*100),col=p>=85?'var(--ok)':p>=65?'#f39c12':'var(--bad)';
+  return'<div class="it" style="display:block"><div style="display:flex;justify-content:space-between;gap:6px"><span>'+x.i+' '+x.nm+'</span><span><b>'+f(p)+'٪</b> <small style="display:inline">'+f(x.n)+' سؤال • '+(x.n<5?'داده کم':p>=85?'قوی':p>=65?'متوسط':'ضعیف')+'</small></span></div><div class="xbar"><i style="width:'+p+'%;background:'+col+'"></i></div></div>'}).join('');
+ const w=wk[0],btn=w?'<button class="btn go" style="margin-top:8px" '+((w.k==='con'||w.k==='app')?'data-ytp="'+w.k+'"':'data-xp="op:'+w.k+'"')+'>🏋️ تمرین ضعیف‌ترین مبحث ('+w.nm+')</button>':'';
+ modal('<div data-nt><h2>📋 کارنامه‌ی عملکرد</h2><div class="it" style="display:block;text-align:center"><div style="font-size:2rem;font-weight:800;color:var(--gold)">'+f(sc)+' از ۲۰</div><div>'+gr+'</div><small>'+f(tot)+' سؤال پاسخ‌داده‌شده • '+f(S.games)+' بازی • سطح '+f(S.lvl)+'</small></div>'+
+ '<div class="it" style="display:block">💪 <b>نقاط قوت:</b> '+(stg.length?li(stg):'هنوز مبحثی با دقت بالای ۸۰٪ و حداقل ۵ سؤال نداری')+'</div>'+
+ '<div class="it" style="display:block">⚠️ <b>نقاط ضعف:</b> '+(wk.length?li(wk):'ضعف مشخصی دیده نمی‌شود 👏')+'</div>'+
+ (tr?'<div class="it"><span>روند ۵ بازی اخیر</span><b>'+tr+'</b></div>':'')+'<h2 style="margin-top:10px">📊 جزئیات مباحث</h2>'+rows+btn+'</div>')}
+
+/* ---------- wiring ---------- */
+document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;const d=t.dataset;
+ if(d.y==='tp')return topicsM();
+ if(d.y==='rc')return reportM();
+ if(d.ytp!==undefined){if(G.on)return stopT();$('#md').classList.remove('on');yTp=d.ytp;start();yTp=null;return}
+ if(t.closest('#xop'))try{xpSol()}catch(x){}});
+($('#xnav')||$('.nav')).insertAdjacentHTML('beforeend','<button data-y="tp"><b>📚</b>مباحث</button><button data-y="rc"><b>📋</b>کارنامه</button>');
+ui();
+})();
+</script>
 </body>
 </html>
+
