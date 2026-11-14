@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
+!DOCTYPE html>
+<htm<l lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -613,6 +613,11 @@ $('#b5').disabled=$('#bk').disabled=$('#bp').disabled=$('#bh').disabled=true;
 ui();
 </script>
 <script>
+/* Keeps the en/ar translation observer away from <script>/<style> source text.
+   Without this, any <script> parsed after the original one is rewritten (digits, punctuation) before it runs. */
+(function(){if(typeof fx!=='function')return;var o=fx;fx=function(n){var p=n&&n.parentNode;if(n&&n.nodeType===3&&p&&(p.nodeName==='SCRIPT'||p.nodeName==='STYLE'))return;return o(n)}})();
+</script>
+<script>
 /* ===== Add-ons: weakness analysis, practice mode, cosmetics shop, daily challenge, result card,
    survival / 60s race, duel rematch, spaced-repetition review.
    Everything below only ADDS to the original game: existing functions are wrapped, never edited. ===== */
@@ -631,19 +636,20 @@ xs();
 
 /* ---------- question types & weakness statistics ---------- */
 const OPS=[['+','➕',T('جمع','Addition','الجمع')],['-','➖',T('تفریق','Subtraction','الطرح')],['*','✖️',T('ضرب','Multiplication','الضرب')],['/','➗',T('تقسیم','Division','القسمة')],['^','⬆️',T('توان','Powers','القوى')],['√','🌱',T('جذر','Roots','الجذور')],['log','🪵',T('لگاریتم','Logarithms','اللوغاريتمات')],['!','❗',T('فاکتوریل','Factorials','العاملي')],['trig','📐',T('مثلثات','Trigonometry','المثلثات')]];
-const opN=k=>{const o=OPS.find(x=>x[0]===k);return o?o[1]+' '+o[2]:k};
+const opN=k=>{const o=OPS.find(x=>x[0]===k);if(o)return o[1]+' '+o[2];const c=window.XV2&&XV2.CATS.find(x=>x[0]===k);return c?c[1]+' '+c[2]:k};
 function opOf(t){const s=U(t);
  if(/log/.test(s))return'log';if(/(sin|cos|tan|cot)/.test(s))return'trig';if(/<sup>/.test(t))return'^';
  if(s.includes('√'))return'√';if(s.includes('!'))return'!';if(s.includes('÷'))return'/';if(s.includes('×'))return'*';
  if(s.includes('+'))return'+';if(s.includes('−'))return'-';return'?'}
 function stat(map,k,ok){const h=map[k]||(map[k]={n:0,b:0,h:''});h.n++;if(!ok)h.b++;h.h=(h.h+(ok?'1':'0')).slice(-20)}
 const accOf=h=>{const s=(h&&h.h)||'';if(!s)return null;let c=0;for(const ch of s)if(ch==='1')c++;return c/s.length};
-function rec(q,ok){xs();const o=opOf(q.t);if(o==='?')return;stat(S.ws,o,ok);
+function rec(q,ok){xs();try{if(q&&q.cat&&window.XV2)XV2.rcAdd(q.cat,ok);if(window.xLog)window.xLog(q,ok)}catch(e){}
+ if(q.cat)return;const o=opOf(q.t);if(o==='?')return;stat(S.ws,o,ok);
  if(q.tb){stat(S.wt,q.tb,ok);return}
  const nums=(U(q.t)+' '+U(q.e||'')).match(/\d+/g)||[];
  if(o==='*'){const a=+nums[0],b=q.e?+q.r:+nums[1];[...new Set([a,b])].forEach(f=>{if(f>=2&&f<=12)stat(S.wt,'x'+f,ok)})}
  else if(o==='/'){const b=+nums[1];if(b>=2&&b<=12)stat(S.wt,'d'+b,ok)}}
-function topicName(t){if(t==='all')return'🎲 '+T('ترکیبی','Mixed','متنوع');if(t==='weak')return'🎯 '+T('نقطه‌ضعف‌های من','My weak spots','نقاط ضعفي');
+function topicName(t){if(t==='all')return'🎲 '+T('ترکیبی','Mixed','متنوع');if(t==='weak')return'🧠 '+T('تمرین هوشمند','Smart practice','التدريب الذكي');
  const p=String(t).split(':'),k=p[0],v=p[1];if(k==='op')return opN(v);
  if(k==='tm')return'✖️ '+T('جدول ضرب ','Times table ','جدول ضرب ')+nn(v);if(k==='td')return'➗ '+T('تقسیم بر ','Divide by ','القسمة على ')+nn(v);return String(t)}
 function weakest(){xs();let best=null;
@@ -666,7 +672,7 @@ function analysisM(){xs();
 const INT=[1,2,4,7,15,30];
 function srAdd(q){xs();if(!q||!q.t)return;const k=q.t+'|'+(q.e||''),it=S.sr.find(x=>x.k===k);
  if(it){it.b=0;it.d=dayN()+1;return}
- S.sr.push({k,t:q.t,e:q.e||'',r:q.r,b:0,d:dayN()+1});
+ S.sr.push({k,t:q.t,e:q.e||'',r:q.r,b:0,d:dayN()+1,cat:q.cat,x:q.x,tag:q.tag});
  if(S.sr.length>80){S.sr.sort((a,b)=>(a.b-b.b)||(a.d-b.d));S.sr.pop()}}
 const srDue=()=>{xs();const n=dayN();return S.sr.filter(x=>x.d<=n)};
 function reviewM(){xs();const due=srDue(),tot=S.sr.length;
@@ -681,7 +687,7 @@ function xReview(early){if(G.on)return stopMsg();xs();const now=dayN();
  const items=S.sr.filter(x=>early||x.d<=now).sort((a,b)=>a.d-b.d).slice(0,15);if(!items.length){toast('✅');return}
  const queue=items.map(x=>x.k),seen=new Set();
  qOpen({title:'🔁 '+T('مرور','Review','مراجعة'),sr:false,auto:600,
-  gen:s=>{while(queue.length){const k=queue.shift(),it=S.sr.find(x=>x.k===k);if(it)return{t:it.t,e:it.e,r:it.r,k}}return null},
+  gen:s=>{while(queue.length){const k=queue.shift(),it=S.sr.find(x=>x.k===k);if(it)return{t:it.t,e:it.e,r:it.r,k,cat:it.cat,x:it.x,tag:it.tag}}return null},
   onAns:(q,ok,s)=>{const it=S.sr.find(x=>x.k===q.k);if(!it)return;
    if(seen.has(q.k))return;seen.add(q.k);
    if(ok){it.b++;if(it.b>=INT.length){S.sr=S.sr.filter(x=>x!==it);S.srm=(S.srm||0)+1;setTimeout(()=>toast('🎓 '+T('این سوال را کامل یاد گرفتی!','You mastered this one!','أتقنت هذا السؤال!')),300)}else it.d=dayN()+INT[it.b]}
@@ -694,7 +700,7 @@ const XQ={a:null};
 const hasQ=()=>XQ.a&&$('#xq')&&$('#md').classList.contains('on');
 function qOpen(cfg){if(XQ.a){clearInterval(XQ.a.tm);clearTimeout(XQ.a.at)}
  const s=XQ.a=Object.assign({ok:0,bad:0,n:0,streak:0,best:0,t0:Date.now(),adv:0,q:null,locked:0},cfg);
- modal('<div id="xq"><h2>'+s.title+'</h2><div class="xqh" id="xqh"></div><div class="q" id="xqq" style="min-height:84px;padding:18px 8px"><span id="xqt"></span></div><div class="op" id="xop" style="margin-top:8px"></div><div class="msg" id="xqm"></div><div class="row" style="margin-top:8px"><button class="btn go" id="xnx" style="display:none">'+T('ادامه ▶','Next ▶','التالي ▶')+'</button><button class="btn t3" data-xq="end" style="flex:0 0 auto">⏹ '+T('پایان','Finish','إنهاء')+'</button></div></div>');
+ modal('<div id="xq"><h2>'+s.title+'</h2><div class="xqh" id="xqh"></div><div id="xqg" style="text-align:center;font-size:.72rem;color:var(--mut);min-height:16px"></div><div class="q" id="xqq" style="min-height:84px;padding:18px 8px"><span id="xqt"></span></div><div class="op" id="xop" style="margin-top:8px"></div><div class="msg" id="xqm"></div><div class="row" style="margin-top:8px"><button class="btn go" id="xnx" style="display:none">'+T('ادامه ▶','Next ▶','التالي ▶')+'</button><button class="btn t3" data-xq="end" style="flex:0 0 auto">⏹ '+T('پایان','Finish','إنهاء')+'</button></div></div>');
  s.tm=setInterval(()=>{if(!hasQ()){clearInterval(s.tm);return}if(s.timer)qHead()},500);qNext()}
 function qHead(){const s=XQ.a;if(!s||!$('#xqh'))return;const sec=Math.floor((Date.now()-s.t0)/1000);
  $('#xqh').innerHTML=(s.total?'<span>'+nn(Math.min(s.n,s.total))+'/'+nn(s.total)+'</span>':'<span>#'+nn(s.n)+'</span>')+'<span>✅ '+nn(s.ok)+'</span><span>❌ '+nn(s.bad)+'</span>'+(s.timer?'<span>⏱ '+nn(sec)+'</span>':'<span>🔥 '+nn(s.streak)+'</span>')}
@@ -704,6 +710,9 @@ function qNext(){const s=XQ.a;if(!s||!$('#xq'))return;clearTimeout(s.at);s.adv=0
  s.q=q;s.n++;s.locked=0;
  const ops=q.o||distract(q.r,4).sort(()=>Math.random()-.5);
  $('#xqt').innerHTML=q.t+(q.e||' = ?');
+ try{const tx=!!q.cat,st=$('#xqq').style,tt=$('#xqt');$('#xqg').textContent=(s.topic==='weak'&&q.tag)?q.tag:'';
+  [['font-size','1.05rem'],['line-height','1.9'],['direction',LG==='en'?'ltr':'rtl'],['font-family','inherit'],['white-space','normal']].forEach(p=>tx?st.setProperty(p[0],p[1]):st.removeProperty(p[0]));
+  if(tx)tt.setAttribute('data-nt','');else tt.removeAttribute('data-nt')}catch(e){}
  $('#xop').innerHTML=ops.map((v,i)=>'<button data-v="'+v+'" aria-label="'+(i+1)+'">'+fa(v)+'</button>').join('');
  $('#xqm').textContent='';$('#xnx').style.display='none';$('#xqq').classList.remove('fo','fb');qHead()}
 function qPick(b){const s=XQ.a;if(!s||s.locked||!s.q||!$('#xq'))return;s.locked=1;const q=s.q;
@@ -729,7 +738,8 @@ function pickWeak(){xs();const w=OPS.map(o=>{const h=S.ws[o[0]],a=h&&h.h.length>
  let r=Math.random()*w.reduce((t,x)=>t+x[1],0);for(const x of w){r-=x[1];if(r<=0)return'op:'+x[0]}return'op:+'}
 function mkQ(t,size){const M=[12,30,160][size|0],p=String(t).split(':'),k=p[0],v=p[1];
  if(t==='all')return gen({o:[...new Set(LV.filter(l=>l.r<=S.lvl).flatMap(l=>l.o))],m:M});
- if(t==='weak')return mkQ(pickWeak(),size);
+ if(t==='weak'){const sq=(window.XV2&&XV2.smartQ)?XV2.smartQ(size):null;return sq||mkQ(pickWeak(),size)}
+ if((k==='op')&&(v==='con'||v==='app')&&window.XV2)return XV2.mkCat(v,size);
  if(k==='tm'){const n=+v,b=rnd(2,12),r=n*b;if(Math.random()<.3)return{t:fa(n)+' × ?',r:b,e:' = '+fa(r),tb:'x'+n};
   return Math.random()<.5?{t:fa(n)+' × '+fa(b),r,tb:'x'+n}:{t:fa(b)+' × '+fa(n),r,tb:'x'+n}}
  if(k==='td'){const n=+v,r=rnd(2,12);return{t:fa(n*r)+' ÷ '+fa(n),r,tb:'d'+n}}
@@ -739,17 +749,19 @@ function pgen(s){const rq=s.rq||(s.rq=[]),i=rq.findIndex(x=>x.at<=s.n+1);
 function practiceM(){if(G.on)return stopMsg();xs();const sz=S.psz|0;
  const chip=(k,l)=>'<button class="xc" data-xp="'+k+'">'+l+'</button>',nums=[];for(let i=2;i<=12;i++)nums.push(i);
  modal('<h2>🏋️ '+T('حالت تمرین','Practice mode','وضع التدريب')+'</h2><div class="it" style="display:block">'+T('بدون زمان و بدون جان. جواب غلط بعداً دوباره پرسیده می‌شود تا یاد بگیری. هر پاسخ درست ۱ تجربه می‌دهد (حداکثر ۳۰ در روز).','No timer, no lives. Wrong answers come back later so you learn them. Each correct answer gives 1 XP (max 30 a day).','بلا وقت وبلا أرواح. تعود الإجابة الخاطئة لاحقاً لتتعلمها. كل إجابة صحيحة تعطي ١ خبرة (حتى ٣٠ يومياً).')+'</div>'+sugHTML()+
- '<b>'+T('موضوع','Topic','الموضوع')+'</b><div class="xrow">'+OPS.map(o=>chip('op:'+o[0],o[1]+' '+o[2])).join('')+chip('all','🎲 '+T('ترکیبی','Mixed','متنوع'))+chip('weak','🎯 '+T('نقطه‌ضعف‌های من','My weak spots','نقاط ضعفي'))+'</div>'+
+ '<b>'+T('موضوع','Topic','الموضوع')+'</b><div class="xrow">'+OPS.map(o=>chip('op:'+o[0],o[1]+' '+o[2])).join('')+(window.XV2?XV2.CATS.filter(c=>c[0]==='con'||c[0]==='app').map(c=>chip('op:'+c[0],c[1]+' '+c[2])).join(''):'')+chip('all','🎲 '+T('ترکیبی','Mixed','متنوع'))+chip('weak','🧠 '+T('تمرین هوشمند (از ضعف‌هایم)','Smart practice (from my weak spots)','التدريب الذكي (من نقاط ضعفي)'))+'</div>'+
  '<b>✖️ '+T('جدول ضرب','Times table','جدول الضرب')+'</b><div class="xrow">'+nums.map(n=>chip('tm:'+n,nn(n))).join('')+'</div>'+
  '<b>➗ '+T('تقسیم بر','Divide by','القسمة على')+'</b><div class="xrow">'+nums.map(n=>chip('td:'+n,nn(n))).join('')+'</div>'+
  '<b>🔢 '+T('بزرگی اعداد','Number size','حجم الأعداد')+'</b><div class="xrow">'+[T('کوچک','Small','صغيرة'),T('متوسط','Medium','متوسطة'),T('بزرگ','Large','كبيرة')].map((l,i)=>'<button class="xc'+(i===sz?' on':'')+'" data-xs="'+i+'">'+l+'</button>').join('')+'</div>')}
 function pxp(){const d=today();if(!S.px||S.px.d!==d)S.px={d,v:0};if(S.px.v<30){S.px.v++;S.xp++;lvUp();ui()}}
 function xPractice(topic){if(G.on)return stopMsg();xs();
  qOpen({title:'🏋️ '+topicName(topic),topic,size:S.psz|0,auto:650,gen:pgen,
-  onAns:(q,ok,s)=>{if(ok)pxp();else(s.rq=s.rq||[]).push({q:{t:q.t,e:q.e,r:q.r,tb:q.tb},at:s.n+3})},
+  onAns:(q,ok,s)=>{if(q.tag){const b=(s.bc=s.bc||{}),a=b[q.tag]||(b[q.tag]=[0,0]);a[0]++;if(ok)a[1]++}
+   if(ok)pxp();else(s.rq=s.rq||[]).push({q:{t:q.t,e:q.e,r:q.r,tb:q.tb,cat:q.cat,x:q.x,tag:q.tag},at:s.n+3})},
   done:s=>{const t=s.ok+s.bad,acc=t?Math.round(s.ok/t*100):0;save();
    if(t>=10&&acc>=90)setTimeout(()=>toast('🎓 '+T('تسلط عالی روی این موضوع!','Great mastery of this topic!','إتقان رائع لهذا الموضوع!')),300);
    return'<h2>🏋️ '+topicName(s.topic)+'</h2><div class="it"><span>✅ / ❌</span><b>'+nn(s.ok)+' / '+nn(s.bad)+'</b></div><div class="it"><span>🎯 '+T('دقت','Accuracy','الدقة')+'</span><b>'+nn(acc)+PCT+'</b></div><div class="it"><span>🔥 '+T('بهترین زنجیره','Best streak','أفضل سلسلة')+'</span><b>'+nn(s.best)+'</b></div>'+
+   (s.bc?'<h2 style="margin-top:8px">🧠 '+T('تمرین‌شده در این دور','Covered this round','ما تدربت عليه')+'</h2>'+Object.keys(s.bc).map(k=>'<div class="it"><span>'+k+'</span><b>'+nn(s.bc[k][1])+' / '+nn(s.bc[k][0])+'</b></div>').join(''):'')+
    (s.mis&&s.mis.length?'<h2 style="margin-top:8px">📚 '+T('مرور اشتباهات','Review mistakes','مراجعة الأخطاء')+'</h2>'+s.mis.slice(0,6).map(x=>'<div class="it" style="direction:ltr;justify-content:center">'+x.t+(x.e||' =')+' '+fa(x.r)+'</div>').join(''):'')+
    '<button class="btn go" data-xp="'+s.topic+'" style="margin-top:6px">🔁 '+T('ادامه‌ی تمرین','Keep practicing','واصل التدريب')+'</button><button class="btn t1" data-x="pr" style="width:100%;margin-top:6px">🏋️ '+T('انتخاب موضوع دیگر','Pick another topic','اختر موضوعاً آخر')+'</button>'+sugHTML()}})}
 
@@ -929,6 +941,7 @@ document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)r
  if(d.xq==='end'){qFin();return}
  if(d.xd){dailyAct(d.xd);return}});
 
+window.XV1={mkQ,opOf,opN,OPS,topicName,accOf,weakest,srAdd,curQ:()=>XQ.a&&XQ.a.q};
 const nav='<div class="nav" id="xnav">'+[['pr','🏋️',T('تمرین','Practice','تدريب')],['an','📊',T('تحلیل','Analysis','تحليل')],['dl','📅',T('چالش روز','Daily','اليومي')],['sv','♾',T('بقا','Survival','البقاء')],['r6','⏱',T('۶۰ ثانیه','60 sec','٦٠ ث')],['rv','🔁',T('مرور','Review','مراجعة')],['cz','🛍',T('ظاهر','Style','المظهر')],['cd','🎴',T('کارت','Card','بطاقة')]].map(b=>'<button data-x="'+b[0]+'"'+(b[0]==='rv'?' id="xrv"':'')+'><b>'+b[1]+'</b>'+b[2]+'</button>').join('')+'</div>';
 $('.hd').insertAdjacentHTML('afterend','<button class="xid" id="xid" data-x="cz" aria-label="'+T('پروفایل ظاهری','Look','المظهر')+'"><span class="xav" id="xav"></span><span class="xnm" id="xnm"></span><span class="xti" id="xti"></span></button>');
 $('.nav').insertAdjacentHTML('afterend',nav);
@@ -937,15 +950,18 @@ if(srDue().length&&S.srn!==today()){S.srn=today();save();setTimeout(()=>toast('�
 })();
 </script>
 <script>
-/* ===== Add-ons v2: solutions after mistakes, topics, conceptual/applied questions, report card.
-   Only wraps existing functions; nothing above is edited. ===== */
+/* ===== Add-ons v2: solutions after mistakes, topics, conceptual/applied questions, report card, smart practice.
+   Now fully trilingual (fa / en / ar). Persian output is identical to the previous version. ===== */
 (function(){'use strict';
-const nA=s=>String(s).replace(/[۰-۹]/g,d=>d.charCodeAt(0)-1776),f=fa;
+const f=n=>{const s=dg(fa(n));return LG==='en'?s.replace(/٫/g,'.'):s};
+const D=s=>{s=dg(String(s));return LG==='en'?s.replace(/٫/g,'.'):s};
+const nA=s=>String(s).replace(/[۰-۹]/g,d=>d.charCodeAt(0)-1776);
 const gcd=(a,b)=>b?gcd(b,a%b):a,isP=n=>{if(n<2)return false;for(let i=2;i*i<=n;i++)if(n%i===0)return false;return true};
-const stopT=()=>toast('ابتدا بازی را متوقف کن');
-document.head.insertAdjacentHTML('beforeend','<style>.xs{margin-top:8px;padding:10px;border-radius:12px;background:var(--shade);border:1px solid var(--bd);font-size:.8rem;line-height:1.9;text-align:right}.xsm{text-align:center;font:700 .9rem "Courier New",monospace;color:var(--gold);margin:2px 0}</style>');
+const J=LG==='en'?', ':'، ',PC=LG==='en'?'%':'٪';
+const stopT=()=>toast(Q('ابتدا بازی را متوقف کن','Stop the game first','أوقف اللعبة أولاً'));
+document.head.insertAdjacentHTML('beforeend','<style>.xs{margin-top:8px;padding:10px;border-radius:12px;background:var(--shade);border:1px solid var(--bd);font-size:.8rem;line-height:1.9;text-align:start}.xsm{text-align:center;font:700 .9rem "Courier New",monospace;color:var(--gold);margin:2px 0}</style>');
 S.rc=S.rc||{};
-const st2=(k,ok)=>{const h=S.rc[k]||(S.rc[k]={n:0,b:0});h.n++;if(!ok)h.b++};
+const rcAdd=(k,ok)=>{S.rc=S.rc||{};const h=S.rc[k]||(S.rc[k]={n:0,b:0});h.n++;if(!ok)h.b++;h.h=((h.h||'')+(ok?'1':'0')).slice(-20)};
 
 /* ---------- 1) step-by-step solutions ---------- */
 function sol(q){
@@ -953,106 +969,129 @@ function sol(q){
  const s=nA(String(q.t+(q.e||'')).replace(/<sup>(.*?)<\/sup>/g,'^$1').replace(/<sub>(.*?)<\/sub>/g,'_$1').replace(/<[^>]*>/g,'')).replace(/٫/g,'.').replace(/−/g,'-').replace(/\s+/g,' ').trim();
  let m;
  if(m=/^(\d+) ([+\-×÷]) (\d+)\b/.exec(s)){const a=+m[1],b=+m[3],o=m[2],O=o==='-'?'−':o,L=[];
-  if(o==='×'&&a>=10&&a%10&&b>=2){const t=a-a%10,u=a%10;L.push('عدد '+f(a)+' را به دهگان و یکان بشکنید:','#'+f(a)+' × '+f(b)+' = ('+f(t)+' × '+f(b)+') + ('+f(u)+' × '+f(b)+')','#= '+f(t*b)+' + '+f(u*b)+' = '+f(r))}
-  else if(o==='÷')L.push('چون '+f(b)+' × '+f(r)+' = '+f(a)+' است، خارج‌قسمت '+f(r)+' می‌شود:','#'+f(a)+' ÷ '+f(b)+' = '+f(r));
-  else if(o==='-')L.push('#'+f(a)+' − '+f(b)+' = '+f(r),'برای بررسی: '+f(r)+' + '+f(b)+' = '+f(a));
+  if(o==='×'&&a>=10&&a%10&&b>=2){const t=a-a%10,u=a%10;L.push(Q('عدد '+f(a)+' را به دهگان و یکان بشکنید:','Split '+f(a)+' into tens and ones:','جزّئ العدد '+f(a)+' إلى عشرات وآحاد:'),'#'+f(a)+' × '+f(b)+' = ('+f(t)+' × '+f(b)+') + ('+f(u)+' × '+f(b)+')','#= '+f(t*b)+' + '+f(u*b)+' = '+f(r))}
+  else if(o==='÷')L.push(Q('چون '+f(b)+' × '+f(r)+' = '+f(a)+' است، خارج‌قسمت '+f(r)+' می‌شود:','Since '+f(b)+' × '+f(r)+' = '+f(a)+', the quotient is '+f(r)+':','بما أن '+f(b)+' × '+f(r)+' = '+f(a)+' فإن ناتج القسمة '+f(r)+':'),'#'+f(a)+' ÷ '+f(b)+' = '+f(r));
+  else if(o==='-')L.push('#'+f(a)+' − '+f(b)+' = '+f(r),Q('برای بررسی: ','Check: ','للتحقق: ')+f(r)+' + '+f(b)+' = '+f(a));
   else L.push('#'+f(a)+' '+O+' '+f(b)+' = '+f(r));
   return L}
  if(m=/^(\d+) ([+\-×]) \? = (\d+)/.exec(s)){const a=+m[1],c=+m[3];
-  return m[2]==='+'?['مجهول = مجموع − عدد معلوم','#'+f(c)+' − '+f(a)+' = '+f(r)]:m[2]==='-'?['مجهول = عدد اول − حاصل','#'+f(a)+' − '+f(c)+' = '+f(r)]:['مجهول = حاصل ÷ عدد معلوم','#'+f(c)+' ÷ '+f(a)+' = '+f(r)]}
- if(m=/^(\d+)\^(\d+)/.exec(s)){const a=+m[1],b=+m[2];return[f(a)+' را '+f(b)+' بار در خودش ضرب کنید:','#'+Array(b).fill(f(a)).join(' × ')+' = '+f(r)]}
- if(m=/^√(\d+)/.exec(s))return['دنبال عددی بگردید که مربعش '+f(m[1])+' شود:','#'+f(r)+' × '+f(r)+' = '+f(m[1]),'#√'+f(m[1])+' = '+f(r)];
- if(m=/^log_(\d+)\((\d+)\)/.exec(s))return['لگاریتم یعنی '+f(m[1])+' را به چه توانی برسانیم تا '+f(m[2])+' شود؟','#'+f(m[1])+'^'+f(r)+' = '+f(m[2]),'#log'+f(m[1])+'('+f(m[2])+') = '+f(r)];
- if(m=/^(\d+)!/.exec(s)){const n=+m[1],a=[];for(let i=n;i>=1;i--)a.push(f(i));return['فاکتوریل یعنی ضرب همه‌ی عددهای از ۱ تا '+f(n)+':','#'+f(n)+'! = '+a.join(' × ')+' = '+f(r)]}
+  return m[2]==='+'?[Q('مجهول = مجموع − عدد معلوم','Unknown = total − known number','المجهول = المجموع − العدد المعلوم'),'#'+f(c)+' − '+f(a)+' = '+f(r)]:m[2]==='-'?[Q('مجهول = عدد اول − حاصل','Unknown = first number − result','المجهول = العدد الأول − الناتج'),'#'+f(a)+' − '+f(c)+' = '+f(r)]:[Q('مجهول = حاصل ÷ عدد معلوم','Unknown = product ÷ known number','المجهول = الناتج ÷ العدد المعلوم'),'#'+f(c)+' ÷ '+f(a)+' = '+f(r)]}
+ if(m=/^(\d+)\^(\d+)/.exec(s)){const a=+m[1],b=+m[2];return[Q(f(a)+' را '+f(b)+' بار در خودش ضرب کنید:','Multiply '+f(a)+' by itself, using '+f(b)+' factors:','اضرب '+f(a)+' في نفسه، بـ '+f(b)+' عوامل:'),'#'+Array(b).fill(f(a)).join(' × ')+' = '+f(r)]}
+ if(m=/^√(\d+)/.exec(s))return[Q('دنبال عددی بگردید که مربعش '+f(m[1])+' شود:','Find the number whose square is '+f(m[1])+':','ابحث عن العدد الذي مربعه '+f(m[1])+':'),'#'+f(r)+' × '+f(r)+' = '+f(m[1]),'#√'+f(m[1])+' = '+f(r)];
+ if(m=/^log_(\d+)\((\d+)\)/.exec(s))return[Q('لگاریتم یعنی '+f(m[1])+' را به چه توانی برسانیم تا '+f(m[2])+' شود؟','A logarithm asks: to what power must '+f(m[1])+' be raised to get '+f(m[2])+'?','اللوغاريتم يسأل: إلى أي أس نرفع '+f(m[1])+' لنحصل على '+f(m[2])+'؟'),'#'+f(m[1])+'^'+f(r)+' = '+f(m[2]),'#log'+f(m[1])+'('+f(m[2])+') = '+f(r)];
+ if(m=/^(\d+)!/.exec(s)){const n=+m[1],a=[];for(let i=n;i>=1;i--)a.push(f(i));return[Q('فاکتوریل یعنی ضرب همه‌ی عددهای از ۱ تا '+f(n)+':','A factorial multiplies all whole numbers from 1 to '+f(n)+':','العاملي هو ضرب كل الأعداد الصحيحة من ١ إلى '+f(n)+':'),'#'+f(n)+'! = '+a.join(' × ')+' = '+f(r)]}
  if(m=/^(sin|cos|tan|cot)\((\d+)°\)/.exec(s)){const FR={0:'0',.5:'1/2',.71:'√2/2',.87:'√3/2',1:'1',.58:'√3/3',1.73:'√3'};
-  const L=['از جدول زاویه‌های مهم (۳۰، ۴۵، ۶۰):','#'+m[1]+'('+f(m[2])+'°) = '+(FR[r]||f(r))+' ≈ '+f(r)];if(m[1]==='tan'||m[1]==='cot')L.push('tan = sin ÷ cos  و  cot = cos ÷ sin');return L}
- return['پاسخ درست: '+f(r)]}
+  const L=[Q('از جدول زاویه‌های مهم (۳۰، ۴۵، ۶۰):','From the table of key angles (30°, 45°, 60°):','من جدول الزوايا المهمة (٣٠°، ٤٥°، ٦٠°):'),'#'+m[1]+'('+f(m[2])+'°) = '+(FR[r]||f(r))+' ≈ '+f(r)];if(m[1]==='tan'||m[1]==='cot')L.push(Q('tan = sin ÷ cos  و  cot = cos ÷ sin','tan = sin ÷ cos and cot = cos ÷ sin','tan = sin ÷ cos و cot = cos ÷ sin'));return L}
+ return[Q('پاسخ درست: ','Correct answer: ','الإجابة الصحيحة: ')+f(r)]}
 const rend=L=>(Array.isArray(L)?L:[L]).map(x=>x[0]==='#'?'<div dir="ltr" class="xsm">'+x.slice(1).replace(/</g,'&lt;')+'</div>':'<div>'+x+'</div>').join('');
-const solH=q=>'<b>📖 راه‌حل</b>'+rend(sol(q));
+const solH=q=>'<b>📖 '+Q('راه‌حل','Solution','الحل')+'</b>'+rend(sol(q));
 const qTxt=q=>q.t+(q.e||' = ?');
 function showSol(q){const o=$('#xsol');if(o)o.remove();$('#ms').insertAdjacentHTML('afterend','<div class="xs" id="xsol" data-nt>'+solH(q)+'</div>')}
 function xpSol(){const m=$('#xqm'),w=$('#xop .w'),c=$('#xop .c');if(!m||!w||!c||m.querySelector('.xs'))return;
- m.insertAdjacentHTML('beforeend','<div class="xs" data-nt>'+solH({t:$('#xqt').innerHTML,e:' ',r:parseFloat(c.dataset.v)})+'</div>')}
+ let q=window.XV1&&XV1.curQ&&XV1.curQ();if(!q)q={t:$('#xqt').innerHTML,e:' ',r:parseFloat(c.dataset.v)};
+ m.insertAdjacentHTML('beforeend','<div class="xs" data-nt>'+solH(q)+'</div>')}
 
 /* ---------- 2+3) topics, conceptual & applied questions ---------- */
 const CON=[
- z=>{const a=Array.from({length:4},()=>rnd(1,[20,60,99][z])),ev=a.filter(x=>x%2===0);return{t:'از بین اعداد '+a.map(f).join('، ')+' چند عدد زوج است؟',r:ev.length,x:['عدد زوج بر ۲ بخش‌پذیر است (رقم یکانش ۰، ۲، ۴، ۶ یا ۸).',ev.length?'عددهای زوج: '+ev.map(f).join('، '):'هیچ‌کدام زوج نیستند.','#تعداد = '+f(ev.length)]}},
- z=>{const n=rnd(8,[30,80,150][z]);let p=n+1;while(!isP(p))p++;return{t:'کوچک‌ترین عدد اول بزرگ‌تر از '+f(n)+' چند است؟',r:p,x:['عدد اول فقط بر ۱ و خودش بخش‌پذیر است.','از '+f(n+1)+' شروع کنید و بالا بروید؛ عددهای قبل از '+f(p)+' همگی مرکب‌اند.','#'+f(p)+' اول است']}},
- z=>{const M=[6,9,12][z],g=rnd(2,M),a=g*rnd(2,M),b=g*rnd(2,M);if(a===b)return CON[2](z);const d=gcd(a,b);return{t:'بزرگ‌ترین مقسوم‌علیه مشترک (ب.م.م) دو عدد '+f(a)+' و '+f(b)+' چند است؟',r:d,x:['بزرگ‌ترین عددی را بیابید که هر دو عدد را بشمارد:','#'+f(a)+' = '+f(d)+' × '+f(a/d),'#'+f(b)+' = '+f(d)+' × '+f(b/d),'ضریب‌های '+f(a/d)+' و '+f(b/d)+' عامل مشترک ندارند، پس ب.م.م برابر '+f(d)+' است.']}},
- z=>{const M=[8,12,15][z],a=rnd(2,M);let b=rnd(2,M);if(a===b)b=a+1;const d=gcd(a,b),l=a/d*b;return{t:'کوچک‌ترین مضرب مشترک (ک.م.م) دو عدد '+f(a)+' و '+f(b)+' چند است؟',r:l,x:['ک.م.م = (حاصل‌ضرب دو عدد) ÷ (ب.م.م)','#'+f(a)+' × '+f(b)+' ÷ '+f(d)+' = '+f(l)]}},
- z=>{const n=rnd(3,[7,10,12][z]);return{t:'مجموع زاویه‌های داخلی یک '+f(n)+'‌ضلعی محدب چند درجه است؟',r:(n-2)*180,x:['هر n‌ضلعی را می‌شود از یک رأس به (n − ۲) مثلث تقسیم کرد و مجموع زاویه‌های هر مثلث ۱۸۰ درجه است.','#('+f(n)+' − ۲) × ۱۸۰ = '+f((n-2)*180)]}},
- z=>{const m=[10,40,90][z],a=[rnd(1,m),rnd(1,m),rnd(1,m)],s=a[0]+a[1]+a[2];let x=rnd(1,m);while((s+x)%4)x++;const all=[...a,x];return{t:'میانگین اعداد '+all.map(f).join('، ')+' چند است؟',r:(s+x)/4,x:['میانگین = مجموع اعداد ÷ تعداد اعداد','#('+all.map(f).join(' + ')+') ÷ ۴ = '+f(s+x)+' ÷ ۴ = '+f((s+x)/4)]}},
- z=>{const n=pick([[6,8,10,12,14,15],[16,18,20,24,28,30],[36,40,42,48,60,72]][z]),ds=[];for(let i=1;i<=n;i++)if(n%i===0)ds.push(i);return{t:'عدد '+f(n)+' چند مقسوم‌علیه (شمارنده) دارد؟',r:ds.length,x:['همه‌ی عددهایی را که '+f(n)+' بر آن‌ها بخش‌پذیر است بنویسید:','#'+ds.map(f).join('، '),'تعداد = '+f(ds.length)]}},
- z=>{const k=rnd(2,[6,9,12][z]),n=rnd(20,[60,120,300][z]),c=Math.floor(n/k);return{t:'چند عدد از ۱ تا '+f(n)+' بر '+f(k)+' بخش‌پذیر است؟',r:c,x:['مضرب‌های '+f(k)+' عبارت‌اند از '+f(k)+'، '+f(2*k)+'، '+f(3*k)+' و ...','تعداد مضرب‌ها = قسمت صحیح (‏'+f(n)+' ÷ '+f(k)+'‏) = '+f(c)]}}];
+ z=>{const a=Array.from({length:4},()=>rnd(1,[20,60,99][z])),ev=a.filter(x=>x%2===0);return{t:Q('از بین اعداد '+a.map(f).join(J)+' چند عدد زوج است؟','How many of these numbers are even: '+a.map(f).join(J)+'?','كم عدداً زوجياً بين الأعداد: '+a.map(f).join(J)+'؟'),r:ev.length,x:[Q('عدد زوج بر ۲ بخش‌پذیر است (رقم یکانش ۰، ۲، ۴، ۶ یا ۸).','An even number is divisible by 2 (its last digit is 0, 2, 4, 6 or 8).','العدد الزوجي يقبل القسمة على ٢ (رقم آحاده ٠ أو ٢ أو ٤ أو ٦ أو ٨).'),ev.length?Q('عددهای زوج: ','Even numbers: ','الأعداد الزوجية: ')+ev.map(f).join(J):Q('هیچ‌کدام زوج نیستند.','None of them is even.','لا يوجد عدد زوجي بينها.'),'#'+Q('تعداد','count','العدد')+' = '+f(ev.length)]}},
+ z=>{const n=rnd(8,[30,80,150][z]);let p=n+1;while(!isP(p))p++;return{t:Q('کوچک‌ترین عدد اول بزرگ‌تر از '+f(n)+' چند است؟','What is the smallest prime number greater than '+f(n)+'?','ما هو أصغر عدد أولي أكبر من '+f(n)+'؟'),r:p,x:[Q('عدد اول فقط بر ۱ و خودش بخش‌پذیر است.','A prime number is divisible only by 1 and itself.','العدد الأولي يقبل القسمة على ١ ونفسه فقط.'),Q('از '+f(n+1)+' شروع کنید و بالا بروید؛ عددهای قبل از '+f(p)+' همگی مرکب‌اند.','Start at '+f(n+1)+' and go up; every number before '+f(p)+' is composite.','ابدأ من '+f(n+1)+' وتقدّم للأعلى؛ كل الأعداد قبل '+f(p)+' مركّبة.'),'#'+f(p)+Q(' اول است',' is prime',' عدد أولي')]}},
+ z=>{const M=[6,9,12][z],g=rnd(2,M),a=g*rnd(2,M),b=g*rnd(2,M);if(a===b)return CON[2](z);const d=gcd(a,b);return{t:Q('بزرگ‌ترین مقسوم‌علیه مشترک (ب.م.م) دو عدد '+f(a)+' و '+f(b)+' چند است؟','What is the greatest common divisor (GCD) of '+f(a)+' and '+f(b)+'?','ما هو القاسم المشترك الأكبر (ق.م.أ) للعددين '+f(a)+' و '+f(b)+'؟'),r:d,x:[Q('بزرگ‌ترین عددی را بیابید که هر دو عدد را بشمارد:','Find the largest number that divides both:','أوجد أكبر عدد يقسم العددين معاً:'),'#'+f(a)+' = '+f(d)+' × '+f(a/d),'#'+f(b)+' = '+f(d)+' × '+f(b/d),Q('ضریب‌های '+f(a/d)+' و '+f(b/d)+' عامل مشترک ندارند، پس ب.م.م برابر '+f(d)+' است.','The factors '+f(a/d)+' and '+f(b/d)+' share no common factor, so the GCD is '+f(d)+'.','العاملان '+f(a/d)+' و '+f(b/d)+' لا يشتركان في قاسم، إذن القاسم المشترك الأكبر هو '+f(d)+'.')]}},
+ z=>{const M=[8,12,15][z],a=rnd(2,M);let b=rnd(2,M);if(a===b)b=a+1;const d=gcd(a,b),l=a/d*b;return{t:Q('کوچک‌ترین مضرب مشترک (ک.م.م) دو عدد '+f(a)+' و '+f(b)+' چند است؟','What is the least common multiple (LCM) of '+f(a)+' and '+f(b)+'?','ما هو المضاعف المشترك الأصغر (م.م.أ) للعددين '+f(a)+' و '+f(b)+'؟'),r:l,x:[Q('ک.م.م = (حاصل‌ضرب دو عدد) ÷ (ب.م.م)','LCM = (product of the two numbers) ÷ GCD','م.م.أ = (حاصل ضرب العددين) ÷ ق.م.أ'),'#'+f(a)+' × '+f(b)+' ÷ '+f(d)+' = '+f(l)]}},
+ z=>{const n=rnd(3,[7,10,12][z]);return{t:Q('مجموع زاویه‌های داخلی یک '+f(n)+'‌ضلعی محدب چند درجه است؟','What is the sum of the interior angles of a convex polygon with '+f(n)+' sides, in degrees?','ما مجموع الزوايا الداخلية لمضلع محدب ذي '+f(n)+' أضلاع بالدرجات؟'),r:(n-2)*180,x:[Q('هر n‌ضلعی را می‌شود از یک رأس به (n − ۲) مثلث تقسیم کرد و مجموع زاویه‌های هر مثلث ۱۸۰ درجه است.','Any n-gon can be split from one vertex into (n − 2) triangles, and the angles of each triangle add up to 180°.','يمكن تقسيم أي مضلع ذي n ضلعاً من رأس واحد إلى (n − ٢) مثلثات، ومجموع زوايا كل مثلث ١٨٠°.'),'#('+f(n)+' − '+f(2)+') × '+f(180)+' = '+f((n-2)*180)]}},
+ z=>{const m=[10,40,90][z],a=[rnd(1,m),rnd(1,m),rnd(1,m)],s=a[0]+a[1]+a[2];let x=rnd(1,m);while((s+x)%4)x++;const all=[...a,x];return{t:Q('میانگین اعداد '+all.map(f).join(J)+' چند است؟','What is the mean of the numbers '+all.map(f).join(J)+'?','ما متوسط الأعداد '+all.map(f).join(J)+'؟'),r:(s+x)/4,x:[Q('میانگین = مجموع اعداد ÷ تعداد اعداد','Mean = sum of the numbers ÷ how many numbers','المتوسط = مجموع الأعداد ÷ عددها'),'#('+all.map(f).join(' + ')+') ÷ '+f(4)+' = '+f(s+x)+' ÷ '+f(4)+' = '+f((s+x)/4)]}},
+ z=>{const n=pick([[6,8,10,12,14,15],[16,18,20,24,28,30],[36,40,42,48,60,72]][z]),ds=[];for(let i=1;i<=n;i++)if(n%i===0)ds.push(i);return{t:Q('عدد '+f(n)+' چند مقسوم‌علیه (شمارنده) دارد؟','How many divisors does '+f(n)+' have?','كم قاسماً للعدد '+f(n)+'؟'),r:ds.length,x:[Q('همه‌ی عددهایی را که '+f(n)+' بر آن‌ها بخش‌پذیر است بنویسید:','List every number that divides '+f(n)+' evenly:','اكتب كل الأعداد التي يقبل '+f(n)+' القسمة عليها:'),'#'+ds.map(f).join(J),Q('تعداد = ','Count = ','العدد = ')+f(ds.length)]}},
+ z=>{const k=rnd(2,[6,9,12][z]),n=rnd(20,[60,120,300][z]),c=Math.floor(n/k);return{t:Q('چند عدد از ۱ تا '+f(n)+' بر '+f(k)+' بخش‌پذیر است؟','How many numbers from 1 to '+f(n)+' are divisible by '+f(k)+'?','كم عدداً من ١ إلى '+f(n)+' يقبل القسمة على '+f(k)+'؟'),r:c,x:[Q('مضرب‌های '+f(k)+' عبارت‌اند از '+f(k)+'، '+f(2*k)+'، '+f(3*k)+' و ...','The multiples of '+f(k)+' are '+f(k)+', '+f(2*k)+', '+f(3*k)+', ...','مضاعفات '+f(k)+' هي '+f(k)+'، '+f(2*k)+'، '+f(3*k)+'، ...'),Q('تعداد مضرب‌ها = قسمت صحیح (‏'+f(n)+' ÷ '+f(k)+'‏) = '+f(c),'Number of multiples = whole part of ('+f(n)+' ÷ '+f(k)+') = '+f(c),'عدد المضاعفات = الجزء الصحيح من ('+f(n)+' ÷ '+f(k)+') = '+f(c))]}}];
 const APP=[
- z=>{const n=rnd(2,[6,9,12][z]),p=rnd(2,[10,20,40][z])*5;return{t:'علی '+f(n)+' دفتر خرید. قیمت هر دفتر '+f(p)+' هزار تومان است. روی هم چند هزار تومان پرداخت کرد؟',r:n*p,x:['قیمت کل = تعداد × قیمت هر دفتر','#'+f(n)+' × '+f(p)+' = '+f(n*p)]}},
- z=>{const v=rnd(4,[10,14,18][z])*10,t=rnd(2,[4,6,8][z]);return{t:'اتومبیلی با سرعت ثابت '+f(v)+' کیلومتر بر ساعت، '+f(t)+' ساعت حرکت می‌کند. چند کیلومتر راه می‌رود؟',r:v*t,x:['مسافت = سرعت × زمان','#'+f(v)+' × '+f(t)+' = '+f(v*t)]}},
- z=>{const p=rnd(5,[20,40,60][z])*20,d=pick([10,20,25,50]),c=p*d/100;return{t:'قیمت یک کفش '+f(p)+' هزار تومان است. اگر '+f(d)+' درصد تخفیف بگیرد، چند هزار تومان باید بپردازد؟',r:p-c,x:['مقدار تخفیف = قیمت × درصد ÷ ۱۰۰','#'+f(p)+' × '+f(d)+' ÷ ۱۰۰ = '+f(c),'مبلغ پرداختی = قیمت − تخفیف','#'+f(p)+' − '+f(c)+' = '+f(p-c)]}},
- z=>{const a=rnd(3,[12,25,40][z]),b=rnd(2,[10,20,30][z]);if(Math.random()<.5)return{t:'طول و عرض یک زمین مستطیلی '+f(a)+' و '+f(b)+' متر است. محیط زمین چند متر است؟',r:2*(a+b),x:['محیط مستطیل = ۲ × (طول + عرض)','#۲ × ('+f(a)+' + '+f(b)+') = '+f(2*(a+b))]};return{t:'طول و عرض یک زمین مستطیلی '+f(a)+' و '+f(b)+' متر است. مساحت زمین چند متر مربع است؟',r:a*b,x:['مساحت مستطیل = طول × عرض','#'+f(a)+' × '+f(b)+' = '+f(a*b)]}},
- z=>{const k=rnd(3,[6,9,12][z]),q=rnd(3,[8,12,20][z]);return{t:'تعداد '+f(k*q)+' شکلات را بین '+f(k)+' کودک مساوی تقسیم می‌کنیم. به هر کودک چند شکلات می‌رسد؟',r:q,x:['سهم هر نفر = کل ÷ تعداد نفرات','#'+f(k*q)+' ÷ '+f(k)+' = '+f(q)]}},
- z=>{const a=rnd(10,[20,20,20][z]),b=rnd(10,20);let c=rnd(10,20);while((a+b+c)%3)c=c<20?c+1:10;return{t:'نمره‌های سارا در سه آزمون '+f(a)+'، '+f(b)+' و '+f(c)+' بود. میانگین نمره‌هایش چند است؟',r:(a+b+c)/3,x:['میانگین = مجموع نمره‌ها ÷ تعداد آزمون‌ها','#('+f(a)+' + '+f(b)+' + '+f(c)+') ÷ ۳ = '+f(a+b+c)+' ÷ ۳ = '+f((a+b+c)/3)]}}];
+ z=>{const n=rnd(2,[6,9,12][z]),p=rnd(2,[10,20,40][z])*5;return{t:Q('علی '+f(n)+' دفتر خرید. قیمت هر دفتر '+f(p)+' هزار تومان است. روی هم چند هزار تومان پرداخت کرد؟','Ali bought '+f(n)+' notebooks. Each notebook costs '+f(p)+' thousand tomans. How many thousand tomans did he pay in total?','اشترى علي '+f(n)+' دفاتر. سعر كل دفتر '+f(p)+' ألف تومان. كم ألف تومان دفع في المجموع؟'),r:n*p,x:[Q('قیمت کل = تعداد × قیمت هر دفتر','Total price = number × price of each notebook','السعر الكلي = العدد × سعر الدفتر الواحد'),'#'+f(n)+' × '+f(p)+' = '+f(n*p)]}},
+ z=>{const v=rnd(4,[10,14,18][z])*10,t=rnd(2,[4,6,8][z]);return{t:Q('اتومبیلی با سرعت ثابت '+f(v)+' کیلومتر بر ساعت، '+f(t)+' ساعت حرکت می‌کند. چند کیلومتر راه می‌رود؟','A car travels at a constant speed of '+f(v)+' km/h for '+f(t)+' hours. How many kilometers does it cover?','تسير سيارة بسرعة ثابتة '+f(v)+' كم/س لمدة '+f(t)+' ساعات. كم كيلومتراً تقطع؟'),r:v*t,x:[Q('مسافت = سرعت × زمان','Distance = speed × time','المسافة = السرعة × الزمن'),'#'+f(v)+' × '+f(t)+' = '+f(v*t)]}},
+ z=>{const p=rnd(5,[20,40,60][z])*20,d=pick([10,20,25,50]),c=p*d/100;return{t:Q('قیمت یک کفش '+f(p)+' هزار تومان است. اگر '+f(d)+' درصد تخفیف بگیرد، چند هزار تومان باید بپردازد؟','A pair of shoes costs '+f(p)+' thousand tomans. With a '+f(d)+'% discount, how many thousand tomans must be paid?','سعر حذاء '+f(p)+' ألف تومان. إذا حصل على خصم '+f(d)+'٪، كم ألف تومان يجب أن يدفع؟'),r:p-c,x:[Q('مقدار تخفیف = قیمت × درصد ÷ ۱۰۰','Discount = price × percent ÷ 100','مقدار الخصم = السعر × النسبة ÷ ١٠٠'),'#'+f(p)+' × '+f(d)+' ÷ '+f(100)+' = '+f(c),Q('مبلغ پرداختی = قیمت − تخفیف','Amount to pay = price − discount','المبلغ المدفوع = السعر − الخصم'),'#'+f(p)+' − '+f(c)+' = '+f(p-c)]}},
+ z=>{const a=rnd(3,[12,25,40][z]),b=rnd(2,[10,20,30][z]);if(Math.random()<.5)return{t:Q('طول و عرض یک زمین مستطیلی '+f(a)+' و '+f(b)+' متر است. محیط زمین چند متر است؟','A rectangular field is '+f(a)+' m long and '+f(b)+' m wide. What is its perimeter in meters?','قطعة أرض مستطيلة طولها '+f(a)+' م وعرضها '+f(b)+' م. كم متراً محيطها؟'),r:2*(a+b),x:[Q('محیط مستطیل = ۲ × (طول + عرض)','Perimeter of a rectangle = 2 × (length + width)','محيط المستطيل = ٢ × (الطول + العرض)'),'#'+f(2)+' × ('+f(a)+' + '+f(b)+') = '+f(2*(a+b))]};return{t:Q('طول و عرض یک زمین مستطیلی '+f(a)+' و '+f(b)+' متر است. مساحت زمین چند متر مربع است؟','A rectangular field is '+f(a)+' m long and '+f(b)+' m wide. What is its area in square meters?','قطعة أرض مستطيلة طولها '+f(a)+' م وعرضها '+f(b)+' م. كم متراً مربعاً مساحتها؟'),r:a*b,x:[Q('مساحت مستطیل = طول × عرض','Area of a rectangle = length × width','مساحة المستطيل = الطول × العرض'),'#'+f(a)+' × '+f(b)+' = '+f(a*b)]}},
+ z=>{const k=rnd(3,[6,9,12][z]),q=rnd(3,[8,12,20][z]);return{t:Q('تعداد '+f(k*q)+' شکلات را بین '+f(k)+' کودک مساوی تقسیم می‌کنیم. به هر کودک چند شکلات می‌رسد؟','We share '+f(k*q)+' chocolates equally among '+f(k)+' children. How many chocolates does each child get?','نوزّع '+f(k*q)+' قطعة شوكولاتة بالتساوي على '+f(k)+' أطفال. كم قطعة يأخذ كل طفل؟'),r:q,x:[Q('سهم هر نفر = کل ÷ تعداد نفرات','Each share = total ÷ number of people','نصيب كل واحد = المجموع ÷ عدد الأشخاص'),'#'+f(k*q)+' ÷ '+f(k)+' = '+f(q)]}},
+ z=>{const a=rnd(10,[20,20,20][z]),b=rnd(10,20);let c=rnd(10,20);while((a+b+c)%3)c=c<20?c+1:10;return{t:Q('نمره‌های سارا در سه آزمون '+f(a)+'، '+f(b)+' و '+f(c)+' بود. میانگین نمره‌هایش چند است؟','Sara’s scores on three tests were '+f(a)+', '+f(b)+' and '+f(c)+'. What is her average score?','كانت درجات سارة في ثلاثة اختبارات '+f(a)+'، '+f(b)+' و'+f(c)+'. ما متوسط درجاتها؟'),r:(a+b+c)/3,x:[Q('میانگین = مجموع نمره‌ها ÷ تعداد آزمون‌ها','Average = sum of the scores ÷ number of tests','المتوسط = مجموع الدرجات ÷ عدد الاختبارات'),'#('+f(a)+' + '+f(b)+' + '+f(c)+') ÷ '+f(3)+' = '+f(a+b+c)+' ÷ '+f(3)+' = '+f((a+b+c)/3)]}}];
 const TPO={'+':['+'],'-':['-'],'*':['*'],'/':['/'],'^':['^'],'√':['√'],'log':['log'],'!':['!'],'trig':['sin','cos','tan','cot']};
-const CATS=[['+','➕','جمع'],['-','➖','تفریق'],['*','✖️','ضرب'],['/','➗','تقسیم'],['^','⬆️','توان'],['√','√','ریشه'],['log','🧮','لگاریتم'],['!','❗','فاکتوریل'],['trig','📐','مثلثات'],['con','💡','مفهومی'],['app','🛒','کاربردی']];
-const TPN={mix:'🎲 ترکیبی'};CATS.forEach(c=>TPN[c[0]]=c[1]+' '+c[2]);
+const CATS=[['+','➕',Q('جمع','Addition','الجمع')],['-','➖',Q('تفریق','Subtraction','الطرح')],['*','✖️',Q('ضرب','Multiplication','الضرب')],['/','➗',Q('تقسیم','Division','القسمة')],['^','⬆️',Q('توان','Powers','القوى')],['√','√',Q('ریشه','Roots','الجذور')],['log','🧮',Q('لگاریتم','Logarithms','اللوغاريتمات')],['!','❗',Q('فاکتوریل','Factorials','العاملي')],['trig','📐',Q('مثلثات','Trigonometry','المثلثات')],['con','💡',Q('مفهومی','Conceptual','مفاهيمي')],['app','🛒',Q('کاربردی','Applied','تطبيقي')]];
+const TPN={mix:'🎲 '+Q('ترکیبی','Mixed','متنوع'),smart:'🧠 '+Q('هوشمند','Smart','ذكي')};CATS.forEach(c=>TPN[c[0]]=c[1]+' '+c[2]);
+const catLabel=c=>{const x=CATS.find(y=>y[0]===c);return x?x[1]+' '+x[2]:c};
 let tpNow=null,yTp=null;
-const mk=(a,cat,z)=>{const q=pick(a)(z);q.cat=cat;q.e=' ';return q};
+const mk=(a,cat,z)=>{const q=pick(a)(z);q.cat=cat;q.e=' ';q.tag=catLabel(cat);return q};
+const mkCat=(c,z)=>c==='con'?mk(CON,'con',z|0):mk(APP,'app',z|0);
+
+/* ---------- smart practice: question generation driven by the report-card data ---------- */
+function catStat(c){const h=(c==='con'||c==='app')?S.rc[c]:(S.ws||{})[c];if(!h||!h.n)return null;const s=h.h||'';
+ if(s.length>=3){let k=0;for(const ch of s)if(ch==='1')k++;return{n:h.n,a:k/s.length}}return{n:h.n,a:(h.n-h.b)/h.n}}
+const unlocked=()=>{const u=new Set();LV.filter(l=>l.r<=S.lvl).forEach(l=>l.o.forEach(o=>u.add(o)));return u};
+const opOpen=(c,u)=>c==='trig'?['sin','cos','tan','cot'].some(x=>u.has(x)):u.has(c);
+function smartWeights(){const u=unlocked();return CATS.map(c=>{const k=c[0],st=catStat(k);
+ if(!st&&k!=='con'&&k!=='app'&&!opOpen(k,u))return[k,0];
+ let w;if(!st||st.n<5)w=.35;else{w=.06+Math.pow(1-st.a,1.6)*1.2;if(st.a>=.9)w*=.5}
+ return[k,w]})}
+function smartCat(){const w=smartWeights(),tot=w.reduce((a,x)=>a+x[1],0);let r=Math.random()*tot;for(const x of w){if(x[1]<=0)continue;r-=x[1];if(r<=0)return x[0]}return'+'}
+function weakTable(c){const pre=c==='*'?'x':c==='/'?'d':null;if(!pre)return null;const cand=[];
+ for(let i=2;i<=12;i++){const h=S.wt&&S.wt[pre+i];if(h&&h.h&&h.h.length>=4){let k=0;for(const ch of h.h)if(ch==='1')k++;const a=k/h.h.length;if(a<.8)cand.push([i,a])}}
+ if(!cand.length||Math.random()>.6)return null;cand.sort((a,b)=>a[1]-b[1]);return(pre==='x'?'tm:':'td:')+cand[0][0]}
+function smartQ(size){const c=smartCat();if(c==='con'||c==='app')return mkCat(c,size);
+ const t=weakTable(c),q=XV1.mkQ(t||('op:'+c),size);q.tag=t?XV1.topicName(t):XV1.opN(c);q.cat=undefined;return q}
+
+/* ---------- generator / next / start hooks ---------- */
 const _gn=gen;
 gen=function(L){
  if(G&&G.on&&tpNow&&!G.pv&&!G.d){const z=L.m<=12?0:L.m<=60?1:2;
   if(tpNow==='con')return mk(CON,'con',z);if(tpNow==='app')return mk(APP,'app',z);
+  if(tpNow==='smart'){const c=smartCat();if(c==='con'||c==='app')return mkCat(c,z);const q=_gn(Object.assign({},L,{o:TPO[c]}));q.tag=catLabel(c);return q}
   if(tpNow==='mix'){const r=Math.random();if(r<.2)return mk(CON,'con',z);if(r<.4)return mk(APP,'app',z)}
   else if(TPO[tpNow])return _gn(Object.assign({},L,{o:TPO[tpNow]}))}
  return _gn(L)};
-const sty=on=>{const s=$('#qt').style;[['display','block'],['font-size','1.05rem'],['line-height','1.9'],['direction','rtl'],['font-family','inherit'],['white-space','normal']].forEach(p=>on?s.setProperty(p[0],p[1]):s.removeProperty(p[0]))};
+const sty=on=>{const q=$('#qt'),s=q.style;[['display','block'],['font-size','1.05rem'],['line-height','1.9'],['direction',LG==='en'?'ltr':'rtl'],['font-family','inherit'],['white-space','normal']].forEach(p=>on?s.setProperty(p[0],p[1]):s.removeProperty(p[0]));if(on)q.setAttribute('data-nt','');else q.removeAttribute('data-nt')};
 const _next=next;
-next=function(){_next.apply(this,arguments);try{const q=G.cq,tx=!!q&&/[\u0621-\u06D3]/.test(String(q.t).replace(/<[^>]*>/g,''));sty(tx);if(tx)G.ql=G.qm=Math.max(G.qm,q.cat==='app'?25:18)}catch(e){}};
+next=function(){_next.apply(this,arguments);try{const q=G.cq,tx=!!q&&!!q.cat;sty(tx);if(tx)G.ql=G.qm=Math.max(G.qm,q.cat==='app'?25:18)}catch(e){}};
 const _st=start;
 start=function(){const t=yTp;yTp=null;if(G.on)return _st.apply(this,arguments);
  tpNow=t;_st.apply(this,arguments);
  const o=$('#xsol');if(o)o.remove();
  if(!G.on){tpNow=null;return}
- G.tp=tpNow;if(['con','app','mix'].includes(t)){G.time=G.tot=Math.round(G.tot*1.6)}
- if(t)msg('📚 مبحث: '+TPN[t]);ui()};
+ G.tp=tpNow;if(['con','app','mix'].includes(t))G.time=G.tot=Math.round(G.tot*1.6);else if(t==='smart')G.time=G.tot=Math.round(G.tot*1.3);
+ if(t)msg('📚 '+Q('مبحث: ','Topic: ','الموضوع: ')+TPN[t]);ui()};
 const _ui=ui;
-ui=function(){_ui();try{const b=$('#xtp');if(b){const on=G.on&&G.tp;b.style.display=on?'':'none';if(on)b.textContent=TPN[G.tp]}}catch(e){}};
+ui=function(){_ui();try{const b=$('#xtp');if(b){const on=G.on&&G.tp;b.style.display=on?'':'none';if(on)b.textContent=(G.tp==='smart'&&G.cq&&G.cq.tag)?'🧠 '+G.cq.tag:TPN[G.tp]}}catch(e){}};
 $('#rk').parentNode.insertAdjacentHTML('beforeend','<span class="bdg v" id="xtp" style="display:none"></span>');
 
-/* ---------- answer / end hooks (solutions + stats) ---------- */
+/* ---------- answer / end hooks (solutions) ---------- */
 const _answer=answer;
 answer=function(btn){
  const q=G.cq,live=!!(G.on&&!G.pv&&!lock&&q),b0=G.bad;
  if(live){const o=$('#xsol');if(o)o.remove()}
  _answer.apply(this,arguments);
  if(!live)return;
- try{const bad=G.bad>b0;if(q.cat){st2(q.cat,!bad);save()}
-  if(bad){(G.xmis=G.xmis||[]).push(q);showSol(q)}}catch(e){console.error(e)}};
+ try{const bad=G.bad>b0;if(bad){(G.xmis=G.xmis||[]).push(q);showSol(q)}}catch(e){console.error(e)}};
 const _end=end;
 end=function(why){const was=G.on,mis=G.xmis;_end.apply(this,arguments);tpNow=null;
- try{if(was&&mis&&mis.length&&$('#md').classList.contains('on'))$('#mb').insertAdjacentHTML('beforeend','<div data-nt><h2 style="margin-top:8px">📖 راه‌حل اشتباهات</h2>'+mis.slice(0,5).map(q=>'<div class="xs"><div dir="auto" style="text-align:center;font-weight:700">'+qTxt(q)+'</div>'+rend(sol(q))+'</div>').join('')+'</div>')}catch(e){}};
+ try{if(was&&mis&&mis.length&&$('#md').classList.contains('on'))$('#mb').insertAdjacentHTML('beforeend','<div data-nt><h2 style="margin-top:8px">📖 '+Q('راه‌حل اشتباهات','Solutions to your mistakes','حلول أخطائك')+'</h2>'+mis.slice(0,5).map(q=>'<div class="xs"><div dir="auto" style="text-align:center;font-weight:700">'+D(qTxt(q))+'</div>'+rend(sol(q))+'</div>').join('')+'</div>')}catch(e){}};
 document.addEventListener('keydown',()=>{try{xpSol()}catch(e){}});
 
 /* ---------- topics menu ---------- */
 function topicsM(){if(G.on)return stopT();
- modal('<div data-nt><h2>📚 انتخاب مبحث</h2><div class="it" style="display:block">یک مبحث را انتخاب کن تا بازی فقط از همان مبحث سؤال بدهد. سختی اعداد بر اساس سطح انتخاب‌شده ('+LV[cur].n+') است. «مفهومی» و «کاربردی» زمان بیشتری برای هر سؤال دارند.</div><div class="xg">'+CATS.concat([['mix','🎲','ترکیبی']]).map(c=>'<button class="xc" data-ytp="'+c[0]+'">'+c[1]+'<small>'+c[2]+'</small></button>').join('')+'</div></div>')}
+ modal('<div data-nt><h2>📚 '+Q('انتخاب مبحث','Choose a topic','اختر موضوعاً')+'</h2><div class="it" style="display:block">'+Q('یک مبحث را انتخاب کن تا بازی فقط از همان مبحث سؤال بدهد. سختی اعداد بر اساس سطح انتخاب‌شده ('+tr(LV[cur].n)+') است. «مفهومی» و «کاربردی» زمان بیشتری برای هر سؤال دارند. «هوشمند» خودش از ضعیف‌ترین مبحث‌های کارنامه‌ات سؤال انتخاب می‌کند.','Pick a topic and the game will only ask questions from it. Number difficulty follows the selected level ('+tr(LV[cur].n)+'). “Conceptual” and “Applied” give you more time per question. “Smart” picks questions from the weakest topics on your report card.','اختر موضوعاً لتأتي الأسئلة منه فقط. تتبع صعوبة الأعداد المستوى المحدد ('+tr(LV[cur].n)+'). يمنحك «المفاهيمي» و«التطبيقي» وقتاً أطول لكل سؤال. أما «الذكي» فيختار الأسئلة من أضعف المواضيع في شهادتك.')+'</div><div class="xg">'+CATS.concat([['mix','🎲',Q('ترکیبی','Mixed','متنوع')],['smart','🧠',Q('هوشمند','Smart','ذكي')]]).map(c=>'<button class="xc" data-ytp="'+c[0]+'">'+c[1]+'<small>'+c[2]+'</small></button>').join('')+'</div></div>')}
 
 /* ---------- report card ---------- */
 function rcData(){return CATS.map(c=>{const h=(c[0]==='con'||c[0]==='app')?S.rc[c[0]]:(S.ws||{})[c[0]],n=h?h.n:0;return{k:c[0],i:c[1],nm:c[2],n,acc:n?(n-h.b)/n:null}})}
 function reportM(){
  const d=rcData(),tot=d.reduce((a,x)=>a+x.n,0);
- if(!tot)return modal('<div data-nt><h2>📋 کارنامه</h2><div class="it" style="display:block">هنوز داده‌ای ثبت نشده. چند دور بازی کن یا از «مباحث» یک مبحث را تمرین کن تا کارنامه‌ات ساخته شود.</div></div>');
+ if(!tot)return modal('<div data-nt><h2>📋 '+Q('کارنامه','Report card','الشهادة')+'</h2><div class="it" style="display:block">'+Q('هنوز داده‌ای ثبت نشده. چند دور بازی کن یا از «مباحث» یک مبحث را تمرین کن تا کارنامه‌ات ساخته شود.','No data yet. Play a few rounds or practice a topic from “Topics” and your report card will be built.','لا توجد بيانات بعد. العب بضع جولات أو تدرّب على موضوع من «المواضيع» لتُبنى شهادتك.')+'</div></div>');
  const sc=Math.round(d.reduce((a,x)=>a+(x.acc||0)*x.n,0)/tot*200)/10,
- gr=sc>=18?'🏆 عالی':sc>=15?'🌟 خیلی خوب':sc>=12?'👍 خوب':sc>=10?'🙂 قابل قبول':'💪 نیازمند تمرین',
+ gr=sc>=18?'🏆 '+Q('عالی','Excellent','ممتاز'):sc>=15?'🌟 '+Q('خیلی خوب','Very good','جيد جداً'):sc>=12?'👍 '+Q('خوب','Good','جيد'):sc>=10?'🙂 '+Q('قابل قبول','Acceptable','مقبول'):'💪 '+Q('نیازمند تمرین','Needs practice','يحتاج إلى تدريب'),
  ok=d.filter(x=>x.n>=5),stg=ok.filter(x=>x.acc>=.8).sort((a,b)=>b.acc-a.acc).slice(0,3),wk=ok.filter(x=>x.acc<.8).sort((a,b)=>a.acc-b.acc).slice(0,3),
- li=a=>a.map(x=>x.i+' '+x.nm+' ('+f(Math.round(x.acc*100))+'٪)').join('، '),
+ li=a=>a.map(x=>x.i+' '+x.nm+' ('+f(Math.round(x.acc*100))+PC+')').join(J),
  h=(S.hist||[]).slice(0,5),av=a=>a.reduce((s,x)=>s+x.a,0)/a.length;
- let tr='';if(h.length>=3){const df=av(h.slice(0,2))-av(h.slice(2));tr=df>=5?'📈 رو به پیشرفت':df<=-5?'📉 افت اخیر':'➡️ ثابت'}
- const rows=d.map(x=>{if(!x.n)return'<div class="it"><span>'+x.i+' '+x.nm+'</span><small>بدون داده</small></div>';const p=Math.round(x.acc*100),col=p>=85?'var(--ok)':p>=65?'#f39c12':'var(--bad)';
-  return'<div class="it" style="display:block"><div style="display:flex;justify-content:space-between;gap:6px"><span>'+x.i+' '+x.nm+'</span><span><b>'+f(p)+'٪</b> <small style="display:inline">'+f(x.n)+' سؤال • '+(x.n<5?'داده کم':p>=85?'قوی':p>=65?'متوسط':'ضعیف')+'</small></span></div><div class="xbar"><i style="width:'+p+'%;background:'+col+'"></i></div></div>'}).join('');
- const w=wk[0],btn=w?'<button class="btn go" style="margin-top:8px" '+((w.k==='con'||w.k==='app')?'data-ytp="'+w.k+'"':'data-xp="op:'+w.k+'"')+'>🏋️ تمرین ضعیف‌ترین مبحث ('+w.nm+')</button>':'';
- modal('<div data-nt><h2>📋 کارنامه‌ی عملکرد</h2><div class="it" style="display:block;text-align:center"><div style="font-size:2rem;font-weight:800;color:var(--gold)">'+f(sc)+' از ۲۰</div><div>'+gr+'</div><small>'+f(tot)+' سؤال پاسخ‌داده‌شده • '+f(S.games)+' بازی • سطح '+f(S.lvl)+'</small></div>'+
- '<div class="it" style="display:block">💪 <b>نقاط قوت:</b> '+(stg.length?li(stg):'هنوز مبحثی با دقت بالای ۸۰٪ و حداقل ۵ سؤال نداری')+'</div>'+
- '<div class="it" style="display:block">⚠️ <b>نقاط ضعف:</b> '+(wk.length?li(wk):'ضعف مشخصی دیده نمی‌شود 👏')+'</div>'+
- (tr?'<div class="it"><span>روند ۵ بازی اخیر</span><b>'+tr+'</b></div>':'')+'<h2 style="margin-top:10px">📊 جزئیات مباحث</h2>'+rows+btn+'</div>')}
+ let trd='';if(h.length>=3){const df=av(h.slice(0,2))-av(h.slice(2));trd=df>=5?'📈 '+Q('رو به پیشرفت','Improving','في تحسّن'):df<=-5?'📉 '+Q('افت اخیر','Recent drop','تراجع أخير'):'➡️ '+Q('ثابت','Steady','ثابت')}
+ const rows=d.map(x=>{if(!x.n)return'<div class="it"><span>'+x.i+' '+x.nm+'</span><small>'+Q('بدون داده','No data','لا بيانات')+'</small></div>';const p=Math.round(x.acc*100),col=p>=85?'var(--ok)':p>=65?'#f39c12':'var(--bad)';
+  return'<div class="it" style="display:block"><div style="display:flex;justify-content:space-between;gap:6px"><span>'+x.i+' '+x.nm+'</span><span><b>'+f(p)+PC+'</b> <small style="display:inline">'+f(x.n)+' '+Q('سؤال','questions','سؤال')+' • '+(x.n<5?Q('داده کم','Low data','بيانات قليلة'):p>=85?Q('قوی','Strong','قوي'):p>=65?Q('متوسط','Average','متوسط'):Q('ضعیف','Weak','ضعيف'))+'</small></span></div><div class="xbar"><i style="width:'+p+'%;background:'+col+'"></i></div></div>'}).join('');
+ const w=wk[0],btn=w?'<button class="btn go" style="margin-top:8px" '+((w.k==='con'||w.k==='app')?'data-ytp="'+w.k+'"':'data-xp="op:'+w.k+'"')+'>🏋️ '+Q('تمرین ضعیف‌ترین مبحث ('+w.nm+')','Practice your weakest topic ('+w.nm+')','تدرّب على أضعف موضوع ('+w.nm+')')+'</button>':'';
+ modal('<div data-nt><h2>📋 '+Q('کارنامه‌ی عملکرد','Performance report card','شهادة الأداء')+'</h2><div class="it" style="display:block;text-align:center"><div style="font-size:2rem;font-weight:800;color:var(--gold)">'+Q(f(sc)+' از ۲۰',f(sc)+' / 20',f(sc)+' من ٢٠')+'</div><div>'+gr+'</div><small>'+Q(f(tot)+' سؤال پاسخ‌داده‌شده • '+f(S.games)+' بازی • سطح '+f(S.lvl),f(tot)+' questions answered • '+f(S.games)+' games • level '+f(S.lvl),f(tot)+' سؤالاً مُجاباً • '+f(S.games)+' لعبة • المستوى '+f(S.lvl))+'</small></div>'+
+ '<div class="it" style="display:block">💪 <b>'+Q('نقاط قوت:','Strengths:','نقاط القوة:')+'</b> '+(stg.length?li(stg):Q('هنوز مبحثی با دقت بالای ۸۰٪ و حداقل ۵ سؤال نداری','No topic yet with over 80% accuracy and at least 5 questions','لا يوجد بعد موضوع بدقة فوق ٨٠٪ و٥ أسئلة على الأقل'))+'</div>'+
+ '<div class="it" style="display:block">⚠️ <b>'+Q('نقاط ضعف:','Weak spots:','نقاط الضعف:')+'</b> '+(wk.length?li(wk):Q('ضعف مشخصی دیده نمی‌شود 👏','No clear weak spot 👏','لا توجد نقطة ضعف واضحة 👏'))+'</div>'+
+ (trd?'<div class="it"><span>'+Q('روند ۵ بازی اخیر','Trend of the last 5 games','اتجاه آخر ٥ ألعاب')+'</span><b>'+trd+'</b></div>':'')+'<h2 style="margin-top:10px">📊 '+Q('جزئیات مباحث','Topic details','تفاصيل المواضيع')+'</h2>'+rows+
+ '<button class="btn t1" data-xp="weak" style="width:100%;margin-top:8px">🧠 '+Q('تمرین هوشمند (از ضعف‌هایم)','Smart practice (from my weak spots)','التدريب الذكي (من نقاط ضعفي)')+'</button>'+btn+
+ '<button class="btn t2" data-z="pg" style="width:100%;margin-top:8px">📈 '+Q('نمودار پیشرفت هفتگی / ماهانه','Weekly / monthly progress charts','مخططات التقدم الأسبوعية / الشهرية')+'</button></div>')}
 
 /* ---------- wiring ---------- */
 document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;const d=t.dataset;
@@ -1060,10 +1099,171 @@ document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)r
  if(d.y==='rc')return reportM();
  if(d.ytp!==undefined){if(G.on)return stopT();$('#md').classList.remove('on');yTp=d.ytp;start();yTp=null;return}
  if(t.closest('#xop'))try{xpSol()}catch(x){}});
-($('#xnav')||$('.nav')).insertAdjacentHTML('beforeend','<button data-y="tp"><b>📚</b>مباحث</button><button data-y="rc"><b>📋</b>کارنامه</button>');
+($('#xnav')||$('.nav')).insertAdjacentHTML('beforeend','<button data-y="tp"><b>📚</b>'+Q('مباحث','Topics','المواضيع')+'</button><button data-y="rc"><b>📋</b>'+Q('کارنامه','Report','الشهادة')+'</button><button data-xp="weak"><b>🧠</b>'+Q('هوشمند','Smart','ذكي')+'</button><button data-z="pg"><b>📈</b>'+Q('پیشرفت','Progress','التقدم')+'</button>');
+window.XV2={CON,APP,CATS,TPN,mk,mkCat,smartQ,smartCat,rcAdd,rcData,sol,rend,f,D,catLabel};
+ui();
+})();
+</script>
+<script>
+/* ===== Add-ons v3: progress log, weekly / monthly report card with charts, PNG + PDF export ===== */
+(function(){'use strict';
+const T=Q,f=XV2.f,CATS=XV2.CATS,PC=LG==='en'?'%':'٪',bd=h=>'<bdi>'+h+'</bdi>';
+const loc=LG==='fa'?'fa-IR':LG==='ar'?'ar-EG':'en-US';
+const fmt=(d,o)=>d.toLocaleDateString(loc,o||{month:'short',day:'numeric'});
+const fmtY=d=>fmt(d,{year:'numeric',month:'short',day:'numeric'});
+const dK=d=>d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();
+const kD=k=>new Date(Math.floor(k/10000),Math.floor(k/100)%100-1,k%100,12);
+S.dl=S.dl||{};
+document.head.insertAdjacentHTML('beforeend','<style>.xk{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:6px 0}.xk div{background:var(--card);border-radius:10px;padding:7px 3px;text-align:center}.xk b{display:block;font-size:1.05rem;color:var(--gold)}.xk span{font-size:.62rem;color:var(--mut)}.xk small{display:block;font-size:.62rem;min-height:12px}.xd{color:var(--ok)}.xu{color:var(--bad)}</style>');
+
+/* ---------- daily activity log (fed by every answer in every mode) ---------- */
+let lastT=0;
+const dayRec=k=>{S.dl=S.dl||{};return S.dl[k]||(S.dl[k]={n:0,ok:0,t:0,g:0,s:0,c:{}})};
+window.xLog=function(q,ok){try{const r=dayRec(dK(new Date()));r.n++;if(ok)r.ok++;
+ const c=q.cat||(window.XV1?XV1.opOf(q.t):'?');if(c&&c!=='?'){const a=r.c[c]||(r.c[c]=[0,0]);a[0]++;if(ok)a[1]++}
+ const now=Date.now();if(lastT&&now-lastT<90000)r.t+=Math.round((now-lastT)/1000);lastT=now;
+ const ks=Object.keys(S.dl);if(ks.length>200)ks.sort().slice(0,ks.length-200).forEach(k=>delete S.dl[k])}catch(e){}};
+const _end=end;
+end=function(why){const was=G.on;_end.apply(this,arguments);try{if(was){const r=dayRec(dK(new Date()));r.g++;r.s=Math.max(r.s,G.score||0);save()}}catch(e){}};
+
+/* ---------- aggregation ---------- */
+function win(days,off){const out=[],base=new Date();base.setHours(12,0,0,0);
+ for(let i=days-1;i>=0;i--){const d=new Date(base);d.setDate(base.getDate()-(off*days+i));const r=(S.dl||{})[dK(d)];
+  out.push({d,n:r?r.n:0,ok:r?r.ok:0,t:r?r.t:0,g:r?r.g:0,s:r?r.s:0,c:r?r.c:{}})}return out}
+function agg(w){const a={n:0,ok:0,t:0,g:0,act:0,best:0,c:{}};
+ w.forEach(x=>{a.n+=x.n;a.ok+=x.ok;a.t+=x.t;a.g+=x.g;if(x.n>0)a.act++;a.best=Math.max(a.best,x.s);for(const k in x.c){const c=a.c[k]||(a.c[k]=[0,0]);c[0]+=x.c[k][0];c[1]+=x.c[k][1]}});
+ a.acc=a.n?a.ok/a.n:null;a.grade=a.n?Math.round(a.acc*200)/10:null;return a}
+function rows(cur,prev){return CATS.map(c=>{const a=cur.c[c[0]],p=prev.c[c[0]],n=a?a[0]:0,pn=p?p[0]:0,acc=n?a[1]/n:null,pacc=pn?p[1]/pn:null;
+ return{k:c[0],i:c[1],nm:c[2],n,acc,delta:(acc!=null&&pacc!=null&&n>=3&&pn>=3)?Math.round((acc-pacc)*100):null}})}
+function insights(cur,prev){const r=rows(cur,prev),ok=r.filter(x=>x.n>=4);
+ return{rows:r,strong:ok.filter(x=>x.acc>=.8).sort((a,b)=>b.acc-a.acc).slice(0,3),weak:ok.filter(x=>x.acc<.8).sort((a,b)=>a.acc-b.acc).slice(0,3)}}
+const gLbl=g=>g==null?'—':g>=18?T('عالی','Excellent','ممتاز'):g>=15?T('خیلی خوب','Very good','جيد جداً'):g>=12?T('خوب','Good','جيد'):g>=10?T('قابل قبول','Acceptable','مقبول'):T('نیازمند تمرین','Needs practice','يحتاج إلى تدريب');
+const gCol=g=>g==null?'#999':g>=15?'#00b894':g>=12?'#f39c12':'#e5484d';
+const li=a=>a.map(x=>x.i+' '+x.nm+' ('+f(Math.round(x.acc*100))+PC+')').join(LG==='en'?', ':'، ');
+const firstKey=()=>Object.keys(S.dl||{}).sort()[0];
+function dlt(v,unit){if(v==null||v===0)return'<small>&nbsp;</small>';const up=v>0;return'<small class="'+(up?'xd':'xu')+'">'+bd((up?'▲ +':'▼ −')+f(Math.abs(Math.round(v*10)/10))+(unit||''))+'</small>'}
+const mins=s=>Math.round(s/60);
+
+/* ---------- in-app view ---------- */
+function chartSVG(w){const W=360,H=150,pl=6,pr=6,pt=10,pb=22,L=w.length,bw=(W-pl-pr)/L,mx=Math.max(1,...w.map(x=>x.n)),ch=H-pt-pb;
+ let s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block;direction:ltr">';
+ [0,.5,1].forEach(v=>{const y=pt+ch*(1-v);s+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+y+'" y2="'+y+'" style="stroke:var(--bd);stroke-width:.6"/>'});
+ w.forEach((x,i)=>{const h=ch*x.n/mx,x0=pl+i*bw;if(x.n)s+='<rect x="'+(x0+bw*.15).toFixed(1)+'" y="'+(H-pb-h).toFixed(1)+'" width="'+(bw*.7).toFixed(1)+'" height="'+h.toFixed(1)+'" rx="2" style="fill:var(--vi);opacity:.75"/>'});
+ const pts=w.map((x,i)=>x.n?[+(pl+i*bw+bw/2).toFixed(1),+(pt+ch*(1-x.ok/x.n)).toFixed(1)]:null).filter(Boolean);
+ if(pts.length>1)s+='<polyline points="'+pts.map(p=>p.join(',')).join(' ')+'" style="fill:none;stroke:var(--gold);stroke-width:2"/>';
+ pts.forEach(p=>{s+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="2.6" style="fill:var(--gold)"/>'});
+ const lab=(i,anchor)=>'<text x="'+(pl+i*bw+bw/2)+'" y="'+(H-6)+'" text-anchor="'+anchor+'" style="font-size:9px;fill:var(--mut)">'+fmt(w[i].d)+'</text>';
+ s+=lab(0,'start')+(L>10?lab(Math.floor(L/2),'middle'):'')+lab(L-1,'end');
+ return s+'</svg>'}
+function progM(days){days=days===30?30:7;S.pgd=days;
+ const w=win(days,0),cur=agg(w),prev=agg(win(days,1)),ins=insights(cur,prev),fk=firstKey();
+ const tabs='<div class="xrow"><button class="xc'+(days===7?' on':'')+'" data-zp="7">'+T('هفتگی','Weekly','أسبوعي')+'</button><button class="xc'+(days===30?' on':'')+'" data-zp="30">'+T('ماهانه','Monthly','شهري')+'</button></div>';
+ let body;
+ if(!cur.n){body='<div class="it" style="display:block">'+T('در این بازه هنوز فعالیتی ثبت نشده است. هر سؤالی که پاسخ بدهی از حالا در نمودار ثبت می‌شود.','No activity recorded in this period yet. Every question you answer from now on is added to the charts.','لم يُسجَّل أي نشاط في هذه الفترة بعد. كل سؤال تجيب عنه من الآن يُضاف إلى المخططات.')+'</div>'}
+ else{
+  const ddAcc=(cur.acc!=null&&prev.acc!=null)?(cur.acc-prev.acc)*100:null,ddG=(cur.grade!=null&&prev.grade!=null)?cur.grade-prev.grade:null;
+  const kp=[[f(cur.grade)+' / '+f(20),T('نمره','Grade','الدرجة'),dlt(ddG)],[f(cur.n),T('سؤال','Questions','أسئلة'),dlt(prev.n?cur.n-prev.n:null)],[f(Math.round(cur.acc*100))+PC,T('دقت','Accuracy','الدقة'),dlt(ddAcc,PC)],[f(cur.act)+'/'+f(days),T('روز فعال','Active days','أيام نشطة'),dlt(prev.act?cur.act-prev.act:null)],[f(mins(cur.t)),T('دقیقه تمرین','Minutes','دقائق'),dlt(prev.t?mins(cur.t)-mins(prev.t):null)],[f(cur.g),T('بازی','Games','ألعاب'),dlt(prev.g?cur.g-prev.g:null)]];
+  body='<div class="it" style="display:block;text-align:center"><div style="font-size:1.6rem;font-weight:800;color:'+gCol(cur.grade)+'">'+bd(f(cur.grade)+' / '+f(20))+'</div><div>'+gLbl(cur.grade)+'</div></div>'+
+  '<div class="xk">'+kp.map(k=>'<div><b>'+bd(k[0])+'</b><span>'+k[1]+'</span>'+k[2]+'</div>').join('')+'</div>'+
+  '<div class="it" style="display:block"><b>📈 '+T('نمودار فعالیت و دقت','Activity & accuracy','النشاط والدقة')+'</b>'+chartSVG(w)+'<div style="font-size:.66rem;color:var(--mut);margin-top:2px">▮ '+T('تعداد سؤال‌ها','questions','عدد الأسئلة')+' &nbsp; ● '+T('دقت روزانه','daily accuracy','الدقة اليومية')+'</div></div>'+
+  '<div class="it" style="display:block">💪 <b>'+T('نقاط قوت:','Strengths:','نقاط القوة:')+'</b> '+(ins.strong.length?li(ins.strong):'—')+'</div><div class="it" style="display:block">⚠️ <b>'+T('نقاط ضعف:','Weak spots:','نقاط الضعف:')+'</b> '+(ins.weak.length?li(ins.weak):T('ضعف مشخصی دیده نمی‌شود 👏','No clear weak spot 👏','لا توجد نقطة ضعف واضحة 👏'))+'</div>'+
+  '<h2 style="margin-top:10px">📊 '+T('جزئیات مباحث','Topic details','تفاصيل المواضيع')+'</h2>'+ins.rows.map(r=>{if(!r.n)return'<div class="it"><span>'+r.i+' '+r.nm+'</span><small>—</small></div>';const p=Math.round(r.acc*100),col=p>=85?'var(--ok)':p>=65?'#f39c12':'var(--bad)';
+   return'<div class="it" style="display:block"><div style="display:flex;justify-content:space-between;gap:6px"><span>'+r.i+' '+r.nm+'</span><span><b>'+f(p)+PC+'</b> <small style="display:inline">'+f(r.n)+' '+T('سؤال','questions','سؤال')+'</small> '+(r.delta?dlt(r.delta,PC).replace('<small','<small style="display:inline"'):'')+'</span></div><div class="xbar"><i style="width:'+p+'%;background:'+col+'"></i></div></div>'}).join('')+
+  '<button class="btn t1" data-xp="weak" style="width:100%;margin-top:8px">🧠 '+T('تمرین هوشمند (از ضعف‌هایم)','Smart practice (from my weak spots)','التدريب الذكي (من نقاط ضعفي)')+'</button>'}
+ modal('<div data-nt><h2>📈 '+T('کارنامه‌ی پیشرفت','Progress report','تقرير التقدم')+'</h2>'+tabs+'<div class="it" style="display:block;font-size:.7rem">'+fmt(w[0].d)+' – '+fmt(w[w.length-1].d)+(fk?' • '+T('ثبت داده از ','Data tracked since ','البيانات مسجّلة منذ ')+fmt(kD(+fk)):'')+'</div>'+body+
+  '<h2 style="margin-top:10px">📄 '+T('خروجی برای معلم و والدین','Export for teacher & parents','تصدير للمعلم وولي الأمر')+'</h2><input id="pgn" class="xta" maxlength="16" placeholder="'+T('نام دانش‌آموز','Student name','اسم الطالب')+'" value="'+(S.nm||'').replace(/[&<>"'`]/g,'')+'" style="direction:'+(LG==='en'?'ltr':'rtl')+';font:inherit"><textarea id="pgc" class="xta" rows="2" maxlength="240" placeholder="'+T('توضیحات برای چاپ در گزارش (اختیاری)','Comment to print on the report (optional)','ملاحظات للطباعة في التقرير (اختياري)')+'" style="margin-top:6px;direction:'+(LG==='en'?'ltr':'rtl')+';font:inherit">'+(S.pgc||'').replace(/[&<>]/g,m=>'&#'+m.charCodeAt(0)+';')+'</textarea>'+
+  '<div class="row" style="margin-top:6px;flex-wrap:wrap"><button class="btn go" data-zx="pdf" style="flex:1">📄 PDF</button><button class="btn t1" data-zx="png" style="flex:1">🖼 '+T('تصویر','Image','صورة')+'</button></div></div>');
+ $('#pgn').onchange=e=>{S.nm=e.target.value.trim().slice(0,16);save();ui()};
+ $('#pgc').onchange=e=>{S.pgc=e.target.value.slice(0,240);save()}}
+
+/* ---------- printable report (A4 canvas) ---------- */
+function wrapTxt(g,s,mw){const words=String(s).split(/\s+/),out=[];let line='';words.forEach(w=>{const t=line?line+' '+w:w;if(g.measureText(t).width>mw&&line){out.push(line);line=w}else line=t});if(line)out.push(line);return out}
+function drawReport(days){
+ const w=win(days,0),cur=agg(w),prev=agg(win(days,1)),ins=insights(cur,prev);
+ const W=1240,H=1754,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
+ const R=LG!=='en',F='Vazirmatn,Tahoma,"Segoe UI","Noto Sans Arabic","DejaVu Sans",sans-serif',M=60,aln=R?'right':'left',sx=R?W-M:M,ox=R?M:W-M;
+ const px=(off,wd)=>R?W-off-wd:off,tx=(s,x,y,sz,wt,col,al,mw)=>{let z=sz;g.font=wt+' '+z+'px '+F;while(mw&&g.measureText(String(s)).width>mw&&z>14){z-=2;g.font=wt+' '+z+'px '+F}g.fillStyle=col;g.textAlign=al||aln;g.fillText(String(s),x,y)};
+ const rr=(x,y,wd,h,r)=>{g.beginPath();g.moveTo(x+r,y);g.arcTo(x+wd,y,x+wd,y+h,r);g.arcTo(x+wd,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+wd,y,r);g.closePath()};
+ g.fillStyle='#fff';g.fillRect(0,0,W,H);g.direction=R?'rtl':'ltr';g.textBaseline='middle';
+ const hg=g.createLinearGradient(0,0,W,0);hg.addColorStop(0,'#302b63');hg.addColorStop(1,'#6c5ce7');g.fillStyle=hg;g.fillRect(0,0,W,190);
+ tx(days===7?T('کارنامه‌ی پیشرفت هفتگی','Weekly progress report','تقرير التقدم الأسبوعي'):T('کارنامه‌ی پیشرفت ماهانه','Monthly progress report','تقرير التقدم الشهري'),sx,70,58,'800','#fff',aln,860);
+ tx('🚀 Math Game Ultimate',sx,135,32,'600','rgba(255,255,255,.88)',aln,860);
+ g.textAlign='center';g.font='84px '+F;g.fillStyle='#fff';g.fillText(S.cz&&S.cz.av||'🙂',R?M+60:W-M-60,98);
+ /* student + grade */
+ tx(T('دانش‌آموز: ','Student: ','الطالب: ')+(S.nm||pName()),sx,245,40,'800','#222',aln,800);
+ tx(fmtY(w[0].d)+' – '+fmtY(w[w.length-1].d),sx,295,28,'500','#666',aln,800);
+ tx(gLbl(cur.grade)+(prev.grade!=null&&cur.grade!=null?'  •  '+(cur.grade>prev.grade?'📈 ':cur.grade<prev.grade?'📉 ':'➡️ ')+T('نسبت به دوره‌ی قبل','vs previous period','مقارنة بالفترة السابقة'):''),sx,345,30,'700',gCol(cur.grade),aln,800);
+ const gx=R?M+100:W-M-100,gy=295;g.beginPath();g.arc(gx,gy,80,0,7);g.lineWidth=14;g.strokeStyle=gCol(cur.grade);g.stroke();
+ g.textAlign='center';tx(cur.grade==null?'—':f(cur.grade),gx,gy-8,50,'800','#222','center',120);tx('/ '+f(20),gx,gy+36,26,'600','#777','center',120);
+ /* KPI tiles */
+ const kp=[[f(cur.n),T('سؤال','Questions','أسئلة')],[cur.acc==null?'—':f(Math.round(cur.acc*100))+PC,T('دقت','Accuracy','الدقة')],[f(cur.act)+'/'+f(days),T('روز فعال','Active days','أيام نشطة')],[f(mins(cur.t)),T('دقیقه','Minutes','دقائق')],[f(cur.g),T('بازی','Games','ألعاب')],[f(cur.best),T('بهترین امتیاز','Best score','أفضل نقاط')]],kw=(W-2*M-5*14)/6;
+ kp.forEach((k,i)=>{const off=M+i*(kw+14),x=px(off,kw);rr(x,395,kw,112,18);g.fillStyle='#f3f1ff';g.fill();tx(k[1],x+kw/2,424,22,'600','#666','center',kw-14);tx(k[0],x+kw/2,472,44,'800','#302b63','center',kw-14)});
+ /* chart */
+ tx('📈 '+T('نمودار فعالیت و دقت','Activity & accuracy','النشاط والدقة'),sx,548,34,'800','#222',aln,1000);
+ const cx0=M+80,cx1=W-M,cy0=585,ch=250,L=w.length,bw=(cx1-cx0)/L,mx=Math.max(1,...w.map(x=>x.n));
+ [0,.5,1].forEach(v=>{const y=cy0+ch*(1-v);g.strokeStyle='#ddd';g.lineWidth=1.5;g.beginPath();g.moveTo(cx0,y);g.lineTo(cx1,y);g.stroke();g.direction='ltr';tx(f(v*100)+PC,cx0-12,y,22,'500','#888','right');g.direction=R?'rtl':'ltr'});
+ w.forEach((x,i)=>{if(!x.n)return;const h=ch*x.n/mx,x0=cx0+i*bw;g.fillStyle='#b9b2f5';rr(x0+bw*.15,cy0+ch-h,bw*.7,h,5);g.fill()});
+ const pts=w.map((x,i)=>x.n?[cx0+i*bw+bw/2,cy0+ch*(1-x.ok/x.n)]:null).filter(Boolean);
+ g.strokeStyle='#f39c12';g.lineWidth=5;g.beginPath();pts.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));if(pts.length>1)g.stroke();
+ pts.forEach(p=>{g.beginPath();g.arc(p[0],p[1],7,0,7);g.fillStyle='#f39c12';g.fill()});
+ g.direction='ltr';const step=days===7?1:5;w.forEach((x,i)=>{if(i%step===0||i===L-1)tx(fmt(x.d),cx0+i*bw+bw/2,cy0+ch+28,21,'500','#666','center',bw*step)});g.direction=R?'rtl':'ltr';
+ tx('▮ '+T('تعداد سؤال‌ها','questions','عدد الأسئلة')+'     ● '+T('دقت روزانه','daily accuracy','الدقة اليومية'),sx,cy0+ch+68,24,'500','#666',aln,1000);
+ /* topic table */
+ tx('📊 '+T('جزئیات مباحث','Topic details','تفاصيل المواضيع'),sx,935,34,'800','#222',aln,1000);
+ const cols=[330,110,420,120,110];let off=M;const cx=cols.map(wd=>{const o=off;off+=wd;return o});
+ [T('مبحث','Topic','الموضوع'),T('سؤال','Questions','أسئلة'),T('دقت','Accuracy','الدقة'),'',T('تغییر','Change','التغيّر')].forEach((h,i)=>{if(h)tx(h,R?W-cx[i]:cx[i],978,22,'700','#888',aln,cols[i]-10)});
+ ins.rows.forEach((r,i)=>{const y=1000+i*38;if(i%2===0){g.fillStyle='#faf9ff';rr(M-10,y,W-2*M+20,38,8);g.fill()}const yc=y+19;
+  tx(r.i+' '+r.nm,R?W-cx[0]:cx[0],yc,26,'600','#222',aln,cols[0]-10);
+  tx(f(r.n),R?W-cx[1]:cx[1],yc,24,'500','#444',aln,cols[1]-10);
+  const bx=px(cx[2],cols[2]-30);rr(bx,yc-8,cols[2]-30,16,8);g.fillStyle='#e8e6f5';g.fill();
+  if(r.acc!=null){const p=Math.round(r.acc*100),bwid=Math.max(8,(cols[2]-30)*p/100),bx2=R?bx+(cols[2]-30)-bwid:bx;rr(bx2,yc-8,bwid,16,8);g.fillStyle=p>=85?'#00b894':p>=65?'#f39c12':'#e5484d';g.fill();tx(f(p)+PC,R?W-cx[3]:cx[3],yc,24,'700','#222',aln,cols[3]-10)}else tx('—',R?W-cx[3]:cx[3],yc,24,'500','#aaa',aln,cols[3]-10);
+  if(r.delta)tx((r.delta>0?'▲ +':'▼ −')+f(Math.abs(r.delta))+PC,R?W-cx[4]:cx[4],yc,22,'700',r.delta>0?'#00a37f':'#e5484d',aln,cols[4]-10)});
+ /* insights */
+ tx('💪 '+T('نقاط قوت: ','Strengths: ','نقاط القوة: ')+(ins.strong.length?li(ins.strong):'—'),sx,1448,28,'600','#222',aln,1120);
+ tx('⚠️ '+T('نقاط ضعف: ','Weak spots: ','نقاط الضعف: ')+(ins.weak.length?li(ins.weak):(cur.n?T('ضعف مشخصی دیده نمی‌شود','no clear weak spot','لا توجد نقطة ضعف واضحة'):'—')),sx,1490,28,'600','#222',aln,1120);
+ const wk=ins.weak[0];tx('💡 '+(wk?T('پیشنهاد: تمرین بیشتر روی «'+wk.nm+'» با حالت تمرین هوشمند','Suggestion: practice “'+wk.nm+'” more with Smart practice','اقتراح: تدرّب أكثر على «'+wk.nm+'» بالتدريب الذكي'):(cur.n?T('عملکرد متعادل است؛ ادامه بده!','Balanced performance. Keep it up!','أداء متوازن. واصل!'):T('هنوز فعالیتی در این بازه ثبت نشده است.','No activity recorded in this period yet.','لم يُسجَّل نشاط في هذه الفترة بعد.'))),sx,1532,28,'600','#302b63',aln,1120);
+ /* comment box */
+ g.strokeStyle='#bbb';g.lineWidth=2;rr(M,1565,W-2*M,130,16);g.stroke();
+ tx(T('توضیحات معلم / والدین','Teacher / parent comments','ملاحظات المعلم / ولي الأمر'),sx+(R?-20:20),1590,24,'700','#888',aln,900);
+ g.font='500 26px '+F;if(S.pgc){wrapTxt(g,S.pgc,W-2*M-60).slice(0,3).forEach((l,i)=>tx(l,sx+(R?-20:20),1630+i*34,26,'500','#222',aln,W-2*M-60))}else{[1635,1665,1695].slice(0,2).forEach(y=>{g.strokeStyle='#ddd';g.lineWidth=1.5;g.beginPath();g.moveTo(M+20,y);g.lineTo(W-M-20,y);g.stroke()})}
+ tx(T('تهیه‌شده با Math Game Ultimate','Generated by Math Game Ultimate','أُعدّ بواسطة Math Game Ultimate')+'  •  '+fmtY(new Date()),W/2,1730,22,'500','#999','center',1100);
+ return c}
+
+/* ---------- export helpers ---------- */
+function pdfBlob(c){const j=c.toDataURL('image/jpeg',.93).split(',')[1],bin=atob(j),n=bin.length,jb=new Uint8Array(n);for(let i=0;i<n;i++)jb[i]=bin.charCodeAt(i);
+ const enc=new TextEncoder(),parts=[],offs=[];let len=0;const push=u=>{parts.push(u);len+=u.length},s=t=>push(enc.encode(t)),PW=595.28,PH=841.89;
+ const obj=(i,b)=>{offs[i]=len;s(i+' 0 obj\n'+b+'\nendobj\n')};
+ s('%PDF-1.4\n');obj(1,'<</Type/Catalog/Pages 2 0 R>>');obj(2,'<</Type/Pages/Kids[3 0 R]/Count 1>>');
+ obj(3,'<</Type/Page/Parent 2 0 R/MediaBox[0 0 '+PW+' '+PH+']/Resources<</XObject<</Im0 4 0 R>>>>/Contents 5 0 R>>');
+ offs[4]=len;s('4 0 obj\n<</Type/XObject/Subtype/Image/Width '+c.width+'/Height '+c.height+'/ColorSpace/DeviceRGB/BitsPerComponent 8/Filter/DCTDecode/Length '+n+'>>\nstream\n');push(jb);s('\nendstream\nendobj\n');
+ const cs='q '+PW+' 0 0 '+PH+' 0 0 cm /Im0 Do Q';obj(5,'<</Length '+cs.length+'>>\nstream\n'+cs+'\nendstream');
+ const xr=len;s('xref\n0 6\n0000000000 65535 f \n');for(let i=1;i<=5;i++)s(String(offs[i]).padStart(10,'0')+' 00000 n \n');
+ s('trailer\n<</Size 6/Root 1 0 R>>\nstartxref\n'+xr+'\n%%EOF');
+ const out=new Uint8Array(len);let p=0;parts.forEach(u=>{out.set(u,p);p+=u.length});return new Blob([out],{type:'application/pdf'})}
+function saveBlob(b,name){try{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},5000);return true}catch(e){return false}}
+async function shareOrSave(blob,name,type){const file=new File([blob],name,{type});
+ if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'Math Game Ultimate'});return}catch(e){if(e&&e.name==='AbortError')return}}
+ if(saveBlob(blob,name))toast('⬇️ '+name)}
+const repName=()=>'math-game-'+(S.pgd===30?'monthly':'weekly')+'-report-'+dK(new Date());
+let lastCanvas=null;
+function exportPDF(){const c=drawReport(S.pgd===30?30:7);lastCanvas=c;shareOrSave(pdfBlob(c),repName()+'.pdf','application/pdf')}
+function exportPNG(){const c=drawReport(S.pgd===30?30:7);lastCanvas=c;
+ modal('<h2>🖼 '+T('تصویر کارنامه','Report image','صورة التقرير')+'</h2><img id="zri" alt="" style="width:100%;border-radius:10px;display:block;background:#fff"><div class="row" style="margin-top:8px"><button class="btn go" data-zx="pngshare" style="flex:1">📤 '+T('اشتراک','Share','مشاركة')+'</button><button class="btn t1" data-zx="pngsave" style="flex:1">⬇️ '+T('ذخیره','Save','حفظ')+'</button></div><button class="btn t2" data-z="pg" style="width:100%;margin-top:6px">↩ '+T('بازگشت','Back','رجوع')+'</button><div class="it" style="display:block;margin-top:6px;font-size:.7rem">'+T('اگر دکمه‌ها کار نکرد، روی تصویر نگه دار و ذخیره کن.','If the buttons do not work, long-press the image to save it.','إن لم تعمل الأزرار، اضغط مطولاً على الصورة لحفظها.')+'</div>');
+ try{$('#zri').src=c.toDataURL('image/png')}catch(e){}}
+function pngBlob(cb){if(lastCanvas)lastCanvas.toBlob(cb,'image/png')}
+
+/* ---------- wiring ---------- */
+document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;const d=t.dataset;
+ if(d.z==='pg'){progM(S.pgd||7);return}
+ if(d.zp){progM(+d.zp);return}
+ if(d.zx==='pdf')exportPDF();else if(d.zx==='png')exportPNG();
+ else if(d.zx==='pngsave')pngBlob(b=>{if(b&&saveBlob(b,repName()+'.png'))toast('⬇️ ✅')});
+ else if(d.zx==='pngshare')pngBlob(b=>{if(b)shareOrSave(b,repName()+'.png','image/png')})});
+window.XV3={progM,drawReport,pdfBlob,win,agg};
 ui();
 })();
 </script>
 </body>
 </html>
+
 
