@@ -1,5 +1,5 @@
-!DOCTYPE html>
-<htm<l lang="fa" dir="rtl">
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -94,6 +94,59 @@ h1{font-size:1.25rem;background:linear-gradient(45deg,#f7971e,#ffd200);-webkit-b
 :root[data-theme="candy"]{--bg1:#fff7e6;--bg2:#ffd1f0;--bg3:#cfe8ff;--tx:#3b1f4a;--mut:#7a5a8a;--card:rgba(255,255,255,.75);--bd:rgba(59,31,74,.18);--gold:#e0489b;--shade:rgba(255,255,255,.7);color-scheme:light}
 :root[data-theme="matrix"]{--bg1:#000a00;--bg2:#012a0a;--bg3:#001a05;--tx:#c9ffd6;--mut:#6fbf84;--card:rgba(57,255,20,.06);--bd:rgba(57,255,20,.3);--gold:#39ff14;--shade:rgba(0,20,0,.55);color-scheme:dark}
 :root[data-theme="royal"]{--bg1:#12062b;--bg2:#3b1a78;--bg3:#1b0c3d;--tx:#fff;--mut:#cdbbf0;--card:rgba(255,255,255,.09);--bd:rgba(245,197,66,.3);--gold:#f5c542;--shade:rgba(10,0,30,.5);color-scheme:dark}
+</style>
+<style id="u5css">
+/* ===== v5 design system, bottom sheet, tab bar, home/play screens ===== */
+:root{--on-gold:#1a1a2e}
+.btn{min-height:44px;border-radius:14px;font-weight:700;transition:transform .12s,filter .15s}.btn:active{transform:scale(.97)}.btn:disabled{opacity:.45}
+.btn.go{background:linear-gradient(135deg,var(--gold),#f7971e)!important;color:var(--on-gold,#1a1a2e)!important;border:0!important}
+.btn.t1,.btn.t2,.btn.cl,#bh{background:var(--card)!important;color:var(--tx)!important;border:1px solid var(--bd)!important}
+.btn.t3{background:rgba(229,72,77,.16)!important;color:var(--tx)!important;border:1px solid rgba(229,72,77,.5)!important}
+small,.hud span,.stg span,.q small,.bdg,.ch div,.xc small,.u-sub{font-size:max(.75rem,12px)!important}
+.op{gap:10px}.op button{min-height:64px;font-size:1.5rem;border-radius:16px}
+.q{min-height:120px;border-radius:20px;font-size:clamp(1.7rem,7vw,2.4rem)}
+.u-tb{height:12px!important;border-radius:8px!important}.u-low i{background:linear-gradient(90deg,var(--bad),#ff8a8a)!important;animation:uPulse .6s infinite alternate}
+.u-tr{position:absolute;top:-4px;left:50%;margin-left:-23px;width:46px;height:46px;pointer-events:none}.hud b{position:relative}
+.bump{display:inline-block;animation:uBump .3s}
+@keyframes uBump{40%{transform:scale(1.35);color:var(--ok)}}@keyframes uPulse{to{opacity:.55}}
+@keyframes uIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}@keyframes uUp{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.md{align-items:flex-end;padding:0;background:rgba(0,0,0,.55);backdrop-filter:blur(3px)}
+.bx{width:100%;max-width:640px;max-height:88vh;border-radius:22px 22px 0 0;padding:12px 16px 0;animation:uUp .26s cubic-bezier(.2,.8,.2,1)}
+.bx::before{content:'';display:block;width:44px;height:5px;border-radius:3px;background:var(--bd);margin:0 auto 10px}
+.bx .cl{position:sticky;bottom:0;margin-top:10px;min-height:48px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));box-shadow:0 -12px 14px var(--bg3)}
+.md .it.empty{display:block;text-align:center;padding:22px 10px;color:var(--mut)}.md .it.empty::before{content:'📭';display:block;font-size:2.2rem;margin-bottom:4px}
+.u-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.u-grid button{background:var(--card);border:1px solid var(--bd);border-radius:14px;color:var(--tx);padding:10px 2px;display:flex;flex-direction:column;align-items:center;gap:4px;font:inherit;cursor:pointer;min-height:76px}.u-grid button span{font-size:1.5rem}
+#u-tabs{display:none}
+body.u-on{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+body.u-on #u-tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;position:fixed;left:50%;transform:translateX(-50%);bottom:calc(10px + env(safe-area-inset-bottom,0px));width:min(94vw,520px);padding:6px;border-radius:22px;background:var(--shade);backdrop-filter:blur(14px);border:1px solid var(--bd);box-shadow:0 8px 30px rgba(0,0,0,.35);z-index:40}
+#u-tabs button{background:none;border:0;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;border-radius:16px;font:700 .75rem inherit;cursor:pointer;min-height:52px}
+#u-tabs button.on{color:var(--gold);background:var(--card)}#u-tabs svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+body.u-on .nav,body.u-on .hd+.bar{display:none!important}
+body.u-on.u-home #u-game,body.u-on.u-play #u-home{display:none}
+body.u-on.u-play #u-tabs,body.u-on.u-play .hd>.row{display:none}body.u-on.u-play{padding-bottom:20px}body.u-on.u-play .hd h1{font-size:1.05rem}
+body.u-on #u-home,body.u-on #u-game{animation:uIn .28s ease}
+.u-hero{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:14px;border-radius:22px;background:var(--card);border:1px solid var(--bd);margin:8px 0}
+.u-av{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-size:1.9rem;background:linear-gradient(135deg,var(--bg2),var(--bg3));border:2px solid var(--gold)}
+.u-info b{font-size:1.1rem}.u-sub{color:var(--mut)}.u-info .bar{margin:6px 0}.u-ring{text-align:center;color:var(--tx)}.u-ring small{display:block;margin-top:-4px}
+.u-play{width:100%;min-height:64px;font-size:1.25rem;margin:6px 0 10px}
+.u-modes{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.u-card{background:var(--card);border:1px solid var(--bd);border-radius:18px;color:var(--tx);padding:12px;text-align:start;font:inherit;cursor:pointer;display:grid;gap:2px;min-height:84px;transition:transform .12s}.u-card:active{transform:scale(.97)}
+.u-card .u-ic{font-size:1.6rem}.u-card small{color:var(--mut)}
+@media(min-width:900px){body.u-on .app{max-width:1080px}body.u-on #u-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}body.u-on.u-home #u-game,body.u-on.u-play #u-home{display:block}.md{align-items:center;padding:14px}.bx{border-radius:22px}}
+html:root[data-theme="dark"]{--on-gold:#1a1a2e}
+html:root[data-theme="light"]{--gold:#816017;--on-gold:#ffffff}
+@media (prefers-color-scheme:light){:root:not([data-theme]){--gold:#816017;--on-gold:#ffffff}}
+html:root[data-theme="ocean"]{--on-gold:#1a1a2e}
+html:root[data-theme="forest"]{--on-gold:#1a1a2e}
+html:root[data-theme="sunset"]{--bg3:#9a3412;--gold:#fbc63e;--on-gold:#1a1a2e}
+html:root[data-theme="neon"]{--on-gold:#1a1a2e}
+html:root[data-theme="amoled"]{--on-gold:#1a1a2e}
+html:root[data-theme="sakura"]{--mut:#81556c;--gold:#b02e60;--on-gold:#ffffff}
+html:root[data-theme="aurora"]{--on-gold:#1a1a2e}
+html:root[data-theme="candy"]{--mut:#725582;--gold:#a13978;--on-gold:#ffffff}
+html:root[data-theme="matrix"]{--on-gold:#1a1a2e}
+html:root[data-theme="royal"]{--on-gold:#1a1a2e}
+:root{--on-gold:#1a1a2e}
 </style>
 </head>
 <body>
@@ -532,7 +585,7 @@ function evalS(s,X,st){let i=0;
  const P=t=>{if(st&&st.length<12)st.push(t)};
  const op=(a,o,b,r)=>{P(fm(a)+' '+o+' '+fm(b)+' = '+fm(r));return r};
  function ex(){let a=tm();for(;;){const c=pk();if(c==='+'||c==='-'){i++;const b=tm();a=op(a,c==='-'?'−':'+',b,c==='+'?a+b:a-b)}else return a}}
- function tm(){let a=un();for(;;){const c=pk();if(c==='*'||c==='/'){i++;const b=un();if(c==='/'&&b===0)throw 0;a=op(a,c==='*'?'×':'÷',b,c==='*'?a*b:a/b)}else if(c==='x'||c==='('){const b=un();a=op(a,'×',b,a*b)}else return a}}
+ function tm(){let a=un();for(;;){const c=pk();if(c==='*'||c==='/'){i++;const b=un();if(c==='/'&&b===0)throw 'z';a=op(a,c==='*'?'×':'÷',b,c==='*'?a*b:a/b)}else if(c==='x'||c==='('){const b=un();a=op(a,'×',b,a*b)}else return a}}
  function un(){const c=pk();if(c==='-'){i++;return -un()}if(c==='+'){i++;return un()}return pw()}
  function pw(){const a=po();if(pk()==='^'){i++;const b=un(),r=Math.pow(a,b);if(!isFinite(r))throw 0;return op(a,'^',b,rd(r))}return a}
  function po(){let a=at();for(;;){const c=pk();if(c==='!'){i++;if(a<0||a>170||a%1)throw 0;let r=1;for(let k=2;k<=a;k++)r*=k;P(fm(a)+'! = '+fm(r));a=r}else if(c==='%'){i++;P(fm(a)+'% = '+fm(a/100));a=a/100}else return a}}
@@ -577,7 +630,7 @@ function localAI(q){
    if(d<0)return R(T('ریشه‌ی حقیقی ندارد','No real roots','لا جذور حقيقية'),st);
    const x1=(-b+Math.sqrt(d))/(2*a),x2=(-b-Math.sqrt(d))/(2*a);st.push('x = (−b ± √Δ) ÷ 2a');return R('x = '+fm(x1)+(d?T('  و  ','  and  ','  و  ')+fm(x2):''),st)}
   const st=[],v=evalS(s.replace(/=/g,' '),undefined,st);if(!isFinite(v))throw 0;return R(fm(v),st)
- }catch(e){return D(T('نتوانستم این را حل کنم. نمونه: 3×(4+5) ، 2x+3=11 ، 20٪ از 500 ، ب.م.م 12 و 18 ، تجزیه 60 ، √144','I could not solve that. Try: 3*(4+5), 2x+3=11, 20% of 500, gcd 12 18, factor 60, sqrt(144)','لم أستطع حلّها. جرّب: 3*(4+5) ، 2x+3=11 ، 20% من 500 ، gcd 12 18 ، تحليل 60 ، sqrt(144)'))}}
+ }catch(e){if(e==='z')return D(T('تقسیم بر صفر تعریف‌نشده است.','Division by zero is undefined.','القسمة على صفر غير معرّفة.'));return D(T('نتوانستم این را حل کنم. نمونه: 3×(4+5) ، 2x+3=11 ، 20٪ از 500 ، ب.م.م 12 و 18 ، تجزیه 60 ، √144','I could not solve that. Try: 3*(4+5), 2x+3=11, 20% of 500, gcd 12 18, factor 60, sqrt(144)','لم أستطع حلّها. جرّب: 3*(4+5) ، 2x+3=11 ، 20% من 500 ، gcd 12 18 ، تحليل 60 ، sqrt(144)'))}}
 
 /* ===== Themes, music tracks, sound packs & answer effects ===== */
 S.mv=S.mv??.5;S.ev=S.ev??.8;S.pk=S.pk||'classic';S.mt=S.mt||0;S.vo=S.vo||0;
@@ -649,7 +702,7 @@ function rec(q,ok){xs();try{if(q&&q.cat&&window.XV2)XV2.rcAdd(q.cat,ok);if(windo
  const nums=(U(q.t)+' '+U(q.e||'')).match(/\d+/g)||[];
  if(o==='*'){const a=+nums[0],b=q.e?+q.r:+nums[1];[...new Set([a,b])].forEach(f=>{if(f>=2&&f<=12)stat(S.wt,'x'+f,ok)})}
  else if(o==='/'){const b=+nums[1];if(b>=2&&b<=12)stat(S.wt,'d'+b,ok)}}
-function topicName(t){if(t==='all')return'🎲 '+T('ترکیبی','Mixed','متنوع');if(t==='weak')return'🧠 '+T('تمرین هوشمند','Smart practice','التدريب الذكي');
+function topicName(t){if(String(t).startsWith('sk:')&&window.XD)return'🔬 '+XD.name(String(t).slice(3));if(t==='all')return'🎲 '+T('ترکیبی','Mixed','متنوع');if(t==='weak')return'🧠 '+T('تمرین هوشمند','Smart practice','التدريب الذكي');
  const p=String(t).split(':'),k=p[0],v=p[1];if(k==='op')return opN(v);
  if(k==='tm')return'✖️ '+T('جدول ضرب ','Times table ','جدول ضرب ')+nn(v);if(k==='td')return'➗ '+T('تقسیم بر ','Divide by ','القسمة على ')+nn(v);return String(t)}
 function weakest(){xs();let best=null;
@@ -736,7 +789,7 @@ document.addEventListener('keydown',e=>{if(!hasQ())return;const s=XQ.a,n=+e.key;
 /* ---------- practice mode ---------- */
 function pickWeak(){xs();const w=OPS.map(o=>{const h=S.ws[o[0]],a=h&&h.h.length>=3?accOf(h):null;return[o[0],a==null?.12:.1+(1-a)]});
  let r=Math.random()*w.reduce((t,x)=>t+x[1],0);for(const x of w){r-=x[1];if(r<=0)return'op:'+x[0]}return'op:+'}
-function mkQ(t,size){const M=[12,30,160][size|0],p=String(t).split(':'),k=p[0],v=p[1];
+function mkQ(t,size){const M=[12,30,160][size|0],p=String(t).split(':'),k=p[0],v=p[1];if(k==='sk'&&window.XD)return XD.mkSkill(v,size);
  if(t==='all')return gen({o:[...new Set(LV.filter(l=>l.r<=S.lvl).flatMap(l=>l.o))],m:M});
  if(t==='weak'){const sq=(window.XV2&&XV2.smartQ)?XV2.smartQ(size):null;return sq||mkQ(pickWeak(),size)}
  if((k==='op')&&(v==='con'||v==='app')&&window.XV2)return XV2.mkCat(v,size);
@@ -964,7 +1017,8 @@ S.rc=S.rc||{};
 const rcAdd=(k,ok)=>{S.rc=S.rc||{};const h=S.rc[k]||(S.rc[k]={n:0,b:0});h.n++;if(!ok)h.b++;h.h=((h.h||'')+(ok?'1':'0')).slice(-20)};
 
 /* ---------- 1) step-by-step solutions ---------- */
-function sol(q){
+function sol(q){return window.XD?XD.sol(q,sol0(q)):sol0(q)}
+function sol0(q){
  if(q.x)return q.x;const r=q.r;
  const s=nA(String(q.t+(q.e||'')).replace(/<sup>(.*?)<\/sup>/g,'^$1').replace(/<sub>(.*?)<\/sub>/g,'_$1').replace(/<[^>]*>/g,'')).replace(/٫/g,'.').replace(/−/g,'-').replace(/\s+/g,' ').trim();
  let m;
@@ -984,7 +1038,7 @@ function sol(q){
   const L=[Q('از جدول زاویه‌های مهم (۳۰، ۴۵، ۶۰):','From the table of key angles (30°, 45°, 60°):','من جدول الزوايا المهمة (٣٠°، ٤٥°، ٦٠°):'),'#'+m[1]+'('+f(m[2])+'°) = '+(FR[r]||f(r))+' ≈ '+f(r)];if(m[1]==='tan'||m[1]==='cot')L.push(Q('tan = sin ÷ cos  و  cot = cos ÷ sin','tan = sin ÷ cos and cot = cos ÷ sin','tan = sin ÷ cos و cot = cos ÷ sin'));return L}
  return[Q('پاسخ درست: ','Correct answer: ','الإجابة الصحيحة: ')+f(r)]}
 const rend=L=>(Array.isArray(L)?L:[L]).map(x=>x[0]==='#'?'<div dir="ltr" class="xsm">'+x.slice(1).replace(/</g,'&lt;')+'</div>':'<div>'+x+'</div>').join('');
-const solH=q=>'<b>📖 '+Q('راه‌حل','Solution','الحل')+'</b>'+rend(sol(q));
+const solH=q=>'<b>📖 '+Q('راه‌حل','Solution','الحل')+'</b>'+rend(sol(q))+(window.XD?XD.extra(q):'');
 const qTxt=q=>q.t+(q.e||' = ?');
 function showSol(q){const o=$('#xsol');if(o)o.remove();$('#ms').insertAdjacentHTML('afterend','<div class="xs" id="xsol" data-nt>'+solH(q)+'</div>')}
 function xpSol(){const m=$('#xqm'),w=$('#xop .w'),c=$('#xop .c');if(!m||!w||!c||m.querySelector('.xs'))return;
@@ -1009,11 +1063,11 @@ const APP=[
  z=>{const k=rnd(3,[6,9,12][z]),q=rnd(3,[8,12,20][z]);return{t:Q('تعداد '+f(k*q)+' شکلات را بین '+f(k)+' کودک مساوی تقسیم می‌کنیم. به هر کودک چند شکلات می‌رسد؟','We share '+f(k*q)+' chocolates equally among '+f(k)+' children. How many chocolates does each child get?','نوزّع '+f(k*q)+' قطعة شوكولاتة بالتساوي على '+f(k)+' أطفال. كم قطعة يأخذ كل طفل؟'),r:q,x:[Q('سهم هر نفر = کل ÷ تعداد نفرات','Each share = total ÷ number of people','نصيب كل واحد = المجموع ÷ عدد الأشخاص'),'#'+f(k*q)+' ÷ '+f(k)+' = '+f(q)]}},
  z=>{const a=rnd(10,[20,20,20][z]),b=rnd(10,20);let c=rnd(10,20);while((a+b+c)%3)c=c<20?c+1:10;return{t:Q('نمره‌های سارا در سه آزمون '+f(a)+'، '+f(b)+' و '+f(c)+' بود. میانگین نمره‌هایش چند است؟','Sara’s scores on three tests were '+f(a)+', '+f(b)+' and '+f(c)+'. What is her average score?','كانت درجات سارة في ثلاثة اختبارات '+f(a)+'، '+f(b)+' و'+f(c)+'. ما متوسط درجاتها؟'),r:(a+b+c)/3,x:[Q('میانگین = مجموع نمره‌ها ÷ تعداد آزمون‌ها','Average = sum of the scores ÷ number of tests','المتوسط = مجموع الدرجات ÷ عدد الاختبارات'),'#('+f(a)+' + '+f(b)+' + '+f(c)+') ÷ '+f(3)+' = '+f(a+b+c)+' ÷ '+f(3)+' = '+f((a+b+c)/3)]}}];
 const TPO={'+':['+'],'-':['-'],'*':['*'],'/':['/'],'^':['^'],'√':['√'],'log':['log'],'!':['!'],'trig':['sin','cos','tan','cot']};
-const CATS=[['+','➕',Q('جمع','Addition','الجمع')],['-','➖',Q('تفریق','Subtraction','الطرح')],['*','✖️',Q('ضرب','Multiplication','الضرب')],['/','➗',Q('تقسیم','Division','القسمة')],['^','⬆️',Q('توان','Powers','القوى')],['√','√',Q('ریشه','Roots','الجذور')],['log','🧮',Q('لگاریتم','Logarithms','اللوغاريتمات')],['!','❗',Q('فاکتوریل','Factorials','العاملي')],['trig','📐',Q('مثلثات','Trigonometry','المثلثات')],['con','💡',Q('مفهومی','Conceptual','مفاهيمي')],['app','🛒',Q('کاربردی','Applied','تطبيقي')]];
+const CATS=[['+','➕',Q('جمع','Addition','الجمع')],['-','➖',Q('تفریق','Subtraction','الطرح')],['*','✖️',Q('ضرب','Multiplication','الضرب')],['/','➗',Q('تقسیم','Division','القسمة')],['^','⬆️',Q('توان','Powers','القوى')],['√','√',Q('ریشه','Roots','الجذور')],['log','🧮',Q('لگاریتم','Logarithms','اللوغاريتمات')],['!','❗',Q('فاکتوریل','Factorials','العاملي')],['trig','📐',Q('مثلثات','Trigonometry','المثلثات')],['con','💡',Q('مفهومی و استدلالی','Conceptual & reasoning','مفاهيمي واستدلالي')],['app','🛒',Q('کاربردی','Applied','تطبيقي')]];
 const TPN={mix:'🎲 '+Q('ترکیبی','Mixed','متنوع'),smart:'🧠 '+Q('هوشمند','Smart','ذكي')};CATS.forEach(c=>TPN[c[0]]=c[1]+' '+c[2]);
 const catLabel=c=>{const x=CATS.find(y=>y[0]===c);return x?x[1]+' '+x[2]:c};
 let tpNow=null,yTp=null;
-const mk=(a,cat,z)=>{const q=pick(a)(z);q.cat=cat;q.e=' ';q.tag=catLabel(cat);return q};
+const mk=(a,cat,z)=>{const g=(window.XD&&XD.pickGen(a,cat))||pick(a),q=g(z);q.cat=cat;q.sk=(cat==='con'?'C':'A')+a.indexOf(g);q.e=' ';q.tag=catLabel(cat);return q};
 const mkCat=(c,z)=>c==='con'?mk(CON,'con',z|0):mk(APP,'app',z|0);
 
 /* ---------- smart practice: question generation driven by the report-card data ---------- */
@@ -1030,7 +1084,7 @@ function weakTable(c){const pre=c==='*'?'x':c==='/'?'d':null;if(!pre)return null
  for(let i=2;i<=12;i++){const h=S.wt&&S.wt[pre+i];if(h&&h.h&&h.h.length>=4){let k=0;for(const ch of h.h)if(ch==='1')k++;const a=k/h.h.length;if(a<.8)cand.push([i,a])}}
  if(!cand.length||Math.random()>.6)return null;cand.sort((a,b)=>a[1]-b[1]);return(pre==='x'?'tm:':'td:')+cand[0][0]}
 function smartQ(size){const c=smartCat();if(c==='con'||c==='app')return mkCat(c,size);
- const t=weakTable(c),q=XV1.mkQ(t||('op:'+c),size);q.tag=t?XV1.topicName(t):XV1.opN(c);q.cat=undefined;return q}
+ if(window.XD&&Math.random()<.7){const q2=XD.weakQ(c,size);if(q2){q2.tag=catLabel(c);return q2}}const t=weakTable(c),q=XV1.mkQ(t||('op:'+c),size);q.tag=t?XV1.topicName(t):XV1.opN(c);q.cat=undefined;return q}
 
 /* ---------- generator / next / start hooks ---------- */
 const _gn=gen;
@@ -1091,7 +1145,7 @@ function reportM(){
  '<div class="it" style="display:block">⚠️ <b>'+Q('نقاط ضعف:','Weak spots:','نقاط الضعف:')+'</b> '+(wk.length?li(wk):Q('ضعف مشخصی دیده نمی‌شود 👏','No clear weak spot 👏','لا توجد نقطة ضعف واضحة 👏'))+'</div>'+
  (trd?'<div class="it"><span>'+Q('روند ۵ بازی اخیر','Trend of the last 5 games','اتجاه آخر ٥ ألعاب')+'</span><b>'+trd+'</b></div>':'')+'<h2 style="margin-top:10px">📊 '+Q('جزئیات مباحث','Topic details','تفاصيل المواضيع')+'</h2>'+rows+
  '<button class="btn t1" data-xp="weak" style="width:100%;margin-top:8px">🧠 '+Q('تمرین هوشمند (از ضعف‌هایم)','Smart practice (from my weak spots)','التدريب الذكي (من نقاط ضعفي)')+'</button>'+btn+
- '<button class="btn t2" data-z="pg" style="width:100%;margin-top:8px">📈 '+Q('نمودار پیشرفت هفتگی / ماهانه','Weekly / monthly progress charts','مخططات التقدم الأسبوعية / الشهرية')+'</button></div>')}
+ '<button class="btn t2" data-z="pg" style="width:100%;margin-top:8px">📈 '+Q('نمودار پیشرفت هفتگی / ماهانه','Weekly / monthly progress charts','مخططات التقدم الأسبوعية / الشهرية')+'</button>'+'<button class="btn t2" data-xd="sk" style="width:100%;margin-top:8px">🔬 '+Q('تحلیل دقیق مهارت‌ها','Detailed skill analysis','تحليل المهارات بالتفصيل')+'</button></div>')}
 
 /* ---------- wiring ---------- */
 document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;const d=t.dataset;
@@ -1263,7 +1317,224 @@ window.XV3={progM,drawReport,pdfBlob,win,agg};
 ui();
 })();
 </script>
+<script>
+/* ===== v4: skill analysis, error diagnosis, richer solutions, more question types, tutor verification, teacher exams ===== */
+(function(){'use strict';
+const T=Q,f=n=>dg(fa(n)),J=LG==='en'?', ':'، ',PC=LG==='en'?'%':'٪',bm=s=>'<bdi dir="ltr">'+s+'</bdi>',E=s=>String(s==null?'':s).replace(/[&<>"'`]/g,m=>'&#'+m.charCodeAt(0)+';'),gcd=(a,b)=>b?gcd(b,a%b):a,$$=s=>document.querySelector(s);
+const nA=s=>String(s).replace(/[۰-۹]/g,d=>d.charCodeAt(0)-1776).replace(/[٠-٩]/g,d=>d.charCodeAt(0)-1632);
+const plain=q=>nA(String(q.t+(q.e||'')).replace(/<sup>(.*?)<\/sup>/g,'^$1').replace(/<sub>(.*?)<\/sub>/g,'_$1').replace(/<[^>]*>/g,'')).replace(/٫/g,'.').replace(/−/g,'-').replace(/\s+/g,' ').trim();
+const XD=window.XD={t:0,last:null};
+document.addEventListener('click',e=>{const b=e.target.closest('button[data-v]');if(b){XD.last=parseFloat(b.dataset.v);XD.t=Date.now()}},true);
+/* ---- skill names ---- */
+const SK={'add-simple':['جمع بدون نقلی','Addition without carrying','جمع بدون حمل'],'add-carry':['جمع با نقلی','Addition with carrying','جمع مع الحمل'],'add-big':['جمع عددهای بزرگ','Adding large numbers','جمع الأعداد الكبيرة'],'sub-simple':['تفریق ساده','Simple subtraction','طرح بسيط'],'sub-borrow':['تفریق با قرض','Subtraction with borrowing','طرح مع الاستلاف'],'mul-t5':['ضرب تا ۵','Times tables up to 5','جدول الضرب حتى 5'],'mul-t9':['ضرب ۶ تا ۹','Times tables 6–9','جدول الضرب 6–9'],'mul-t12':['ضرب ۱۰ تا ۱۲','Times tables 10–12','جدول الضرب 10–12'],'mul-big':['ضرب چندرقمی','Multi-digit multiplication','ضرب متعدد الأرقام'],'div-fact':['تقسیم (جدول)','Division facts','حقائق القسمة'],'div-big':['تقسیم بزرگ‌تر','Larger division','قسمة أكبر'],'miss':['عدد گمشده','Missing number','العدد المفقود'],'pow-square':['توان ۲ (مربع)','Squares','المربعات'],'pow-cube':['توان ۳ (مکعب)','Cubes','المكعبات'],'pow-high':['توان‌های بالاتر','Higher powers','قوى أعلى'],'sqrt':['جذر کامل','Perfect-square roots','الجذور التربيعية'],'log':['لگاریتم','Logarithms','اللوغاريتمات'],'fact':['فاکتوریل','Factorials','العاملي'],'trig-sc':['سینوس و کسینوس','Sine and cosine','الجيب وجيب التمام'],'trig-tc':['تانژانت و کتانژانت','Tangent and cotangent','الظل وظل التمام']};
+const CN=[['اعداد زوج','Even numbers','الأعداد الزوجية'],['اعداد اول','Prime numbers','الأعداد الأولية'],['ب.م.م','GCD','القاسم المشترك الأكبر'],['ک.م.م','LCM','المضاعف المشترك الأصغر'],['زاویه‌های چندضلعی','Polygon angles','زوايا المضلعات'],['میانگین','Mean','المتوسط'],['مقسوم‌علیه‌ها','Divisors','القواسم'],['مضرب‌ها','Multiples','المضاعفات'],['ارزش مکانی','Place value','القيمة المنزلية'],['گرد کردن','Rounding','التقريب'],['الگوی عددی (استدلال)','Number patterns (reasoning)','الأنماط العددية (استدلال)'],['بخش‌پذیری (استدلال)','Divisibility (reasoning)','قابلية القسمة (استدلال)'],['اعداد متوالی (استدلال)','Consecutive numbers (reasoning)','أعداد متتالية (استدلال)'],['فکر کردن به عدد (استدلال)','Think-of-a-number (reasoning)','فكّر في عدد (استدلال)'],['مجموع ارقام (استدلال)','Digit sums (reasoning)','مجموع الأرقام (استدلال)']];
+const AN=[['قیمت و تعداد','Price × quantity','السعر × الكمية'],['سرعت و مسافت','Speed & distance','السرعة والمسافة'],['تخفیف و درصد','Discounts & percent','الخصم والنسبة'],['محیط و مساحت','Perimeter & area','المحيط والمساحة'],['تقسیم مساوی','Equal sharing','التقاسم المتساوي'],['میانگین نمره','Average score','متوسط الدرجات'],['زمان (ساعت و دقیقه)','Time (hours & minutes)','الزمن (ساعات ودقائق)'],['تبدیل واحد','Unit conversion','تحويل الوحدات'],['کسر از مقدار','Fraction of a quantity','كسر من كمية'],['پول و باقی‌مانده','Money & change','النقود والباقي'],['سن (مسئله‌ی کلامی)','Age problems','مسائل الأعمار']];
+XD.name=id=>{const m=/^([CA])(\d+)$/.exec(id),a=m?(m[1]==='C'?CN:AN)[+m[2]]:SK[id];return a?T(a[0],a[1],a[2]):id};
+function skillOf(q){if(q.sk)return q.sk;const s=plain(q);let m;
+ if(m=/^(\d+) ([+\-×÷]) (\d+)/.exec(s)){const a=+m[1],b=+m[3],o=m[2];if(o==='+')return(a%10+b%10>=10)?'add-carry':(a>=100||b>=100)?'add-big':'add-simple';if(o==='-')return a%10<b%10?'sub-borrow':'sub-simple';if(o==='×'){const M=Math.max(a,b);return M>12?'mul-big':M>9?'mul-t12':M>5?'mul-t9':'mul-t5'}return Math.max(a/b|0,b)<=12?'div-fact':'div-big'}
+ if(/^\d+ [+\-×÷] \?/.test(s)||/^\d+ [+\-×÷] \d+ = \?/.test(s)&&false)return'miss';
+ if(m=/^(\d+)\^(\d+)/.exec(s))return+m[2]===2?'pow-square':+m[2]===3?'pow-cube':'pow-high';
+ if(s[0]==='√')return'sqrt';if(/^log/.test(s))return'log';if(/^\d+!/.test(s))return'fact';if(/^(sin|cos)/.test(s))return'trig-sc';if(/^(tan|cot)/.test(s))return'trig-tc';return null}
+XD.skillOf=skillOf;
+const acc=h=>{if(!h||!h.n)return null;const s=h.h||'';if(s.length>=3){let k=0;for(const c of s)if(c==='1')k++;return k/s.length}return(h.n-h.b)/h.n};
+/* ---- error diagnosis ---- */
+const DM={opmix:['عمل را اشتباه گرفتی (جمع/تفریق/ضرب/تقسیم). به علامت وسط خوب نگاه کن.','You used a different operation. Look carefully at the sign between the numbers.','استخدمت عملية أخرى. انتبه إلى الإشارة بين العددين.'],carry:['در نقلی خطا کردی؛ اول یکان‌ها را جمع کن، بعد نقلی را به دهگان ببر.','Carrying slip: add the units first, then carry to the tens.','خطأ في الحمل: اجمع الآحاد أولاً ثم احمل إلى العشرات.'],borrow:['در قرض‌گرفتن خطا کردی؛ اگر رقم یکان کوچک‌تر بود از دهگان قرض بگیر.','Borrowing slip: if the units digit is too small, borrow from the tens.','خطأ في الاستلاف: إن كان رقم الآحاد أصغر فاستلف من العشرات.'],table:['یک گروه کم یا زیاد شمردی؛ جدول ضرب این عدد را مرور کن.','You counted one group too many or too few. Review that times table.','عددت مجموعة زائدة أو ناقصة؛ راجع جدول الضرب.'],place:['ارزش مکانی را اشتباه گرفتی؛ جواب ۱۰ یا ۱۰۰ برابر شده است.','Place-value slip: your answer is off by a power of ten.','خطأ في القيمة المنزلية: الناتج يختلف بمضاعف للعدد 10.'],slip:['خطای کوچک محاسباتی (یک واحد اختلاف). دوباره بررسی کن.','Small calculation slip (off by 1). Double-check.','خطأ حسابي بسيط (فرق 1). أعد التحقق.'],swap:['ارقام جواب را جابه‌جا نوشتی.','You swapped the digits of the answer.','بدّلت ترتيب أرقام الناتج.'],sign:['علامت جواب را اشتباه گرفتی.','Sign error.','خطأ في الإشارة.'],powmul:['توان یعنی ضرب مکرر، نه ضرب پایه در توان.','A power means repeated multiplication, not base × exponent.','الأس يعني الضرب المتكرر لا ضرب الأساس في الأس.'],half:['جذر، نصف عدد نیست؛ دنبال عددی بگرد که مربعش برابر عدد باشد.','A square root is not half; find the number whose square equals it.','الجذر ليس النصف؛ ابحث عن عدد مربعه يساوي العدد.'],general:['مرحله‌به‌مرحله دوباره حل کن و جواب را بررسی کن.','Redo it step by step and check your result.','أعد الحل خطوة بخطوة وتحقق من الناتج.'],timeout:['زمان تمام شد؛ اول تخمین بزن، بعد دقیق حساب کن.','Time ran out. Estimate first, then calculate precisely.','انتهى الوقت؛ قدّر أولاً ثم احسب بدقة.']};
+const dm=id=>{const a=DM[id]||DM.general;return T(a[0],a[1],a[2])};
+function diag(q,c){const r=+q.r;if(!(Date.now()-XD.t<2500)||c==null||isNaN(c))return'timeout';if(c===-r&&r)return'sign';const s=plain(q);let m;
+ if(m=/^(\d+) ([+\-×÷]) (\d+)/.exec(s)){const a=+m[1],b=+m[3],o=m[2],alt={'+':[a-b,b-a,a*b],'-':[a+b,b-a,a*b],'×':[a+b,a-b],'÷':[a*b,a-b,a+b]}[o];if(alt.includes(c))return'opmix';const df=Math.abs(c-r);
+  if(df===10||df===100)return o==='+'?'carry':o==='-'?'borrow':'place';if(o==='×'&&(df===a||df===b))return'table';if(df===1)return'slip';if(c!==r&&String(c).split('').sort().join('')===String(r).split('').sort().join(''))return'swap';if(r&&(c===r*10||c*10===r))return'place'}
+ else if((m=/^(\d+)\^(\d+)/.exec(s))&&c===+m[1]*+m[2])return'powmul';else if((m=/^√(\d+)/.exec(s))&&c===+m[1]/2)return'half';else if(Math.abs(c-r)===1)return'slip';return'general'}
+XD.rec=function(q,ok){try{const id=skillOf(q);if(!id)return;S.skl=S.skl||{};const h=S.skl[id]||(S.skl[id]={n:0,b:0,h:''});h.n++;if(!ok)h.b++;h.h=(h.h+(ok?'1':'0')).slice(-20);
+ if(!ok&&!/^[CA]\d+$/.test(id)){const d=diag(q,XD.last);S.er=S.er||{};S.er[d]=(S.er[d]||0)+1}}catch(e){}};
+const _xl=window.xLog;window.xLog=function(q,ok){if(_xl)_xl.apply(this,arguments);XD.rec(q,ok)};
+/* ---- richer step-by-step solutions ---- */
+const PL=[['یکان','units','الآحاد'],['دهگان','tens','العشرات'],['صدگان','hundreds','المئات'],['هزارگان','thousands','الآلاف']],pn=i=>{const p=PL[Math.min(i,3)];return T(p[0],p[1],p[2])};
+const dg2=n=>String(n).split('').reverse().map(Number);
+function colAdd(a,b){const A=dg2(a),B=dg2(b),n=Math.max(A.length,B.length),L=[T('جمع ستونی؛ از راست (یکان) شروع می‌کنیم:','Column addition, starting from the right (units):','الجمع العمودي من اليمين (الآحاد):')];let c=0;
+ for(let i=0;i<n;i++){const x=A[i]||0,y=B[i]||0,s=x+y+c;L.push('• '+pn(i)+': '+bm(f(x)+' + '+f(y)+(c?' + '+f(c):'')+' = '+f(s))+(s>9?' → '+T('می‌نویسیم','write','نكتب')+' '+bm(f(s%10))+T(' و نقلی ',' and carry ',' ونحمل ')+bm(f(1)):''));c=s>9?1:0}
+ if(c)L.push('• '+T('نقلی آخر را پایین می‌آوریم: ','Bring down the last carry: ','ننزل الحمل الأخير: ')+bm(f(1)));return L}
+function colSub(a,b){const A=dg2(a),B=dg2(b),L=[T('تفریق ستونی؛ از راست شروع می‌کنیم:','Column subtraction, starting from the right:','الطرح العمودي من اليمين:')];let bo=0;
+ for(let i=0;i<A.length;i++){const x=A[i]-bo,y=B[i]||0;if(x<y){L.push('• '+pn(i)+': '+bm(f(x)+' < '+f(y))+' → '+T('از رقم بعدی ۱ قرض می‌گیریم: ','borrow 1 from the next place: ','نستلف 1 من الخانة التالية: ')+bm(f(x+10)+' − '+f(y)+' = '+f(x+10-y)));bo=1}else{L.push('• '+pn(i)+': '+bm(f(x)+' − '+f(y)+' = '+f(x-y)));bo=0}}return L}
+function colMul(a,b){const d=dg2(b),pr=[],L=[T('ضرب را به ارزش مکانی رقم‌های ','Split the multiplier ','نجزّئ المضروب فيه ')+f(b)+T(' تقسیم می‌کنیم:',' by place value:',' حسب القيمة المنزلية:')];
+ d.forEach((x,i)=>{if(x){pr.push(a*x*Math.pow(10,i));L.push('• '+bm(f(a)+' × '+f(x*Math.pow(10,i))+' = '+f(a*x*Math.pow(10,i))))}});L.push('• '+T('جمع حاصل‌ها: ','Add the products: ','نجمع النواتج: ')+bm(pr.map(f).join(' + ')+' = '+f(a*b)));return L}
+const CP={'^':['توان یعنی ضرب مکرر پایه؛ تعداد ضرب‌ها = توان − ۱.','An exponent counts how many times the base is a factor; the number of multiplications is exponent − 1.','الأس يعدّ كم مرة يظهر الأساس عاملاً؛ عدد عمليات الضرب = الأس − 1.'],'√':['جذر عکس توان ۲ است: اگر x² = n آنگاه √n = x.','A square root undoes squaring: if x² = n then √n = x.','الجذر عكس التربيع: إذا كان x² = n فإن √n = x.'],log:['لگاریتم عکس توان است: log_b(n) = x یعنی b^x = n.','A logarithm undoes a power: log_b(n) = x means b^x = n.','اللوغاريتم عكس الأس: log_b(n) = x يعني b^x = n.'],'!':['n! یعنی تعداد روش‌های چیدن n شیء در یک ردیف.','n! is the number of ways to arrange n objects in a row.','n! هو عدد طرق ترتيب n من الأشياء في صف.']};
+XD.sol=function(q,L){if(q.x||!Array.isArray(L))return L;const s=plain(q);let m,add=[];
+ if(m=/^(\d+) ([+\-×÷]) (\d+)\b/.exec(s)){const a=+m[1],b=+m[3],o=m[2];
+  if(o==='+'&&Math.max(a,b)>=10)add=colAdd(a,b);else if(o==='-'&&a>=10&&b>=1&&a>=b)add=colSub(a,b);else if(o==='×'&&b>=10&&a>=2)add=colMul(a,b);
+  else if(o==='÷'){const r=+q.r;add=[T('تقسیم عکس ضرب است؛ جواب را با ضرب بررسی کن:','Division undoes multiplication; verify with multiplication:','القسمة عكس الضرب؛ تحقق بالضرب:'),'#'+f(r)+' × '+f(b)+' = '+f(a)+' ✓']}}
+ else if(/^(\d+)\^/.test(s))add=[T(...CP['^'])];else if(s[0]==='√')add=[T(...CP['√'])];else if(/^log/.test(s))add=[T(...CP.log)];else if(/^\d+!/.test(s))add=[T(...CP['!'])];
+ return add.length?L.concat(add):L};
+XD.extra=function(q){if(!(Date.now()-XD.t<2500)||XD.last==null||isNaN(XD.last)||Math.abs(XD.last-q.r)<.0001)return'';const id=diag(q,XD.last);
+ return'<div style="margin-top:6px;border-top:1px dashed var(--bd);padding-top:6px">🔎 <b>'+T('چرا غلط شد؟','Why was it wrong?','لماذا كانت خاطئة؟')+'</b> '+T('انتخاب تو','You chose','اخترت')+' '+bm(f(XD.last))+' — '+T('جواب درست','correct answer','الصحيح')+' '+bm(f(q.r))+'.<div>'+dm(id)+'</div></div>'};
+/* ---- skill practice generators ---- */
+function mkSkill(id,size){const z=size|0,R=(a,b)=>rnd(a,b),q=(t,r,e)=>({t:t,r:r,e:e,sk:id});let a,b,m;
+ if(m=/^([CA])(\d+)$/.exec(id)){const arr=m[1]==='C'?XV2.CON:XV2.APP,cat=m[1]==='C'?'con':'app',x=arr[+m[2]](z);x.cat=cat;x.e=' ';x.sk=id;x.tag=XV2.catLabel(cat);return x}
+ const hi=[40,99,480][z];
+ switch(id){case'add-carry':do{a=R(8,hi);b=R(6,hi)}while(a%10+b%10<10);return q(f(a)+' + '+f(b),a+b);
+ case'add-simple':do{a=R(11,hi);b=R(11,hi)}while(a%10+b%10>=10);return q(f(a)+' + '+f(b),a+b);
+ case'add-big':a=R(100,[400,999,4999][z]);b=R(100,[400,999,4999][z]);return q(f(a)+' + '+f(b),a+b);
+ case'sub-borrow':do{a=R(21,hi+20);b=R(9,a-1)}while(a%10>=b%10);return q(f(a)+' − '+f(b),a-b);
+ case'sub-simple':do{a=R(15,hi+20);b=R(2,a-1)}while(a%10<b%10);return q(f(a)+' − '+f(b),a-b);
+ case'mul-t5':a=R(2,5);b=R(2,5);return q(f(a)+' × '+f(b),a*b);case'mul-t9':a=R(6,9);b=R(2,9);return q(f(a)+' × '+f(b),a*b);case'mul-t12':a=R(10,12);b=R(2,12);return q(f(a)+' × '+f(b),a*b);
+ case'mul-big':a=R(13,[30,60,99][z]);b=R(2,[9,12,19][z]);return q(f(a)+' × '+f(b),a*b);
+ case'div-fact':b=R(2,12);m=R(2,12);return q(f(b*m)+' ÷ '+f(b),m);case'div-big':b=R(3,9);m=R(13,[30,60,99][z]);return q(f(b*m)+' ÷ '+f(b),m);
+ case'miss':a=R(2,[20,50,99][z]);b=R(2,[20,50,99][z]);return q(f(a)+' + ?',b,' = '+f(a+b));
+ case'pow-square':a=R(2,[9,12,15][z]);return q(f(a)+'<sup>'+f(2)+'</sup>',a*a);case'pow-cube':a=R(2,[4,6,9][z]);return q(f(a)+'<sup>'+f(3)+'</sup>',a*a*a);
+ case'pow-high':a=R(2,[3,4,5][z]);b=R(4,5);return q(f(a)+'<sup>'+f(b)+'</sup>',Math.pow(a,b));
+ case'trig-sc':{const x=gen({o:['sin','cos'],m:12});x.sk=id;return x}case'trig-tc':{const x=gen({o:['tan','cot'],m:12});x.sk=id;return x}
+ default:{const x=gen({o:[id],m:[12,30,160][z]});x.sk=id;return x}}}
+XD.mkSkill=mkSkill;
+const MAPC={'+':['add-simple','add-carry','add-big'],'-':['sub-simple','sub-borrow'],'*':['mul-t5','mul-t9','mul-t12','mul-big'],'/':['div-fact','div-big'],'^':['pow-square','pow-cube','pow-high'],'√':['sqrt'],log:['log'],'!':['fact'],trig:['trig-sc','trig-tc']};
+XD.weakQ=function(c,size){const ids=(MAPC[c]||[]).map(id=>[id,acc((S.skl||{})[id]),((S.skl||{})[id]||{}).n||0]).filter(x=>x[2]>=3&&x[1]<.8);if(!ids.length)return null;const w=ids.map(x=>.1+Math.pow(1-x[1],1.5));let r=Math.random()*w.reduce((a,b)=>a+b,0),i=0;for(;i<w.length-1;i++){r-=w[i];if(r<=0)break}return mkSkill(ids[i][0],size)};
+XD.pickGen=function(arr,cat){const p=cat==='con'?'C':'A',w=arr.map((g,i)=>{const h=(S.skl||{})[p+i],a=acc(h);return a==null?.3:.1+Math.pow(1-a,1.5)});let r=Math.random()*w.reduce((a,b)=>a+b,0);for(let i=0;i<arr.length;i++){r-=w[i];if(r<=0)return arr[i]}return arr[arr.length-1]};
+/* ---- skills modal ---- */
+function skillM(){const sk=S.skl||{},rows=Object.keys(sk).filter(k=>sk[k].n>0).map(k=>({k,n:sk[k].n,a:acc(sk[k])})).sort((x,y)=>x.a-y.a);
+ if(!rows.length)return modal('<div data-nt><h2>🔬 '+T('تحلیل مهارت‌ها','Skill analysis','تحليل المهارات')+'</h2><div class="it" style="display:block">'+T('هنوز داده‌ای نیست. چند دور بازی یا تمرین کن تا ضعف‌هایت تا سطح «مهارت» مشخص شود.','No data yet. Play or practice a few rounds to see your weak spots down to the skill level.','لا بيانات بعد. العب أو تدرّب لتظهر نقاط ضعفك على مستوى المهارة.')+'</div></div>');
+ const wk=rows.filter(r=>r.n>=3&&r.a<.75).slice(0,3),er=Object.entries(S.er||{}).filter(x=>x[0]!=='timeout'&&x[0]!=='general').sort((x,y)=>y[1]-x[1]).slice(0,3),col=p=>p>=85?'var(--ok)':p>=65?'#f39c12':'var(--bad)';
+ modal('<div data-nt><h2>🔬 '+T('تحلیل مهارت‌ها','Skill analysis','تحليل المهارات')+'</h2>'+
+ '<div class="it" style="display:block">⚠️ <b>'+T('دقیقاً کجا ضعف داری:','Exactly where you are weak:','أين ضعفك تحديداً:')+'</b>'+(wk.length?wk.map(r=>'<div style="margin-top:4px">'+E(XD.name(r.k))+' — <b>'+f(Math.round(r.a*100))+PC+'</b> <button class="btn t1" data-xp="sk:'+r.k+'" style="padding:4px 10px;font-size:.7rem">🎯 '+T('تمرین','Practice','تدرّب')+'</button></div>').join(''):'<div>'+T('ضعف مشخصی دیده نمی‌شود 👏','No clear weak spot 👏','لا ضعف واضح 👏')+'</div>')+'</div>'+
+ (er.length?'<div class="it" style="display:block">🧩 <b>'+T('رایج‌ترین نوع اشتباه‌هایت:','Your most common mistakes:','أكثر أخطائك شيوعاً:')+'</b>'+er.map(x=>'<div style="margin-top:4px">• '+dm(x[0])+' ('+f(x[1])+')</div>').join('')+'</div>':'')+
+ '<h2 style="margin-top:8px">📊 '+T('همه‌ی مهارت‌ها','All skills','كل المهارات')+'</h2>'+rows.map(r=>{const p=Math.round(r.a*100);return'<div class="it" style="display:block"><div style="display:flex;justify-content:space-between;gap:6px"><span>'+E(XD.name(r.k))+'</span><span><b>'+f(p)+PC+'</b> <small style="display:inline">'+f(r.n)+'</small></span></div><div class="xbar"><i style="width:'+p+'%;background:'+col(p)+'"></i></div></div>'}).join('')+'</div>')}
+/* ---- more question types: conceptual / reasoning / applied ---- */
+const isP=n=>{if(n<2)return false;for(let i=2;i*i<=n;i++)if(n%i===0)return false;return true};
+XV2.CON.push(
+ z=>{const L=[3,4,5][z],ds=[1,2,3,4,5,6,7,8,9].sort(()=>Math.random()-.5).slice(0,L),num=+ds.join(''),pos=rnd(0,L-1),dg_=ds[L-1-pos],r=dg_*Math.pow(10,pos);return{t:T('در عدد '+f(num)+' ارزش رقم '+f(dg_)+' چند است؟','In the number '+f(num)+', what is the value of the digit '+f(dg_)+'?','في العدد '+f(num)+' ما قيمة الرقم '+f(dg_)+'؟'),r,x:[T('رقم '+f(dg_)+' در جایگاه «'+pn(pos)+'» است.','The digit '+f(dg_)+' is in the '+pn(pos)+' place.','الرقم '+f(dg_)+' في منزلة '+pn(pos)+'.'),'#'+f(dg_)+' × '+f(Math.pow(10,pos))+' = '+f(r)]}},
+ z=>{const p=pick([10,100]),n=rnd(p+1,[999,4999,9999][z]),r=Math.round(n/p)*p;return{t:T('عدد '+f(n)+' را به نزدیک‌ترین '+(p===10?'ده':'صد')+'تایی گرد کنید.','Round '+f(n)+' to the nearest '+f(p)+'.','قرّب العدد '+f(n)+' إلى أقرب '+f(p)+'.'),r,x:[T('به رقم سمت راستِ جایگاه گرد‌شونده نگاه کن: اگر ۵ یا بیشتر بود، رو به بالا گرد کن.','Look at the digit to the right: if it is 5 or more, round up.','انظر إلى الرقم الأيمن: إن كان 5 فأكثر فقرّب إلى الأعلى.'),'#'+f(n)+' ≈ '+f(r)]}},
+ z=>{const t=pick([0,1,2]),a=rnd(2,[9,15,30][z]);let s,r,h;if(t===0){const d=rnd(2,[6,9,15][z]);s=[a,a+d,a+2*d,a+3*d];r=a+4*d;h=T('اختلاف هر دو جمله‌ی متوالی ثابت است: ','The difference between consecutive terms is constant: ','الفرق بين كل حدّين متتاليين ثابت: ')+bm('+'+f(d))}else if(t===1){const k=pick([2,3]);s=[a,a*k,a*k*k,a*k*k*k];r=a*k*k*k*k;h=T('هر جمله ضرب‌در ','Each term is multiplied by ','كل حد يُضرب في ')+bm(f(k))}else{s=[a,a+1,a+3,a+6];r=a+10;h=T('اختلاف‌ها ۱، ۲، ۳ هستند و بعدی ۴ است.','The differences are 1, 2, 3, so the next one is 4.','الفروق 1 و2 و3 فالتالي 4.')}return{t:T('جمله‌ی بعدی الگو چیست؟ ','What is the next term? ','ما الحد التالي؟ ')+bm(s.map(f).join(', ')+', ?'),r,x:[h,'#'+f(r)]}},
+ z=>{const L=Array.from({length:6},()=>rnd(10,[60,120,300][z])),c=L.filter(x=>x%6===0);return{t:T('از بین اعداد '+L.map(f).join(J)+' چند عدد هم بر ۲ و هم بر ۳ بخش‌پذیر است؟','How many of '+L.map(f).join(J)+' are divisible by both 2 and 3?','كم عدداً من '+L.map(f).join(J)+' يقبل القسمة على 2 و3 معاً؟'),r:c.length,x:[T('بخش‌پذیر بر ۲ و ۳ یعنی بخش‌پذیر بر ۶ (زوج و مجموع رقم‌ها مضرب ۳).','Divisible by 2 and 3 means divisible by 6 (even and digit sum a multiple of 3).','القسمة على 2 و3 تعني القسمة على 6 (زوجي ومجموع أرقامه من مضاعفات 3).'),c.length?T('عددهای مناسب: ','Matching numbers: ','الأعداد المطابقة: ')+c.map(f).join(J):T('هیچ‌کدام مناسب نیست.','None match.','لا شيء يطابق.')]}},
+ z=>{const m=rnd(3,[20,60,150][z]),S3=3*m;return{t:T('مجموع سه عدد صحیح متوالی '+f(S3)+' است. بزرگ‌ترین آن‌ها کدام است؟','Three consecutive integers add up to '+f(S3)+'. What is the largest?','مجموع ثلاثة أعداد صحيحة متتالية '+f(S3)+'. ما أكبرها؟'),r:m+1,x:[T('عدد وسط = مجموع ÷ ۳:','Middle number = sum ÷ 3:','العدد الأوسط = المجموع ÷ 3:'),'#'+f(S3)+' ÷ 3 = '+f(m),T('بزرگ‌ترین = وسط + ۱:','Largest = middle + 1:','الأكبر = الأوسط + 1:'),'#'+f(m)+' + 1 = '+f(m+1)]}},
+ z=>{const n=rnd(2,[12,30,60][z]),k=rnd(2,5),c=rnd(2,[20,30,40][z]),R=k*n+c;return{t:T('به عددی فکر کرده‌ام؛ آن را در '+f(k)+' ضرب و با '+f(c)+' جمع کردم و '+f(R)+' شد. آن عدد چند است؟','I thought of a number, multiplied it by '+f(k)+' and added '+f(c)+' to get '+f(R)+'. What is the number?','فكّرت في عدد فضربته في '+f(k)+' وأضفت '+f(c)+' فكان الناتج '+f(R)+'. ما العدد؟'),r:n,x:[T('از آخر به اول برگرد (عمل‌های وارون):','Work backwards (inverse operations):','اعمل بالعكس (العمليات العكسية):'),'#'+f(R)+' − '+f(c)+' = '+f(R-c),'#'+f(R-c)+' ÷ '+f(k)+' = '+f(n)]}},
+ z=>{const S1=rnd(2,9),ls=[];for(let a=1;a<=S1;a++)ls.push(a*10+S1-a);return{t:T('چند عدد دو رقمی وجود دارد که مجموع رقم‌هایشان '+f(S1)+' باشد؟','How many two-digit numbers have a digit sum of '+f(S1)+'?','كم عدداً من رقمين مجموع رقميه '+f(S1)+'؟'),r:S1,x:[T('رقم دهگان از ۱ تا '+f(S1)+' می‌تواند باشد و یکان باقی‌مانده است:','The tens digit can be 1 to '+f(S1)+', and the units digit is the rest:','يمكن أن تكون خانة العشرات من 1 إلى '+f(S1)+' وتكمل الآحاد الباقي:'),ls.map(f).join(J)]}});
+XV2.APP.push(
+ z=>{const h=rnd(1,[3,4,5][z]),m=rnd(5,55);return{t:T('یک فیلم '+f(h)+' ساعت و '+f(m)+' دقیقه طول می‌کشد. این فیلم چند دقیقه است؟','A film lasts '+f(h)+' hours and '+f(m)+' minutes. How many minutes is that?','يستغرق فيلم '+f(h)+' ساعات و'+f(m)+' دقيقة. كم دقيقة يساوي ذلك؟'),r:60*h+m,x:[T('هر ساعت ۶۰ دقیقه است.','One hour is 60 minutes.','الساعة الواحدة 60 دقيقة.'),'#'+f(h)+' × 60 + '+f(m)+' = '+f(60*h+m)]}},
+ z=>{const v=pick([['متر','سانتی‌متر','meters','centimeters','أمتار','سنتيمترات',100],['کیلومتر','متر','kilometers','meters','كيلومترات','أمتار',1000],['کیلوگرم','گرم','kilograms','grams','كيلوغرامات','غرامات',1000]]),n=rnd(2,[9,20,60][z]);return{t:T(f(n)+' '+v[0]+' چند '+v[1]+' است؟','How many '+v[3]+' are in '+f(n)+' '+v[2]+'?','كم '+v[5]+' في '+f(n)+' '+v[4]+'؟'),r:n*v[6],x:[T('هر یک '+v[0]+' برابر '+f(v[6])+' '+v[1]+' است.','One '+v[2].replace(/s$/,'')+' equals '+f(v[6])+' '+v[3]+'.','الواحد من '+v[4]+' يساوي '+f(v[6])+' '+v[5]+'.'),'#'+f(n)+' × '+f(v[6])+' = '+f(n*v[6])]}},
+ z=>{const d=pick([4,5,6,8]),k=rnd(1,d-1),N=d*rnd(2,[10,15,25][z]);return{t:T('یک کشاورز '+f(N)+' گوسفند دارد. '+f(k)+'/'+f(d)+' آن‌ها سفیدند. چند گوسفند سفید دارد؟','A farmer has '+f(N)+' sheep. '+f(k)+'/'+f(d)+' of them are white. How many white sheep are there?','لدى مزارع '+f(N)+' خروفاً. '+f(k)+'/'+f(d)+' منها بيضاء. كم عدد الخراف البيضاء؟'),r:N/d*k,x:[T('اول کل را بر مخرج تقسیم کن، بعد در صورت ضرب کن:','Divide the total by the denominator, then multiply by the numerator:','اقسم الكل على المقام ثم اضرب في البسط:'),'#'+f(N)+' ÷ '+f(d)+' = '+f(N/d),'#'+f(N/d)+' × '+f(k)+' = '+f(N/d*k)]}},
+ z=>{const a=rnd(5,[30,60,90][z]),b=rnd(5,[30,60,90][z]),P=Math.ceil((a+b+1)/50)*50;return{t:T('سارا دو کتاب به قیمت '+f(a)+' و '+f(b)+' هزار تومان خرید و '+f(P)+' هزار تومان داد. چند هزار تومان باقی‌مانده می‌گیرد؟','Sara buys two books costing '+f(a)+' and '+f(b)+' thousand tomans and pays '+f(P)+' thousand. How many thousand tomans change does she get?','اشترت سارة كتابين بسعر '+f(a)+' و'+f(b)+' ألف تومان ودفعت '+f(P)+' ألفاً. كم ألف تومان الباقي؟'),r:P-a-b,x:[T('اول مجموع قیمت‌ها، بعد پول داده‌شده منهای مجموع:','First the total price, then paid minus total:','أولاً مجموع الأسعار ثم المدفوع − المجموع:'),'#'+f(a)+' + '+f(b)+' = '+f(a+b),'#'+f(P)+' − '+f(a+b)+' = '+f(P-a-b)]}},
+ z=>{const a=rnd(4,[10,14,18][z]),k=rnd(2,4),y=rnd(2,[8,12,20][z]);return{t:T('سارا '+f(a)+' ساله است و مادرش '+f(k)+' برابر او سن دارد. '+f(y)+' سال دیگر مادر چند ساله است؟','Sara is '+f(a)+' and her mother is '+f(k)+' times as old. How old will her mother be in '+f(y)+' years?','عمر سارة '+f(a)+' وأمها أكبر منها '+f(k)+' مرات. كم سيكون عمر الأم بعد '+f(y)+' سنة؟'),r:a*k+y,x:[T('سن فعلی مادر = سن سارا × '+f(k)+':','Mother now = Sara × '+f(k)+':','عمر الأم الآن = عمر سارة × '+f(k)+':'),'#'+f(a)+' × '+f(k)+' = '+f(a*k),T('بعد '+f(y)+' سال:','After '+f(y)+' years:','بعد '+f(y)+' سنة:'),'#'+f(a*k)+' + '+f(y)+' = '+f(a*k+y)]}});
+/* ---- tutor: safer answers (word-problem guard, independent verification, fraction form, root check) ---- */
+const KN=new Set('what is calculate compute solve find the of by to and equals equal sqrt sin cos tan cot log ln abs pi x e gcd lcm hcf factor prime power times plus minus divided multiplied square root percent number numbers من ما هو ناتج احسب جد حل على في و حاصل جواب چند است برابر مساوی از بر در به توان ضرب تقسیم جمع تفریق منهای جذر ریشه تجزیه عوامل اول را'.split(' '));
+const _la=window.localAI;
+window.localAI=function(q){const raw=String(q);
+ const words=(raw.replace(/[0-9۰-۹٠-٩+\-−×÷*/^().,!%=?؟:;،٪√°]/g,' ').match(/[A-Za-z\u0600-\u06FF]+/g)||[]).filter(w=>!KN.has(w.toLowerCase()));
+ if(words.length>4)return T('⚠️ این شبیه یک مسئله‌ی کلامی است و من فقط عبارت‌های ریاضی را مطمئن حل می‌کنم. آن را به یک عبارت یا معادله تبدیل کن (مثلاً ۵ + ۳ یا ۲x + ۳ = ۱۱).','⚠️ This looks like a word problem. I only solve math expressions reliably. Rewrite it as an expression or equation (e.g. 5 + 3 or 2x + 3 = 11).','⚠️ يبدو هذا مسألة كلامية وأنا أحل التعابير الرياضية بثقة فقط. اكتبها كتعبير أو معادلة (مثل 5 + 3 أو 2x + 3 = 11).');
+ let out=_la(raw);if(out.indexOf('✅')<0)return out;
+ const e=nA(raw).replace(/[×·]/g,'*').replace(/÷/g,'/').replace(/[−–]/g,'-').replace(/٫/g,'.').replace(/[?؟]/g,'').toLowerCase().replace(/\s+/g,''),extra=[];
+ try{
+  if(/^[0-9+\-*/().^]+=?$/.test(e)){const ex=e.replace(/=$/,'').replace(/\^/g,'**');if(!/^-?\d+\*\*/.test(ex)&&!/\(-/.test(ex)||true){const v=Function('"use strict";return('+ex+')')();if(isFinite(v)){const mine=parseFloat(nA(out.split('\n')[0]).replace(/[^0-9.\-]/g,'').replace(/^(-?)\.?/,'$1'));
+    if(isFinite(mine)&&Math.abs(mine-v)<=1e-6*Math.max(1,Math.abs(v)))extra.push('✔ '+T('بازبینی مستقل: نتیجه یکسان است.','Independent check: same result.','تحقق مستقل: النتيجة نفسها.'));
+    else if(isFinite(mine))extra.push('⚠️ '+T('بازبینی مستقل نتیجه‌ی متفاوتی داد؛ سؤال را با پرانتز واضح‌تر بنویس.','An independent check gave a different result; write the question with clearer parentheses.','أعطى التحقق المستقل نتيجة مختلفة؛ اكتب السؤال بأقواس أوضح.'));
+    if(!Number.isInteger(v)){for(let d=2;d<=1000;d++){const p=Math.round(v*d);if(Math.abs(v-p/d)<1e-9){extra.push('📐 '+T('به شکل کسر: ','As a fraction: ','على شكل كسر: ')+bm(f(p)+'/'+f(d)));break}}}}}}
+  else if((e.match(/=/g)||[]).length===1&&e.includes('x')){const lr=e.split('='),rs=[...nA(out).replace(/٫/g,'.').matchAll(/x = (-?[0-9.]+)/g)].map(m=>+m[1]);
+   if(rs.length&&rs.every(v=>{const d=evalS(lr[0],v)-evalS(lr[1],v);return Math.abs(d)<1e-6*Math.max(1,Math.abs(v))}))extra.push('✔ '+T('بررسی: با جایگذاری جواب در معادله، دو طرف برابر می‌شوند.','Check: substituting the solution makes both sides equal.','تحقق: بالتعويض يتساوى الطرفان.'))}
+ }catch(err){}
+ return extra.length?out+'\n\n'+(LG==='en'?extra.join('\n'):extra.map(x=>dg(x.replace(/\d/g,d=>fa(d)))).join('\n')):out};
+/* ---- teacher: exams, results, dashboard (serverless: codes) ---- */
+const b64=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''),unb=s=>JSON.parse(decodeURIComponent(escape(atob(String(s).replace(/-/g,'+').replace(/_/g,'/')))));
+const enc=(p,o)=>p+'.'+b64(o),dec=(p,s)=>{s=String(s).trim();if(!s.startsWith(p+'.'))throw 0;return unb(s.slice(p.length+1))};
+const mb=a=>()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+function examQs(X){const out=[],rr=Math.random;try{for(let i=0;i<X.n;i++){Math.random=mb(X.s*1000+i*7919+13);const tp=X.p[i%X.p.length],q=XV1.mkQ(tp,X.z),ops=distract(+q.r,4);for(let k=ops.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[ops[k],ops[j]]=[ops[j],ops[k]]}out.push({q,ops,tp})}}finally{Math.random=rr}return out}
+const TKS=[['+','➕'],['-','➖'],['*','✖️'],['/','➗'],['^','⬆️'],['√','√'],['log','🧮'],['!','❗'],['con','💡'],['app','🛒']].map(x=>['op:'+x[0],x[1]+' '+XV1.opN(x[0])]).concat(['add-carry','sub-borrow','mul-t9','mul-t12','div-fact'].map(k=>['sk:'+k,'🔬 '+XD.name(k)]));
+const css=document.createElement('style');css.textContent='.tc input,.tc select,.tc textarea{width:100%;padding:8px;margin:3px 0;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit}.tc .xc.on{outline:2px solid var(--gold)}.tc table{width:100%;border-collapse:collapse;font-size:.74rem}.tc td,.tc th{padding:4px;border-bottom:1px solid var(--bd);text-align:start}';document.head.appendChild(css);
+let TS=new Set(['op:+','op:-']);
+function tchM(tab,sel){S.tch=S.tch||{ex:[]};tab=tab||'new';const tabs=[['new',T('ساخت آزمون / تمرین','New exam / assignment','إنشاء اختبار / واجب')],['list',T('آزمون‌ها و نتایج','Exams & results','الاختبارات والنتائج')]];
+ let body='';
+ if(tab==='new')body='<input id="tt" maxlength="40" placeholder="'+T('عنوان (مثلاً آزمون فصل ۱)','Title (e.g. Unit 1 quiz)','العنوان (مثل اختبار الوحدة 1)')+'"><div class="xrow">'+TKS.map(x=>'<button class="xc'+(TS.has(x[0])?' on':'')+'" data-tk="'+x[0]+'">'+x[1]+'</button>').join('')+'</div><div class="row"><select id="tn"><option>5</option><option selected>10</option><option>15</option><option>20</option></select><select id="tz"><option value="0">'+T('آسان','Easy','سهل')+'</option><option value="1" selected>'+T('متوسط','Medium','متوسط')+'</option><option value="2">'+T('سخت','Hard','صعب')+'</option></select><select id="tl"><option value="0">'+T('بدون زمان','No limit','بلا وقت')+'</option><option value="5">5 min</option><option value="10">10 min</option><option value="20">20 min</option></select></div><label class="it"><span>'+T('حالت تمرین (راه‌حل بعد از هر سؤال)','Practice mode (show solution after each question)','وضع التدريب (الحل بعد كل سؤال)')+'</span><input type="checkbox" id="tf" style="width:auto"></label><button class="btn go" id="tg" style="width:100%">'+T('ساخت کد','Create code','إنشاء الرمز')+'</button><div id="to"></div>';
+ else{const ex=S.tch.ex;body=ex.length?ex.map((x,i)=>'<div class="it" style="display:block"><b>'+E(x.t)+'</b> <small style="display:inline">'+f(x.res.length)+' '+T('نتیجه','results','نتيجة')+'</small><div class="row" style="margin-top:4px"><button class="btn t1" data-tc="cp:'+i+'" style="flex:1">📋 '+T('کپی کد','Copy code','نسخ الرمز')+'</button><button class="btn t2" data-tc="rs:'+i+'" style="flex:1">📊 '+T('نتایج','Results','النتائج')+'</button><button class="btn t3" data-tc="dl:'+i+'" style="flex:0 0 auto">🗑</button></div></div>').join(''):'<div class="it">'+T('هنوز آزمونی نساخته‌اید.','No exams yet.','لا اختبارات بعد.')+'</div>';
+  if(sel!=null&&ex[sel])body=resHTML(ex[sel],sel)}
+ modal('<div class="tc" data-nt><h2>👩‍🏫 '+T('بخش معلم','Teacher area','منطقة المعلم')+'</h2><div class="row" style="margin-bottom:6px">'+tabs.map(t=>'<button class="xc'+(t[0]===tab?' on':'')+'" data-tt="'+t[0]+'" style="flex:1">'+t[1]+'</button>').join('')+'</div>'+body+'<div class="it" style="display:block;margin-top:6px;font-size:.68rem">'+T('دانش‌آموز کد آزمون را در «📝 آزمون» وارد می‌کند و در پایان یک «کد نتیجه» می‌دهد که شما اینجا می‌چسبانید. این روش بدون سرور کار می‌کند و مانع تقلب نیست.','Students enter the exam code under “📝 Exam” and get a result code at the end, which you paste here. This works without a server and does not prevent cheating.','يدخل الطالب رمز الاختبار في «📝 اختبار» ويحصل في النهاية على رمز نتيجة تلصقه هنا. يعمل بلا خادم ولا يمنع الغش.')+'</div></div>');
+ const mb_=$$('#mb');mb_.onclick=ev=>{const b=ev.target.closest('button');if(!b)return;const d=b.dataset;
+  if(d.tt)return tchM(d.tt);if(d.tk){TS.has(d.tk)?TS.delete(d.tk):TS.add(d.tk);b.classList.toggle('on');return}
+  if(b.id==='tg'){if(!TS.size)return toast('—');const X={i:Date.now().toString(36),t:($$('#tt').value.trim()||T('آزمون','Exam','اختبار')).slice(0,40),p:[...TS],n:+$$('#tn').value,z:+$$('#tz').value,tl:+$$('#tl').value,fb:$$('#tf').checked?1:0,s:Math.floor(Math.random()*1e6)},code=enc('MGX1',X);S.tch.ex.unshift({id:X.i,t:X.t,code:code,res:[]});save();
+   const link=location.origin+location.pathname+'?exam='+code;$$('#to').innerHTML='<div class="it" style="display:block"><b>'+T('کد آزمون','Exam code','رمز الاختبار')+'</b><textarea readonly rows="3" dir="ltr" data-nt>'+code+'</textarea><div class="row"><button class="btn t1" id="c1" style="flex:1">📋 '+T('کپی کد','Copy code','نسخ الرمز')+'</button><button class="btn t2" id="c2" style="flex:1">🔗 '+T('کپی لینک','Copy link','نسخ الرابط')+'</button></div></div>';
+   $$('#c1').onclick=()=>cp(code);$$('#c2').onclick=()=>cp(link);return}
+  if(d.tc){const[a,i]=d.tc.split(':'),x=S.tch.ex[+i];if(!x)return;if(a==='cp')cp(x.code);else if(a==='rs')tchM('list',+i);else if(a==='dl'&&confirm(T('حذف شود؟','Delete?','حذف؟'))){S.tch.ex.splice(+i,1);save();tchM('list')}return}
+  if(d.ra!==undefined){const i=+d.ra,x=S.tch.ex[i],ta=$$('#ri'),n0=x.res.length;String(ta.value).split(/\s+/).filter(Boolean).forEach(c=>{try{const r=dec('MGR1',c);if(r.i!==x.id)return;const k=r.nm+'|'+r.ts;if(x.res.some(y=>y.nm+'|'+y.ts===k))return;x.res.push({nm:String(r.nm||'?').slice(0,24),ok:+r.ok||0,n:+r.n||1,tm:+r.tm||0,ts:+r.ts||0,tp:r.tp||{},sk:r.sk||{}})}catch(e){}});save();toast(f(x.res.length-n0)+' ✓');tchM('list',i);return}
+  if(d.csv!==undefined)return csv(S.tch.ex[+d.csv])}}
+const cp=t=>{try{navigator.clipboard.writeText(t).then(()=>toast('✅'))}catch(e){prompt('',t)}};
+function aggr(R,key){const A={};R.forEach(r=>{for(const k in(r[key]||{})){const a=A[k]||(A[k]=[0,0]);a[0]+=+r[key][k][0]||0;a[1]+=+r[key][k][1]||0}});return Object.entries(A).filter(x=>x[1][0]>0).map(x=>({k:x[0],n:x[1][0],a:x[1][1]/x[1][0]})).sort((a,b)=>a.a-b.a)}
+function resHTML(x,i){const R=x.res,sc=r=>Math.round(r.ok/r.n*200)/10;let h='<h2>'+E(x.t)+'</h2>';
+ h+='<textarea id="ri" rows="3" dir="ltr" placeholder="'+T('کد نتیجه‌ی دانش‌آموزان را اینجا بچسبان (هر کدام در یک خط)','Paste students’ result codes here (one per line)','الصق رموز نتائج الطلاب هنا (كل رمز في سطر)')+'"></textarea><button class="btn go" data-ra="'+i+'" style="width:100%">➕ '+T('افزودن نتایج','Add results','إضافة النتائج')+'</button>';
+ if(!R.length)return h;const S1=R.map(sc),avg=S1.reduce((a,b)=>a+b,0)/R.length,bins=[0,0,0,0];S1.forEach(v=>bins[Math.min(3,Math.floor(v/5))]++);
+ const tp=aggr(R,'tp').slice(0,3),sk=aggr(R,'sk').filter(x=>x.n>=3).slice(0,3),nm=k=>k.indexOf('op:')===0||k.indexOf('sk:')===0?XV1.topicName(k):XD.name(k),col=v=>v>=15?'var(--ok)':v>=10?'#f39c12':'var(--bad)';
+ h+='<div class="it" style="display:grid;grid-template-columns:repeat(3,1fr);text-align:center"><div><b style="color:var(--gold)">'+f(R.length)+'</b><br><small>'+T('دانش‌آموز','students','طلاب')+'</small></div><div><b style="color:var(--gold)">'+f(Math.round(avg*10)/10)+'</b><br><small>'+T('میانگین از ۲۰','avg / 20','المتوسط / 20')+'</small></div><div><b style="color:var(--gold)">'+f(Math.max(...S1))+' / '+f(Math.min(...S1))+'</b><br><small>'+T('بیشینه / کمینه','max / min','أعلى / أدنى')+'</small></div></div>';
+ h+='<div class="it" style="display:block"><b>'+T('توزیع نمره‌ها','Score distribution','توزيع الدرجات')+'</b>'+bins.map((b,j)=>'<div style="display:flex;align-items:center;gap:6px;margin-top:3px"><small style="width:46px;display:inline">'+f(j*5)+'–'+f(j*5+5)+'</small><div class="xbar" style="flex:1"><i style="width:'+Math.round(b/R.length*100)+'%"></i></div><small style="display:inline">'+f(b)+'</small></div>').join('')+'</div>';
+ h+='<div class="it" style="display:block">⚠️ <b>'+T('ضعف‌های کلاس:','Class weak spots:','نقاط ضعف الصف:')+'</b>'+(tp.concat(sk).length?tp.concat(sk).map(t=>'<div>• '+E(nm(t.k))+' — '+f(Math.round(t.a*100))+PC+'</div>').join(''):'—')+'</div>';
+ h+='<div class="it" style="display:block"><table><tr><th>'+T('نام','Name','الاسم')+'</th><th>'+T('نمره','Score','الدرجة')+'</th><th>'+T('ضعف','Weak','الضعف')+'</th></tr>'+R.map((r,j)=>({r,s:S1[j]})).sort((a,b)=>b.s-a.s).map(o=>{const w=aggr([o.r],'sk').concat(aggr([o.r],'tp')).filter(z=>z.a<.6).slice(0,2).map(z=>E(nm(z.k))).join(J);return'<tr><td>'+E(o.r.nm)+'</td><td style="color:'+col(o.s)+'"><b>'+f(o.s)+'</b></td><td>'+(w||'—')+'</td></tr>'}).join('')+'</table></div><button class="btn t2" data-csv="'+i+'" style="width:100%">⬇️ CSV</button>';return h}
+function csv(x){const rows=[['name','score_20','correct','total','seconds']].concat(x.res.map(r=>[r.nm,Math.round(r.ok/r.n*200)/10,r.ok,r.n,r.tm])),t='\ufeff'+rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n'),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:'text/csv'}));a.download='exam-'+x.id+'.csv';document.body.appendChild(a);a.click();a.remove()}
+/* ---- student: take an exam by code ---- */
+function examEntry(pre){modal('<div class="tc" data-nt><h2>📝 '+T('آزمون معلم','Teacher exam','اختبار المعلم')+'</h2><textarea id="ec" rows="3" dir="ltr" placeholder="MGX1...">'+E(pre||'')+'</textarea><input id="en_" maxlength="24" placeholder="'+T('نام شما','Your name','اسمك')+'" value="'+E(S.nm||'')+'"><button class="btn go" id="es" style="width:100%">▶ '+T('شروع','Start','ابدأ')+'</button></div>');
+ $$('#es').onclick=()=>{let X;try{X=dec('MGX1',$$('#ec').value);if(!Array.isArray(X.p)||!(X.n>0&&X.n<=40))throw 0}catch(e){return toast('❌')}const nm=($$('#en_').value.trim()||'?').slice(0,24);S.nm=S.nm||nm;save();runExam(X,nm)}}
+function runExam(X,nm){const Q_=examQs(X),st={i:0,a:[],t0:Date.now()};let tmr=null;
+ const fin=()=>{clearInterval(tmr);let ok=0;const tp={},sk={};Q_.forEach((o,i)=>{const good=st.a[i]!=null&&Math.abs(st.a[i]-o.q.r)<.0001;if(good)ok++;const a=tp[o.tp]||(tp[o.tp]=[0,0]);a[0]++;if(good)a[1]++;const id=skillOf(o.q);if(id){const b=sk[id]||(sk[id]=[0,0]);b[0]++;if(good)b[1]++}XD.t=0});
+  const code=enc('MGR1',{i:X.i,t:X.t,nm:nm,ok:ok,n:X.n,tm:Math.round((Date.now()-st.t0)/1000),ts:Date.now(),tp:tp,sk:sk}),score=Math.round(ok/X.n*200)/10;
+  const wrong=Q_.map((o,i)=>({o,i})).filter(x=>!(st.a[x.i]!=null&&Math.abs(st.a[x.i]-x.o.q.r)<.0001));
+  modal('<div class="tc" data-nt><h2>📝 '+E(X.t)+'</h2><div class="it" style="display:block;text-align:center"><div style="font-size:2rem;font-weight:800;color:var(--gold)">'+f(score)+' / '+f(20)+'</div><small>'+f(ok)+' / '+f(X.n)+'</small></div><b>'+T('کد نتیجه (برای معلم)','Result code (for your teacher)','رمز النتيجة (للمعلم)')+'</b><textarea readonly rows="3" dir="ltr">'+code+'</textarea><div class="row"><button class="btn t1" id="rc1" style="flex:1">📋 '+T('کپی','Copy','نسخ')+'</button><button class="btn t2" id="rc2" style="flex:1">📤 '+T('اشتراک','Share','مشاركة')+'</button></div>'+
+   (wrong.length?'<h2 style="margin-top:8px">📖 '+T('مرور اشتباه‌ها','Review mistakes','مراجعة الأخطاء')+'</h2>'+wrong.slice(0,8).map(x=>'<div class="xs"><div><b>'+qh(x.o.q)+'</b></div>'+(st.a[x.i]!=null?'<div>'+T('پاسخ تو: ','Your answer: ','إجابتك: ')+bm(f(st.a[x.i]))+'</div>':'')+XV2.rend(XV2.sol(x.o.q))+'</div>').join(''):'')+'</div>');
+  $$('#rc1').onclick=()=>cp(code);$$('#rc2').onclick=()=>{if(navigator.share)navigator.share({text:code}).catch(()=>{});else cp(code)}};
+ const qh=q=>dg(q.t+(q.e!==undefined?q.e:' = ?'));
+ const show=()=>{if(st.i>=X.n)return fin();const o=Q_[st.i],left=X.tl?Math.max(0,X.tl*60-Math.round((Date.now()-st.t0)/1000)):0;
+  modal('<div class="tc" data-nt><div class="row" style="justify-content:space-between"><b>'+f(st.i+1)+' / '+f(X.n)+'</b><b id="et">'+(X.tl?'⏱ '+f(Math.floor(left/60))+':'+String(left%60).padStart(2,'0'):'')+'</b></div><div class="xbar"><i style="width:'+Math.round(st.i/X.n*100)+'%"></i></div><div class="q" style="direction:ltr;min-height:70px;margin:8px 0;font-size:1.3rem;display:block;padding:14px 8px;text-align:center">'+qh(o.q)+'</div><div class="op">'+o.ops.map((v,j)=>'<button data-v="'+v+'" data-eo="'+j+'">'+f(v)+'</button>').join('')+'</div><div id="ef"></div></div>');
+  $$('#mb').onclick=ev=>{const b=ev.target.closest('button[data-eo]');if(!b)return;const v=parseFloat(b.dataset.v);st.a[st.i]=v;const good=Math.abs(v-o.q.r)<.0001;
+   if(X.fb){$$('#mb').onclick=null;[...document.querySelectorAll('#mb [data-eo]')].forEach(x=>{x.disabled=true;if(Math.abs(parseFloat(x.dataset.v)-o.q.r)<.0001)x.classList.add('c')});if(!good)b.classList.add('w');$$('#ef').innerHTML='<div class="xs">'+XV2.rend(XV2.sol(o.q))+'</div><button class="btn go" id="en2" style="width:100%;margin-top:6px">▶</button>';$$('#en2').onclick=()=>{st.i++;show()}}else{st.i++;show()}};
+  clearInterval(tmr);if(X.tl)tmr=setInterval(()=>{const l=Math.max(0,X.tl*60-Math.round((Date.now()-st.t0)/1000)),e=$$('#et');if(e)e.textContent='⏱ '+f(Math.floor(l/60))+':'+String(l%60).padStart(2,'0');if(l<=0){clearInterval(tmr);fin()}},1000)};
+ show()}
+/* ---- wiring ---- */
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset.xd;if(d==='sk')skillM();else if(d==='tch')tchM();else if(d==='exam')examEntry()});
+(document.getElementById('xnav')||document.querySelector('.nav')).insertAdjacentHTML('beforeend','<button data-xd="sk"><b>🔬</b>'+T('مهارت‌ها','Skills','المهارات')+'</button><button data-xd="tch"><b>👩‍🏫</b>'+T('معلم','Teacher','المعلم')+'</button><button data-xd="exam"><b>📝</b>'+T('آزمون','Exam','اختبار')+'</button>');
+try{const u=new URLSearchParams(location.search).get('exam');if(u)setTimeout(()=>examEntry(u),700)}catch(e){}
+})();
+
+</script>
+<script>
+/* ===== v5 UI: home/play screens, bottom tab bar + sheet, focus mode, timer ring, empty states ===== */
+(function(){try{
+const $=s=>document.querySelector(s),T=Q,f=n=>dg(fa(n));
+const app=$('.app'),nav=$('.nav'),hd=$('.hd'),lv=$('#lv'),hud=$('.hud'),stg=$('#stg'),tbI=$('#tb'),q=$('.q'),op=$('#op'),tl=$('.tl'),ch=$('#ch'),go=$('#go'),ms=$('#ms'),ft=$('.ft'),mdEl=$('#md'),mb=$('#mb');
+if(![app,nav,hd,lv,hud,stg,tbI,q,op,tl,ch,go,ms,ft,mdEl,mb].every(Boolean))return;
+const tb=tbI.parentNode,goRow=go.parentNode,tmB=$('#tm');tb.classList.add('u-tb');
+const IC={home:'<path d="M3 11l9-8 9 8v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>',book:'<path d="M4 4h12a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3zM4 17a3 3 0 0 1 3-3h12"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/><circle cx="17.5" cy="9" r="2.5"/><path d="M17 14c3 0 5 2 5 5"/>',chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',more:'<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>'};
+const ic=n=>'<svg viewBox="0 0 24 24" aria-hidden="true">'+IC[n]+'</svg>';
+const ring=(p,t)=>'<svg viewBox="0 0 44 44" width="72" height="72"><circle cx="22" cy="22" r="18" fill="none" stroke="var(--bd)" stroke-width="5"/><circle cx="22" cy="22" r="18" fill="none" stroke="var(--gold)" stroke-width="5" stroke-linecap="round" stroke-dasharray="'+(113*p).toFixed(1)+' 113" transform="rotate(-90 22 22)"/><text x="22" y="25.5" text-anchor="middle" font-size="9.5" font-weight="700" fill="currentColor">'+t+'</text></svg>';
+const game=document.createElement('section');game.id='u-game';[hud,tb,q,op,tl,goRow,ms].forEach(x=>game.appendChild(x));
+const home=document.createElement('section');home.id='u-home';
+home.innerHTML='<div class="u-hero"><div class="u-av" id="u-av"></div><div class="u-info"><b id="u-nm"></b><div class="u-sub" id="u-rk"></div><div class="bar"><i id="u-xp"></i></div><small id="u-st"></small></div><div id="u-ring" class="u-ring"></div></div><button class="btn go u-play" id="u-pl"></button><div id="u-lvh"></div><div class="u-modes" id="u-md"></div><div id="u-sh"></div>';
+const H=s=>home.querySelector(s);H('#u-lvh').appendChild(lv);H('#u-sh').appendChild(stg);H('#u-sh').appendChild(ch);H('#u-sh').appendChild(ft);
+const MODES=[['[data-ytp="smart"]','🧠',T('تمرین هوشمند','Smart practice','تدريب ذكي'),T('ضعف‌هایت را هدف بگیر','Targets your weak spots','يستهدف نقاط ضعفك')],['[data-y="tp"]','📚',T('مباحث','Topics','المواضيع'),T('یک مبحث انتخاب کن','Pick one topic','اختر موضوعاً')],['#du2','🤖',T('دوئل','Duel','مبارزة'),T('با ربات یا دوست','vs robot or friend','ضد الروبوت أو صديق')],['[data-xd="exam"]','📝',T('آزمون','Exam','اختبار'),T('کد معلم را وارد کن','Enter teacher code','أدخل رمز المعلم')],['[data-xd="sk"]','🔬',T('مهارت‌ها','Skills','المهارات'),T('ضعف دقیق تو','Your exact weak spots','نقاط ضعفك بدقة')],['[data-m="d"]','🎯',T('مأموریت‌ها','Missions','المهام'),T('هدف‌های امروز','Daily goals','أهداف اليوم')],['[data-z="pg"]','📈',T('پیشرفت','Progress','التقدم'),T('نمودار هفتگی و ماهانه','Weekly & monthly charts','مخططات أسبوعية وشهرية')],['[data-m="s"]','🛒',T('فروشگاه','Shop','المتجر'),T('ارتقا و ظاهر','Upgrades & looks','ترقيات ومظهر')]];
+const md=H('#u-md');MODES.forEach(m=>{if(!$(m[0]))return;const b=document.createElement('button');b.className='u-card';b.innerHTML='<span class="u-ic">'+m[1]+'</span><b>'+m[2]+'</b><small>'+m[3]+'</small>';b.onclick=()=>{const t=$(m[0]);if(t)t.click()};md.appendChild(b)});
+H('#u-pl').onclick=()=>go.click();
+const wrap=document.createElement('div');wrap.id='u-wrap';wrap.appendChild(game);wrap.appendChild(home);hd.parentNode.insertBefore(wrap,nav.nextSibling);
+/* bottom tab bar + "more" sheet */
+const tabs=document.createElement('nav');tabs.id='u-tabs';
+const TB=[['home','home',T('خانه','Home','الرئيسية')],['tp','book',T('مباحث','Topics','المواضيع')],['fr','users',T('دوستان','Friends','الأصدقاء')],['rc','chart',T('کارنامه','Report','التقرير')],['more','more',T('بیشتر','More','المزيد')]];
+tabs.innerHTML=TB.map(t=>'<button data-ut="'+t[0]+'" class="'+(t[0]==='home'?'on':'')+'">'+ic(t[1])+'<span>'+t[2]+'</span></button>').join('');document.body.appendChild(tabs);
+const click=s=>{const t=$(s);if(t)t.click()};
+function moreSheet(){const bs=[...nav.querySelectorAll('button')].filter(b=>b.textContent.trim());
+ mdEl.classList.remove('on');
+ modal('<div data-nt><h2>'+T('امکانات بیشتر','More','المزيد')+'</h2><div class="u-grid">'+bs.map((b,i)=>{const e=b.querySelector('b'),em=e?e.textContent:'•',tx=b.textContent.replace(em,'').trim();return'<button data-un="'+i+'"><span>'+em+'</span><small>'+tx+'</small></button>'}).join('')+'</div></div>');
+ mb.onclick=e=>{const b=e.target.closest('[data-un]');if(!b)return;const o=bs[+b.dataset.un];mdEl.classList.remove('on');setTimeout(()=>o&&o.click(),40)}}
+tabs.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const k=b.dataset.ut;
+ if(k==='home'){mdEl.classList.remove('on');scrollTo(0,0)}else if(k==='tp')click('[data-y="tp"]');else if(k==='fr')click('#fr');else if(k==='rc')click('[data-y="rc"]');else moreSheet()});
+/* live updates */
+const NA=s=>String(s).replace(/[۰-۹]/g,d=>d.charCodeAt(0)-1776).replace(/[٠-٩]/g,d=>d.charCodeAt(0)-1632);
+function homeUp(){const g=s=>H(s);g('#u-av').textContent=S.av||'🙂';g('#u-nm').textContent=S.nm||T('بازیکن','Player','لاعب');const rk=$('#rk');g('#u-rk').textContent=rk?rk.textContent:'';
+ g('#u-xp').style.width=Math.min(100,(S.xp||0)/((S.lvl||1)*40)*100)+'%';g('#u-st').textContent='🪙 '+f(S.coins||0)+'  ·  🔥 '+f(S.ls||0)+' '+T('روز','days','يوم')+'  ·  '+T('سطح ','Level ','المستوى ')+f(S.lvl||1);
+ const d=Math.min(S.dq||0,20);g('#u-ring').innerHTML=ring(d/20,f(d)+'/'+f(20))+'<small>'+T('هدف امروز','Daily goal','هدف اليوم')+'</small>';
+ const lb=$('#lb');g('#u-pl').textContent='▶ '+T('شروع بازی','Play','ابدأ اللعب')+(lb&&lb.textContent?' — '+lb.textContent:'')}
+tmB.parentNode.style.position='relative';tmB.parentNode.insertAdjacentHTML('afterbegin','<svg class="u-tr" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="19" fill="none" stroke="var(--bd)" stroke-width="3"/><circle id="u-tc" cx="22" cy="22" r="19" fill="none" stroke="var(--ok)" stroke-width="3" stroke-linecap="round" stroke-dasharray="119 119" transform="rotate(-90 22 22)"/></svg>');
+const tc=$('#u-tc');let was=null,hu=0;
+setInterval(()=>{const on=typeof G!=='undefined'&&!!G.on;if(on!==was){was=on;document.body.classList.toggle('u-play',on);document.body.classList.toggle('u-home',!on);tabs.querySelector('[data-ut="home"]').classList.toggle('on',!on);if(!on)homeUp();scrollTo(0,0)}
+ if(on&&G.tot){const r=Math.max(0,Math.min(1,G.time/G.tot));tc.setAttribute('stroke-dasharray',(119*r).toFixed(1)+' 119');tc.setAttribute('stroke',r>.5?'var(--ok)':r>.25?'#f39c12':'var(--bad)');tb.classList.toggle('u-low',r<.25)}
+ if(!on&&++hu%5===0)homeUp()},200);
+const sc=$('#sc');if(sc)new MutationObserver(()=>{sc.classList.remove('bump');void sc.offsetWidth;sc.classList.add('bump')}).observe(sc,{childList:true,characterData:true,subtree:true});
+/* friendly empty states + swipe-down to close sheet */
+new MutationObserver(()=>{mb.querySelectorAll('.it').forEach(it=>{if(!it.id&&!it.querySelector('*')&&it.textContent.trim().length<150&&!(it.parentElement&&it.parentElement.querySelectorAll(':scope>.it').length>1))it.classList.add('empty')})}).observe(mb,{childList:true,subtree:true});
+const bx=mdEl.querySelector('.bx');let y0=null;bx.addEventListener('touchstart',e=>{y0=bx.scrollTop<=0?e.touches[0].clientY:null},{passive:true});bx.addEventListener('touchend',e=>{if(y0!=null&&e.changedTouches[0].clientY-y0>90)mdEl.classList.remove('on');y0=null},{passive:true});
+homeUp();document.body.classList.add('u-on','u-home');
+}catch(e){console.warn('UI v5 disabled:',e)}})();
+
+</script>
 </body>
 </html>
+
 
 
